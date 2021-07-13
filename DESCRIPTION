@@ -1,0 +1,10 @@
+Package: shinysender
+Type: Package
+Title: Send Shiny Apps to a Server 
+Version: 0.1.0
+Author: David Mawdsley
+Maintainer: David Mawdsley <david.mawdsley@manchester.ac.uk>
+Description: Upload a Shiny App to a server via sftp.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
