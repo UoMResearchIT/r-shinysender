@@ -19,9 +19,27 @@ default:
 
 Multiple servers can be specified in the `config.yml` file, and selected when making the connection.
 
-## Notes
+### Basic usage
 
-User authentication will be handled by Shinyproxy.
+```{r}
+# Connect to shiny server, as user Alice, using private key in ~/.ssh/id_rsh
+session <- ss_connect("alice", "~/.ssh/id_rsh")
+
+# List Alice's apps on Shiny server
+ss_listapps(session)
+
+# Delete Alice's app "demo" on the server
+# TODO implement
+ss_deleteapp(session, "demo")
+
+# Upload app stored in ~/testapp to server as an app called demo
+ss_uploadappdir(session, "~/testapp/", "demo")
+
+# Disconnect from the server
+ss_disconnect(session)
+```
+
+## Notes
 
 Initially:
 
