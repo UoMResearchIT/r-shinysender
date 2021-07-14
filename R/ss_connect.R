@@ -20,7 +20,9 @@ ss_connect <- function(username,
                        config = "default",
                        hostverify = TRUE){
 
-  # TODO verify username syntatcially valid
+  # TODO verify username syntactically valid
+
+  # TODO Allow connection with password
 
   # TODO verify keyfile exists
 
@@ -32,8 +34,8 @@ ss_connect <- function(username,
   conname = paste0(username, "@", server)
 
   session = ssh::ssh_connect(conname,
-                              keyfile = keyfile,
-                             verbose = 2)
+                              keyfile = keyfile)
+
 
   # Verify session matches what we expect
   expectedkey = config::get("serverfingerprint",
