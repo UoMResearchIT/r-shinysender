@@ -16,6 +16,7 @@ ss_listapps <- function(session,
 
   # TODO Handle no ShinyApps directory
   # TODO verify appdir is a valid directory name
+  # TODO handle files in ~/ShinyApps - show or not?
 
   listappcmd <- paste0("ls ", appdir)
 
