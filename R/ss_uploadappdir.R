@@ -23,21 +23,37 @@ ss_uploadappdir <- function(session, appDir, appName,
 
   bundleFile <- ss_bundleapp(appDir = appDir,
                              appName = appName)
-
+  bundleBareFile <- basename(bundleFile)
 
   if (method == "direct_home") {
     # TODO check ~/ShinyApps exists
+    # TODO - decide how to handle if already exists
 
     ssh::scp_upload(session,
                     file = bundleFile,
                     to = "./ShinyApps")
-    # Make remote directory
+    # Make remote directory and decompress
 
-    # TODO - decide how to handle if already exists
-    # remote = paste0("ShinyApps/", appName)
-    #
-    #
-    # ssh::ssh_exec_internal(session, paste0("mkdir ~/", remote))
+    remotecommand <- paste0("cd ~/ShinyApps && mkdir ",
+                            appName,
+                            " && tar xvzf ",
+                            bundleBareFile,
+                            " -C ",
+                            appName,
+                            " && rm ",
+                            bundleBareFile)
+
+    retval = ssh::ssh_exec_wait(session, remotecommand)
+    stopifnot(retval == 0)
+
+    # Restore the packrat libraries
+    # Project parameter doesn't seem to work, so cd to project directory
+    # first
+    remotecommand <- paste0("cd ./ShinyApps/", appName,
+                            " && Rscript -e 'packrat::restore()'")
+
+    retval = ssh::ssh_exec_wait(session, remotecommand )
+    stopifnot(retval == 0)
 
   } else {
     stop("Only direct upload currently supported")
