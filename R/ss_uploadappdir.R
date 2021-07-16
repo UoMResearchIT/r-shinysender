@@ -10,7 +10,10 @@
 #' @export
 ss_uploadappdir <- function(session, appdir, appname){
 
-
+  # TODO FIXME - this doesn't really work, as it has the effect of flattening
+  # the file path when we upload
+  # ssh::scp_upload(session, "~/testshinyapp2", "renvapp") will work
+  # but falls over if ther are any broken symlinks
   toupload <- list.files(appdir,
                          full.names = TRUE,
                          recursive = TRUE)
@@ -30,6 +33,7 @@ ss_uploadappdir <- function(session, appdir, appname){
   # TODO - decide how to handle if already exists
 
   # Upload files
+  # This will flatten the directory structure
   ssh::scp_upload(session,
                   file = toupload,
                   to = paste0("./", remote))
