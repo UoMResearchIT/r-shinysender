@@ -70,3 +70,33 @@ TODO - test just renv::restore() without isolate - less to transfer over
 Can we use rsconnect library to build the bundle, and then deploy at the other end? This deals with a lot of the dependency troubles...however, Packrat will install a full set for each app (rather than using system ones).
 
 2021-07-16: Packrat has a Cache feature (<https://stackoverflow.com/questions/44676570/how-does-the-use-cache-feature-of-packrat-work>) which works by symlinking, so will hopefully avoid the space/time constraints of each app getting a full set of packages.
+
+This approach looks like it should be feasible - have put a wrapper round rsconnect bundling code in `ss_bundleapp()` (probably shoudn't export this), and modified `ss_uploadappdir()` to upload the bundle (rather than individual files)
+
+On the server end... we need to:
+
+-   Repopulate the packrat local library (with `packrat::restore()`)
+
+-   Make sure the app (when invoked by Shiny Server uses the packrat library
+
+The second point is a bit tricky. TODO - try adding code to \~/.RProfile to check whether:
+
+-   Set user level packrat cache location
+
+-   We're running under shinyserver (how??)
+
+-   If so check whether a (populated) packrat directory exists (i.e. one that's been `packrat::restore()`ed)
+
+-   If so run `packrat::on()` to use packrat library
+
+### Packrat Cache
+
+The following in \~/.Rprofile sets up each user's Packrat cache:
+
+    message("Setting up packrat cache")
+    Sys.setenv(R_PACKRAT_CACHE_DIR = "~/R/packratcache")
+    packrat::set_opts(use.cache=TRUE)
+
+Will need to have the packrat library installed for all users, so they can run the final command (TODO - test if library is installed before running any of it)
+
+Two approaches for doing this... use `/etc/skel` to set up on user creation, or provide a function to populate user's remote `.Rprofile` from `shinysender` package. The latter approach is probably better.
