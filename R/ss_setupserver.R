@@ -20,6 +20,10 @@ ss_setupserver <- function(session){
   # TODO check packrat is available to the user
   # If not - install to users local library?? (as optional parameter)
 
+  # TODO only setup project packrat directory if running under shiny server
+  # and if packrat directory has been packrat::restor()ed
+
+
 
   # TODO append to file rather than overwrite (packrat does this for its autoloader)
 
