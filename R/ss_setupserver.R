@@ -21,7 +21,7 @@ ss_setupserver <- function(session){
   # If not - install to users local library?? (as optional parameter)
 
 
-  # TODO append to file rather than overwrite
+  # TODO append to file rather than overwrite (packrat does this for its autoloader)
 
   rprofile_file = system.file("remoteprofile/.Rprofile", package = "shinysender",
                               mustWork = TRUE)
