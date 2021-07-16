@@ -2,6 +2,7 @@
 
 export(ss_bundleapp)
 export(ss_connect)
+export(ss_deleteapp)
 export(ss_disconnect)
 export(ss_listapps)
 export(ss_setupserver)
