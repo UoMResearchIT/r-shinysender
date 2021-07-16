@@ -4,7 +4,7 @@
 \alias{ss_uploadappdir}
 \title{Upload an app to the shiny server}
 \usage{
-ss_uploadappdir(session, appDir, appName)
+ss_uploadappdir(session, appDir, appName, method = "direct_home")
 }
 \arguments{
 \item{session}{The ssh session to use for the upload}
@@ -13,7 +13,16 @@ ss_uploadappdir(session, appDir, appName)
 
 \item{appName}{The name of the application - this will form part of the URL
 for the app}
+
+\item{method}{The deployment method - see details}
 }
 \description{
 Upload all the files in the app directory to the Shiny server
+}
+\details{
+method: Only "direct_home" is currently supported.  This uses the ssh
+session passed to the function to ssh the bundle file to the user's
+~/ShinyApps directory and decompresses it, before removing the bundle file.
+In future we could support, e.g. ShinyProxy deployment by creating a Docker
+image containing the bundle
 }

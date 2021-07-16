@@ -2,44 +2,51 @@
 #'
 #' Upload all the files in the app directory to the Shiny server
 #'
+#' @details method: Only "direct_home" is currently supported.  This uses the ssh
+#' session passed to the function to ssh the bundle file to the user's
+#' ~/ShinyApps directory and decompresses it, before removing the bundle file.
+#' In future we could support, e.g. ShinyProxy deployment by creating a Docker
+#' image containing the bundle
+#'
 #' @param session The ssh session to use for the upload
 #' @param appDir The local directory containing the app to upload
 #' @param appName The name of the application - this will form part of the URL
 #' for the app
+#' @param method The deployment method - see details
 #'
 #' @export
-ss_uploadappdir <- function(session, appDir, appName){
-
-  # TODO FIXME - this doesn't really work, as it has the effect of flattening
-  # the file path when we upload
-  # ssh::scp_upload(session, "~/testshinyapp2", "renvapp") will work
-  # but falls over if ther are any broken symlinks
-  toupload <- list.files(appDir,
-                         full.names = TRUE,
-                         recursive = TRUE)
-  # TODO establish if we need all.files = TRUE (for renv - think this uses
-  # a hidden directory
+ss_uploadappdir <- function(session, appDir, appName,
+                            method = "direct_home"){
 
   # TODO check we have a potentially valid Shiny app (i.e. ui.R+server.R or app.R)
   # at top level
 
-
-  # TODO heck app name
-  # Make remote directory
-  remote = paste0("ShinyApps/", appName)
+  bundleFile <- ss_bundleapp(appDir = appDir,
+                             appName = appName)
 
 
-  ssh::ssh_exec_internal(session, paste0("mkdir ~/", remote))
-  # TODO - decide how to handle if already exists
+  if (method == "direct_home") {
+    # TODO check ~/ShinyApps exists
 
-  # Upload files
-  # This will flatten the directory structure
-  ssh::scp_upload(session,
-                  file = toupload,
-                  to = paste0("./", remote))
+    ssh::scp_upload(session,
+                    file = bundleFile,
+                    to = "./ShinyApps")
+    # Make remote directory
+
+    # TODO - decide how to handle if already exists
+    # remote = paste0("ShinyApps/", appName)
+    #
+    #
+    # ssh::ssh_exec_internal(session, paste0("mkdir ~/", remote))
+
+  } else {
+    stop("Only direct upload currently supported")
+  }
 
 
-  return("success")
+
+
+
 }
 
 
