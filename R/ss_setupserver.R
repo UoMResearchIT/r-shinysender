@@ -19,6 +19,11 @@ ss_setupserver <- function(session){
 
   # TODO check packrat is available to the user
   # If not - install to users local library?? (as optional parameter)
+  remote_packrat = ss_is_remote_package_installed(session, package = "packrat")
+
+  if(!remote_packrat) {
+    stop("Packrat is not installed on the remote server")
+  }
 
   # TODO only setup project packrat directory if running under shiny server
   # and if packrat directory has been packrat::restor()ed
@@ -34,5 +39,28 @@ ss_setupserver <- function(session){
                   rprofile_file)
 
 
+
+}
+
+
+#' Check whether a package on the remote server is installed
+#'
+#' @param session The session to use
+#' @param package The package to test for
+#'
+#' @return TRUE if installed, FALSE otherwise
+#'
+ss_is_remote_package_installed <- function(session, package){
+
+  remoteR <- paste0("if( '", package, "' %in% installed.packages()) { quit(status = 0) } else { quit(status = 1) }")
+  remoteRRun <- paste0('Rscript -e "', remoteR, '"')
+
+  retcode <- ssh::ssh_exec_wait(session, remoteRRun)
+
+  if(retcode == 0){
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
 
 }
