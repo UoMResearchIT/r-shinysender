@@ -4,14 +4,14 @@
 \alias{ss_uploadappdir}
 \title{Upload an app to the shiny server}
 \usage{
-ss_uploadappdir(session, appdir, appname)
+ss_uploadappdir(session, appDir, appName)
 }
 \arguments{
 \item{session}{The ssh session to use for the upload}
 
-\item{appdir}{The local directory containing the app to upload}
+\item{appDir}{The local directory containing the app to upload}
 
-\item{appname}{The name of the application - this will form part of the URL
+\item{appName}{The name of the application - this will form part of the URL
 for the app}
 }
 \description{
