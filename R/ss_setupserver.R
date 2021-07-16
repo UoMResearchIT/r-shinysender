@@ -14,6 +14,12 @@
 #'
 #' @export
 ss_setupserver <- function(session){
+  # TODO require user to confirm it's OK to do what we plan to,
+  # as we're altering their home directory
+
+  # TODO check packrat is available to the user
+  # If not - install to users local library?? (as optional parameter)
+
 
   # TODO append to file rather than overwrite
 
