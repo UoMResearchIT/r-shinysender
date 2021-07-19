@@ -28,3 +28,55 @@ ss_listapps <- function(session,
   return(appvect)
 }
 
+
+#' Report on the apps installed on the remote server
+#'
+#' Return a tibble containing details of each directory in the user's app
+#' directory:
+#'
+#' * Is the directory a potentially valid Shiny app (i.e. contains app.R or (ui.R and server.R))
+#' * Does it have a packrat directory?
+#' * Any logs associated with the app
+#'
+#' @param session The ssh session
+#' @param appdir The location of the folder containing the user's ShinyApps
+#'
+#' @return A data frame containing details about each entry in the user's app
+#' directory
+#'
+#' @export
+ss_appreport <- function(session,
+                         appdir = "~/ShinyApps"){
+
+
+  possibleApps <- ss_listapps(session, appdir)
+
+  appinfo <- list()
+  i <- 1
+  for(p in possibleApps){
+
+    cmd <- paste0("ls ", appdir, "/", p)
+    out <- ssh::ssh_exec_internal(session, cmd)
+
+    # TODO Catch if errors
+
+    shinyApp = isShinyApp(processls(out$stdout))
+
+    thisrow <- c(entryname = p,
+                       isApp = shinyApp)
+
+
+    appinfo[[i]] <- thisrow
+    i <- i + 1
+
+  }
+
+  # Make into a data frame
+  appout <- as.data.frame(do.call(rbind, appinfo))
+
+  return(appout)
+}
+
+
+
+
