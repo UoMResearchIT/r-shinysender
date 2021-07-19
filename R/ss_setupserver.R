@@ -25,8 +25,6 @@ ss_setupserver <- function(session){
     stop("Packrat is not installed on the remote server")
   }
 
-  # TODO only setup project packrat directory if running under shiny server
-  # and if packrat directory has been packrat::restor()ed
 
 
 
