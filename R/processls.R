@@ -30,8 +30,13 @@ processls <- function(inraw) {
 #' @param directoryEntries A character vector containing directory entries;
 #' one per element
 #'
-#' @return TRUE if the directory contains a Shiny app, FALSE otherwise.
+#' @return TRUE if the directory contains a Shiny app, FALSE otherwise. Return
+#' NA if both app types are defined
 isShinyApp <- function(directoryEntries) {
+
+  if(all(c("app.R", "server.R", "ui.R") %in% directoryEntries))
+    return(NA)
+
   return("app.R" %in% directoryEntries |
           ("server.R" %in% directoryEntries & "ui.R" %in% directoryEntries)
   )
