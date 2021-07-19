@@ -22,9 +22,7 @@ ss_listapps <- function(session,
 
   out <- ssh::ssh_exec_internal(session, listappcmd)
 
-  shinyapps <- (rawToChar(out$stdout))
-  appvect <- strsplit(shinyapps, "\\n")[[1]]
-
+  appvect <- processls(out$stdout)
   # TODO Handle log directory
   # TODO check each directory contains a (potentially) valid app
   return(appvect)
