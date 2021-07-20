@@ -62,3 +62,42 @@ ss_is_remote_package_installed <- function(session, package){
   }
 
 }
+
+#' Check whether we have a ~/ShinyApps directory on the remote account
+#'
+#' Check whether the ~/ShinyApps directory exists
+#'
+#' @param session The session to use
+ss_does_shinyapps_exist <- function(session){
+
+  remoteCmd <- "ls -d */"
+  returndata <- ssh::ssh_exec_internal(session, remoteCmd)
+
+  remotedirs <- shinysender:::processls(returndata$stdout)
+
+  return("ShinyApps/" %in% remotedirs)
+
+
+}
+
+
+#' Create ~/ShinyApps on remote account
+#'
+#' @param session The session to use
+ss_create_shinyapps <- function(session) {
+
+  alreadyThere <- ss_does_shinyapps_exist(session)
+  if(alreadyThere)
+    stop("~/ShinyApps already exists on remote server")
+
+  remoteCmd <- "mkdir ShinyApps"
+
+  retcode <- ssh::ssh_exec_wait(session, remoteCmd)
+
+  if(retcode != 0)
+    stop("Remote command failed when creating ~/ShinyApps directory")
+
+  # Check the directory exists now we've made it
+  if(!ss_does_shinyapps_exist(session))
+    stop("Remote command apparently worked, but cannot see ~/ShinyApps directory")
+}
