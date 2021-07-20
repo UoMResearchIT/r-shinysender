@@ -79,3 +79,25 @@ ss_does_shinyapps_exist <- function(session){
 
 
 }
+
+
+#' Create ~/ShinyApps on remote account
+#'
+#' @param session The session to use
+ss_create_shinyapps <- function(session) {
+
+  alreadyThere <- ss_does_shinyapps_exist(session)
+  if(alreadyThere)
+    stop("~/ShinyApps already exists on remote server")
+
+  remoteCmd <- "mkdir ShinyApps"
+
+  retcode <- ssh::ssh_exec_wait(session, remoteCmd)
+
+  if(retcode != 0)
+    stop("Remote command failed when creating ~/ShinyApps directory")
+
+  # Check the directory exists now we've made it
+  if(!ss_does_shinyapps_exist(session))
+    stop("Remote command apparently worked, but cannot see ~/ShinyApps directory")
+}
