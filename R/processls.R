@@ -41,3 +41,19 @@ isShinyApp <- function(directoryEntries) {
           ("server.R" %in% directoryEntries & "ui.R" %in% directoryEntries)
   )
 }
+
+
+#' Test if a directory contains a packrat directory
+#'
+#' Test whether an (app) directory contains a packrat directory
+#'
+#' This function is used to see whether the app (likely) uses packrat to manage
+#' package dependencies.
+isPackratApp <- function(directoryEntries){
+
+  if("packrat" %in% directoryEntries)
+    return(TRUE)
+  else
+    return(FALSE)
+
+}

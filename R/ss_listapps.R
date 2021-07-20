@@ -62,8 +62,13 @@ ss_appreport <- function(session,
 
     shinyApp = isShinyApp(processls(out$stdout))
 
+
+    haspackrat = isPackratApp(processls(out$stdout))
+
+
     thisrow <- c(entryname = p,
-                       isApp = shinyApp)
+                 isApp = shinyApp,
+                 ispackrat  = haspackrat)
 
 
     appinfo[[i]] <- thisrow
