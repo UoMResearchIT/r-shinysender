@@ -78,11 +78,17 @@ server <- function(input, output) {
 
   output$installedapps <- DT::renderDataTable({
 
-    if(class(ssSession()) == "ssh_session")
+    if(class(ssSession()) == "ssh_session"){
+
+      ourapps <- ssApps()
+
+      ourapps <- ourapps[,-which(names(ourapps) == "entryname_raw")]
+
       DT::datatable(
-      ssApps(),
-      escape = FALSE)
-    else
+      ourapps,
+      rownames = FALSE,
+      escape = c(-1))
+    }else
       NULL
 
   })
