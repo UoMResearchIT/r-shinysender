@@ -82,6 +82,31 @@ ss_appreport <- function(session,
   return(appout)
 }
 
+#' Hyperlinked app report
+#'
+#' Provide an app report, with html entries for entrynames, linking to the hosted app
+#'
+#' @param session The ssh session
+#' @param slug The location of the hosted app, up to the appname
+#' @param appdir The location of the folder containing the user's ShinyApps
+#'
+#' @return A data frame containing details about each entry in the user's app
+#' directory with clickable links
+#'
+ss_appreport_linked <- function(session, slug, appdir = "~/ShinyApps"){
+
+  report <- ss_appreport(session, appdir)
+
+  hyperlinked <-  paste0("<a href='", slug, instapps$entryname,
+                         "'>",instapps$entryname,"</a>")
+
+  report$entryname_raw = report$entryname
 
 
+  report$entryname = ifelse(report$isApp, hyperlinked, report$entryname_raw)
+
+  return(report)
+
+
+}
 

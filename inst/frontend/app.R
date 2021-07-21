@@ -7,6 +7,10 @@ library(shinysender)
 
 static_session <- ss_connect("david", "~/shinysender/id_rsa")
 
+# Hard coded server slug for devel
+# TODO get from config.yml
+slug <- "http://192.168.56.101:3838/user/david/"
+
 ui <- dashboardPage(dashboardHeader(title = "Shiny Sender"),
 
                     dashboardSidebar(
@@ -20,7 +24,7 @@ ui <- dashboardPage(dashboardHeader(title = "Shiny Sender"),
                         tabItem("installed",
                                 h1("Installed applications"),
                                 # actionButton("login", "Login"),
-                                dataTableOutput("installedapps")
+                                DT::dataTableOutput("installedapps")
                         ),
                         tabItem("add",
                                 h1("Add a new Shiny App"),
@@ -67,14 +71,17 @@ server <- function(input, output) {
   })
 
   observeEvent(ssSession(), {
-    ourApps <- ss_appreport(ssSession())
+    ourApps <- shinysender:::ss_appreport_linked(ssSession(),
+                                                 slug = slug )
     ssApps(ourApps)
   })
 
-  output$installedapps <- renderDataTable({
+  output$installedapps <- DT::renderDataTable({
 
     if(class(ssSession()) == "ssh_session")
-      ssApps()
+      DT::datatable(
+      ssApps(),
+      escape = FALSE)
     else
       NULL
 
@@ -131,7 +138,9 @@ server <- function(input, output) {
         ss_uploadappdir(ssSession(), file_path, input$appname)
 
         # Update app list
-        ourApps <- ss_appreport(ssSession())
+        # FIXME
+        ourApps <- shinysender:::ss_appreport_linked(ssSession(),
+                                                     slug = slug)
         ssApps(ourApps)
 
         showNotification("Upload completed")
