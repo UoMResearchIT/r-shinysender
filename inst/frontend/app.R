@@ -52,6 +52,7 @@ server <- function(input, output) {
   # showModal(startup_modal)
 
   ssSession <- reactiveVal(static_session)
+  ssApps <- reactiveVal()
 
   observeEvent(input$login, {
     removeModal()
@@ -65,7 +66,10 @@ server <- function(input, output) {
 
   })
 
-  ssApps <- reactive({ss_appreport(ssSession()) })
+  observeEvent(ssSession(), {
+    ourApps <- ss_appreport(ssSession())
+    ssApps(ourApps)
+  })
 
   output$installedapps <- renderDataTable({
 
@@ -119,14 +123,17 @@ server <- function(input, output) {
         showNotification("Directory does not appear to contain a Shiny app")
       } else if(!shinysender:::ss_isAppNameValid(input$appname)){
         showNotification("App name does not appear to be valid")
-      } else if(input$appname %in% ssApps()$entryname) {
+      } else if(input$appname %in% shinysender::ss_listapps(ssSession())) {
         showNotification("App already exists on server")
       } else {
         showNotification("Uploading")
         # TODO Catch any errors that may occur here
         ss_uploadappdir(ssSession(), file_path, input$appname)
-        # Update app report so we have the new app
-        ssApps <- reactive({ss_appreport(ssSession()) })
+
+        # Update app list
+        ourApps <- ss_appreport(ssSession())
+        ssApps(ourApps)
+
         showNotification("Upload completed")
       }
 
