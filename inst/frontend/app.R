@@ -26,6 +26,9 @@ ui <- dashboardPage(dashboardHeader(title = "Shiny Sender"),
                                 h1("Add a new Shiny App"),
                                 shinyDirButton("appdirinput", "Select directory",
                                                "Select your Shiny app directory"),
+                                p(),
+                                textOutput("uploaddir"),
+                                textInput("appname", "Application name"),
                                 actionButton("upload", "Upload app")
                         )
 
@@ -87,16 +90,53 @@ server <- function(input, output) {
 
   observe({print(input$appdirinput)})
 
+
+  output$uploaddir <- renderText({
+    # TODO Make reactive
+    # TODO format according to if a valid Shiny App
+    file_path <- parseDirPath(c(home="~"), input$appdirinput)
+    file_path
+
+  })
+
   shiny::observeEvent(input$upload, {
     if (is.integer(input$appdirinput)) {
       cat("No files have been selected (shinyFileChoose)")
     } else {
       file_path <- parseDirPath(c(home="~"), input$appdirinput)
       print(file_path)
-    }
-  })
 
-}
+
+      # Need to establish:
+      # * Is it a shiny app?
+      # * Is the app name valid?
+      # * Does the app already exist on the server?
+
+      path_files <- list.files(file_path)
+
+      # Check if we have a Shiny app
+      if(!shinysender:::isShinyApp(path_files)) {
+        showNotification("Directory does not appear to contain a Shiny app")
+      } else if(!shinysender:::ss_isAppNameValid(input$appname)){
+        showNotification("App name does not appear to be valid")
+      } else if(input$appname %in% ssApps()$entryname) {
+        showNotification("App already exists on server")
+      } else {
+        showNotification("Uploading")
+        # TODO Catch any errors that may occur here
+        ss_uploadappdir(ssSession(), file_path, input$appname)
+        # Update app report so we have the new app
+        ssApps <- reactive({ss_appreport(ssSession()) })
+        showNotification("Upload completed")
+      }
+
+    }
+
+
+
+})
+
+  }
 
 
 
