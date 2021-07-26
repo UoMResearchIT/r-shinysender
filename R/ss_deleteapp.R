@@ -9,8 +9,8 @@
 #' @export
 ss_deleteapp <- function(session, appName, prompt = TRUE){
 
-  # TODO check app name valid
-
+  # Check application name is valid
+  stopifnot(shinysender:::ss_isAppNameValid(appName))
 
   # No app passed - don't trash the whole directory
   stopifnot(length(appName) > 0)
