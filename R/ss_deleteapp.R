@@ -10,7 +10,7 @@
 ss_deleteapp <- function(session, appName, prompt = TRUE){
 
   # Check application name is valid
-  stopifnot(shinysender:::ss_isAppNameValid(appName))
+  stopifnot(ss_isAppNameValid(appName))
 
   # Only deal with a single application at a time
   # TODO - handle >1 app per function call

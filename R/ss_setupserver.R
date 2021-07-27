@@ -73,7 +73,7 @@ ss_does_shinyapps_exist <- function(session){
   remoteCmd <- "ls -d */"
   returndata <- ssh::ssh_exec_internal(session, remoteCmd)
 
-  remotedirs <- shinysender:::processls(returndata$stdout)
+  remotedirs <- processls(returndata$stdout)
 
   return("ShinyApps/" %in% remotedirs)
 

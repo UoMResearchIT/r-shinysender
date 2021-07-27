@@ -32,13 +32,13 @@ ss_uploadappdir <- function(session, appDir, appName,
 
   if (method == "direct_home") {
     # Check ~/ShinyApps exists
-    if (! shinysender:::ss_does_shinyapps_exist(session) ){
+    if (!ss_does_shinyapps_exist(session) ){
       warning("~/ShinyApps does not exist")
       return("otherError")
     }
 
 
-    installedApps <- shinysender:::ss_listapps(session)
+    installedApps <- ss_listapps(session)
 
 
     if (tolower(appName) %in% tolower(installedApps) ) {
