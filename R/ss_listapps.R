@@ -97,8 +97,8 @@ ss_appreport_linked <- function(session, slug, appdir = "~/ShinyApps"){
 
   report <- ss_appreport(session, appdir)
 
-  hyperlinked <-  paste0("<a href='", slug, instapps$entryname,
-                         "'>",instapps$entryname,"</a>")
+  hyperlinked <-  paste0("<a href='", slug, report$entryname,
+                         "'>",report$entryname,"</a>")
 
   report$entryname_raw = report$entryname
 
