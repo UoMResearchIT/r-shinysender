@@ -12,10 +12,15 @@
 #' @param appDir The local directory containing the app to upload
 #' @param appName The name of the application - this will form part of the URL
 #' for the app
+#' @param overwrite Whether to overwrite or abort if the app directory already exists
 #' @param method The deployment method - see details
+#'
+#'
+#' @return One of "success", "alreadyExists", "otherError"
 #'
 #' @export
 ss_uploadappdir <- function(session, appDir, appName,
+                            overwrite = FALSE,
                             method = "direct_home"){
 
   # TODO check we have a potentially valid Shiny app (i.e. ui.R+server.R or app.R)
@@ -26,14 +31,34 @@ ss_uploadappdir <- function(session, appDir, appName,
   bundleBareFile <- basename(bundleFile)
 
   if (method == "direct_home") {
-    # TODO check ~/ShinyApps exists
-    # TODO - decide how to handle if already exists
+    # Check ~/ShinyApps exists
+    if (!ss_does_shinyapps_exist(session) ){
+      warning("~/ShinyApps does not exist")
+      return("otherError")
+    }
 
-    ssh::scp_upload(session,
-                    file = bundleFile,
-                    to = "./ShinyApps")
+
+    installedApps <- ss_listapps(session)
+
+
+    if (tolower(appName) %in% tolower(installedApps) ) {
+      warning(appName, "is already on the server")
+      if (!overwrite) {
+        return("alreadyExists")
+      } else {
+        message("Deleting existing app and re-uploading")
+        ss_deleteapp(session, appName, prompt = FALSE)
+      }
+    }
+
+    tryCatch(
+      ssh::scp_upload(session,
+                      file = bundleFile,
+                      to = "./ShinyApps"),
+      error = function(c) stop("Upload failed")
+    )
+
     # Make remote directory and decompress
-
     remotecommand <- paste0("cd ~/ShinyApps && mkdir ",
                             appName,
                             " && tar xvzf ",
@@ -44,7 +69,11 @@ ss_uploadappdir <- function(session, appDir, appName,
                             bundleBareFile)
 
     retval = ssh::ssh_exec_wait(session, remotecommand)
-    stopifnot(retval == 0)
+
+    if (retval != 0){
+      warning("App decompression failed")
+      return("otherError")
+    }
 
     # Restore the packrat libraries
     # Project parameter doesn't seem to work, so cd to project directory
@@ -53,7 +82,10 @@ ss_uploadappdir <- function(session, appDir, appName,
                             " && Rscript -e 'packrat::restore()'")
 
     retval = ssh::ssh_exec_wait(session, remotecommand )
-    stopifnot(retval == 0)
+    if (retval != 0){
+      warning("Library restoration on remote server failed")
+      return("otherError")
+    }
 
   } else {
     stop("Only direct upload currently supported")

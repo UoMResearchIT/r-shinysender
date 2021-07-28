@@ -49,6 +49,11 @@ isShinyApp <- function(directoryEntries) {
 #'
 #' This function is used to see whether the app (likely) uses packrat to manage
 #' package dependencies.
+#'
+#' @param directoryEntries A character vector containing directory entries;
+#' one per element
+#'
+#' @return TRUE if the directory contains a Packrat app
 isPackratApp <- function(directoryEntries){
 
   if("packrat" %in% directoryEntries)

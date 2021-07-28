@@ -9,11 +9,12 @@
 #' @export
 ss_deleteapp <- function(session, appName, prompt = TRUE){
 
-  # TODO check app name valid
+  # Check application name is valid
+  stopifnot(ss_isAppNameValid(appName))
 
-
-  # No app passed - don't trash the whole directory
-  stopifnot(length(appName) > 0)
+  # Only deal with a single application at a time
+  # TODO - handle >1 app per function call
+  stopifnot(length(appName) == 1)
 
   # Check app is in directory
   installedApps <- ss_listapps(session)

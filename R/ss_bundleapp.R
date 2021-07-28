@@ -16,13 +16,19 @@
 ss_bundleapp <- function(appDir = ".",
                          appName){
 
-  # TODO test valid app name (low priority?  Not sure why we need to set it
-  # this early - that will be at the deployment stage?)
+  # Check app name is OK
+  stopifnot(ss_isAppNameValid(appName))
+
+  # Extract functions we need from rsconnect package
+  # This avoids a note in the cran checks, since they're internal
+  # It's a bit of a hack, based on
+  # https://stat.ethz.ch/pipermail/r-devel/2013-August/067210.html
+  rscBundleApp <- get("bundleApp", envir = asNamespace("rsconnect"))
+  rscBundleFiles <- get("bundleFiles", envir = asNamespace("rsconnect"))
 
 
-  # TODO figure out away to avoid Cran check note for use of ::: see ?`:::`
-  bundleFile <- rsconnect:::bundleApp(appName,
-                        appFiles = rsconnect:::bundleFiles(appDir),
+  bundleFile <- rscBundleApp(appName,
+                        appFiles = rscBundleFiles(appDir),
                         appPrimaryDoc = NULL, # Unsure what this is used for
                         appDir = appDir,
                         assetTypeName = "application",

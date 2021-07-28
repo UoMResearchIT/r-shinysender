@@ -1,2 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+config.yml
+id_rsa*
+testserver.txt
