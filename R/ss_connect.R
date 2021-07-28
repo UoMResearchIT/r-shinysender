@@ -7,7 +7,7 @@
 #' @note If keyfile is NULL, we use ssh::ssh_connects() approach to authentication
 #' i.e. .ssh/id_rsa, followed by interactive password authentication
 #'
-#' @param username The user to log onto the server as
+#' @param username The user to log onto the server as.  Uses the USERNAME environment variable by default
 #' @param server The remote Shiny server to connect to.  Uses value set in SHINYSENDER_SERVER environment variable by default
 #' @param keyfile The path to the user's private keyfile.
 #' the active config.  Will warn otherwise.
@@ -15,13 +15,15 @@
 #' @return An ssh connection object
 #'
 #' @export
-ss_connect <- function(username,
+ss_connect <- function(username = Sys.getenv("USERNAME"),
                        server = Sys.getenv("SHINYSENDER_SERVER"),
                        keyfile = NULL){
 
   if(server == "")
     stop("Pass server parameter, or set SHINYSENDER_SERVER environment variable")
 
+  if(username == "")
+    stop("Pass username parameter.  USERNAME environment variable was not set")
 
   conname = paste0(username, "@", server)
 
