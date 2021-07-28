@@ -4,12 +4,12 @@
 \alias{ss_connect}
 \title{Connect to a Shiny Server}
 \usage{
-ss_connect(username, keyfile, config = "default", hostverify = TRUE)
+ss_connect(username, keyfile = NULL, config = "default", hostverify = TRUE)
 }
 \arguments{
 \item{username}{The user to log onto the server as}
 
-\item{keyfile}{The path to the user's private keyfile}
+\item{keyfile}{The path to the user's private keyfile.}
 
 \item{config}{The configuration name to use from config.yml. This will
 follow the config package's inheritance rules (i.e. default: must exist
@@ -25,4 +25,8 @@ An ssh connection object
 Connect to the Shiny server referred to in the specified
 configuration in config.yml, using the given user name
 and keyfile specified
+}
+\note{
+If keyfile is NULL, we use ssh::ssh_connects() approach to authentication
+i.e. .ssh/id_rsa, followed by interactive password authentication
 }
