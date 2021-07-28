@@ -30,6 +30,7 @@ ss_connect <- function(username = Sys.getenv("USERNAME"),
   session = ssh::ssh_connect(conname,
                               keyfile = keyfile)
 
+  return(session)
 }
 
 
