@@ -4,11 +4,15 @@
 #' configuration in config.yml, using the given user name
 #' and keyfile specified
 #'
+#' @note If keyfile is NULL, we use ssh::ssh_connects() approach to authentication
+#' i.e. .ssh/id_rsa, followed by interactive password authentication
+#'
 #' @param config The configuration name to use from config.yml. This will
 #' follow the config package's inheritance rules (i.e. default: must exist
 #' in the file, other configs inherit values not explicitly specified)
 #' @param username The user to log onto the server as
-#' @param keyfile The path to the user's private keyfile
+#' @param keyfile The path to the user's private keyfile.
+#' @param
 #' @param hostverify If TRUE, abort if the host's expected SHA1 isn't given in
 #' the active config.  Will warn otherwise.
 #
@@ -16,7 +20,7 @@
 #'
 #' @export
 ss_connect <- function(username,
-                       keyfile,
+                       keyfile = NULL,
                        config = "default",
                        hostverify = TRUE){
 
