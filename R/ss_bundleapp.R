@@ -16,8 +16,8 @@
 ss_bundleapp <- function(appDir = ".",
                          appName){
 
-  # TODO test valid app name (low priority?  Not sure why we need to set it
-  # this early - that will be at the deployment stage?)
+  # Check app name is OK
+  stopifnot(ss_isAppNameValid(appName))
 
   # Extract functions we need from rsconnect package
   # This avoids a note in the cran checks, since they're internal
