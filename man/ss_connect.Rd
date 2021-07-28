@@ -4,18 +4,14 @@
 \alias{ss_connect}
 \title{Connect to a Shiny Server}
 \usage{
-ss_connect(username, keyfile = NULL, config = "default", hostverify = TRUE)
+ss_connect(username, server = Sys.getenv("SHINYSENDER_SERVER"), keyfile = NULL)
 }
 \arguments{
 \item{username}{The user to log onto the server as}
 
-\item{keyfile}{The path to the user's private keyfile.}
+\item{server}{The remote Shiny server to connect to.  Uses value set in SHINYSENDER_SERVER environment variable by default}
 
-\item{config}{The configuration name to use from config.yml. This will
-follow the config package's inheritance rules (i.e. default: must exist
-in the file, other configs inherit values not explicitly specified)}
-
-\item{hostverify}{If TRUE, abort if the host's expected SHA1 isn't given in
+\item{keyfile}{The path to the user's private keyfile.
 the active config.  Will warn otherwise.}
 }
 \value{

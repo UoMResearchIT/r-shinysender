@@ -7,66 +7,26 @@
 #' @note If keyfile is NULL, we use ssh::ssh_connects() approach to authentication
 #' i.e. .ssh/id_rsa, followed by interactive password authentication
 #'
-#' @param config The configuration name to use from config.yml. This will
-#' follow the config package's inheritance rules (i.e. default: must exist
-#' in the file, other configs inherit values not explicitly specified)
 #' @param username The user to log onto the server as
+#' @param server The remote Shiny server to connect to.  Uses value set in SHINYSENDER_SERVER environment variable by default
 #' @param keyfile The path to the user's private keyfile.
-#' @param
-#' @param hostverify If TRUE, abort if the host's expected SHA1 isn't given in
 #' the active config.  Will warn otherwise.
 #
 #' @return An ssh connection object
 #'
 #' @export
 ss_connect <- function(username,
-                       keyfile = NULL,
-                       config = "default",
-                       hostverify = TRUE){
+                       server = Sys.getenv("SHINYSENDER_SERVER"),
+                       keyfile = NULL){
 
-  # TODO verify username syntactically valid
+  if(server == "")
+    stop("Pass server parameter, or set SHINYSENDER_SERVER environment variable")
 
-  # TODO Allow connection with password
-
-  # TODO verify keyfile exists
-
-  server = config::get("server", config = config)
-  if(is.null(server)){
-    stop("'server' field not found in config")
-  }
 
   conname = paste0(username, "@", server)
 
   session = ssh::ssh_connect(conname,
                               keyfile = keyfile)
-
-
-  # Verify session matches what we expect
-  expectedkey = config::get("serverfingerprint",
-                            config = config)
-
-  if(is.null(expectedkey)) {
-
-    # Stop or warn according to how strict we want to be
-    if(hostverify)
-      errfunc = stop
-    else
-      errfunc = warning
-
-    errfunc("'servefingerprint' not found in config.  Not performing hostverification")
-
-    return(session)
-  } else {
-    actualkey = ssh::ssh_info(session)$sha1
-
-    if (expectedkey != actualkey) {
-      stop("Expected sha1 key does not match server's key")
-    }
-
-    return(session)
-  }
-
-  stop("Should never get here")
 
 }
 
