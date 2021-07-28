@@ -17,6 +17,7 @@ Suggests:
     testthat (>= 3.0.0),
     shiny,
     shinydashboard,
-    shinyFiles
+    shinyFiles,
+    DT
 Config/testthat/edition: 3
 RoxygenNote: 7.1.1

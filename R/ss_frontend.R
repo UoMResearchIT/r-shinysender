@@ -17,7 +17,7 @@ ss_frontend <- function() {
   if(requireNamespace("shiny", quietly = TRUE)
      & requireNamespace("shinydashboard", quietly = TRUE)
      & requireNamespace("shinyFiles", quietly = TRUE)
-     & requireMethods("DT", quietly = TRUE))  {
+     & requireNamespace("DT", quietly = TRUE))  {
     shiny::runApp(appDir, display.mode = "normal")
   } else {
     stop("Please check that the 'shiny', 'shinydashboard', 'DT' and 'shinyFiles' packages are installed on your machine")
