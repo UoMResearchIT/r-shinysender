@@ -71,12 +71,27 @@ ss_is_remote_package_installed <- function(session, package){
 ss_does_shinyapps_exist <- function(session){
 
   remoteCmd <- "ls -d */"
-  returndata <- ssh::ssh_exec_internal(session, remoteCmd)
+  returndata <- ssh::ssh_exec_internal(session, remoteCmd, error = FALSE)
 
-  remotedirs <- processls(returndata$stdout)
+  if(returndata$status == 0) { # Command worked - see what directories we have
 
-  return("ShinyApps/" %in% remotedirs)
+    remotedirs <- processls(returndata$stdout)
+    return("ShinyApps/" %in% remotedirs)
 
+  } else {
+    errstring <-  rawToChar(returndata$stderr)
+
+    if(grepl("ls: cannot access '*/': No such file or directory",
+             errstring,
+             fixed = TRUE)) {
+      # No directories, so no ~/ShinyApps
+      return(FALSE)
+    } else {
+      stop("Could not determine if ~/ShinyApps exists on remote:",
+           errstring)
+    }
+
+  }
 
 }
 
