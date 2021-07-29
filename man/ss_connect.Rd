@@ -5,13 +5,13 @@
 \title{Connect to a Shiny Server}
 \usage{
 ss_connect(
-  username = Sys.getenv("USERNAME"),
+  username = getUserName(),
   server = Sys.getenv("SHINYSENDER_SERVER"),
   keyfile = NULL
 )
 }
 \arguments{
-\item{username}{The user to log onto the server as.  Uses the USERNAME environment variable by default}
+\item{username}{The user to log onto the server as. Defaults to current user}
 
 \item{server}{The remote Shiny server to connect to.  Uses value set in SHINYSENDER_SERVER environment variable by default}
 

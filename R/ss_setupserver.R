@@ -1,4 +1,5 @@
-#' Set up .Rprofile on remote server
+#' Set up .Rprofile on remote server, and create ~/ShinyApps if it doesn't
+#' exist
 #'
 #' Set up the user's environment with an appropriate .RProfile to
 #' load packrat libraries when running their apps
@@ -17,6 +18,13 @@ ss_setupserver <- function(session){
   # TODO require user to confirm it's OK to do what we plan to,
   # as we're altering their home directory
 
+  # Create ~/Shnyapps if it doesn't exist
+  if ( !ss_does_shinyapps_exist(session) ){
+    ss_create_shinyapps(session)
+  }
+
+
+
   # TODO check packrat is available to the user
   # If not - install to users local library?? (as optional parameter)
   remote_packrat = ss_is_remote_package_installed(session, package = "packrat")
@@ -29,6 +37,8 @@ ss_setupserver <- function(session){
 
 
   # TODO append to file rather than overwrite (packrat does this for its autoloader)
+  # TODO check if already installed
+
 
   rprofile_file = system.file("remoteprofile/.Rprofile", package = "shinysender",
                               mustWork = TRUE)

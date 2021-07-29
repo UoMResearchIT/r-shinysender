@@ -2,7 +2,8 @@
 % Please edit documentation in R/ss_setupserver.R
 \name{ss_setupserver}
 \alias{ss_setupserver}
-\title{Set up .Rprofile on remote server}
+\title{Set up .Rprofile on remote server, and create ~/ShinyApps if it doesn't
+exist}
 \usage{
 ss_setupserver(session)
 }
