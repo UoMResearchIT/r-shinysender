@@ -1,7 +1,7 @@
 #' Set up .Rprofile on remote server, and create ~/ShinyApps if it doesn't
 #' exist
 #'
-#' Set up the user's environment with an appropriate .RProfile to
+#' Set up the user's environment with an appropriate .Rprofile to
 #' load packrat libraries when running their apps
 #'
 #' We use Packrat to reproduce the local system's libraries as closely
@@ -11,7 +11,7 @@
 #'
 #' This function uploads an .Rprofile to the user's home directory
 #'
-#' @param session The session to upload the .RProfile to
+#' @param session The session to upload the .Rprofile to
 #'
 #' @export
 ss_setupserver <- function(session){
@@ -34,22 +34,28 @@ ss_setupserver <- function(session){
   }
 
 
-
-
-  # TODO append to file rather than overwrite (packrat does this for its autoloader)
-  # TODO check if already installed
-
-
-  rprofile_file = system.file("remoteprofile/.Rprofile", package = "shinysender",
-                              mustWork = TRUE)
-
-  ssh::scp_upload(session,
-                  rprofile_file)
-
-
+  # Setup user's .Rprofile
+  ss_setupRprofile(session)
 
 }
 
+
+#' Set up users Rprofile so hosted apps use Packrat correctly
+#'
+#' This adds the required text to the remote ~/.Rprofile, if it
+#' does not already exist
+#'
+#' @param session The session
+#'
+ss_setupRprofile <- function(session){
+
+  original_Rprofile <- get_remote_Rprofile(session)
+
+  modified_Rprofile <- shinysenderize_Rprofile(original_Rprofile)
+
+  send_Rprofile(session, modified_Rprofile)
+
+}
 
 #' Check whether a package on the remote server is installed
 #'
@@ -127,17 +133,3 @@ ss_create_shinyapps <- function(session) {
     stop("Remote command apparently worked, but cannot see ~/ShinyApps directory")
 }
 
-
-#' Get remote .Rprofile
-#'
-#' Get the remote .Rprofile on the session
-#'
-#' @param session The session to use
-#'
-#' @return The contents of the remote .Rprofile
-get_remote_Rprofile <- function(session){
-
-
-
-
-}
