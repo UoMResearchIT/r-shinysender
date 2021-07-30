@@ -1,7 +1,9 @@
+#### Shinysender Loader ####
+## Shinysender Loader Version 0.0.1
+
 # .Rprofile code to use user's packrat cache
 # (to avoid recompiling packages for each app)
 # and to enable Packrat on startup
-
 
 message("Setting up packrat cache")
 Sys.setenv(R_PACKRAT_CACHE_DIR = "~/R/packratcache")
@@ -26,3 +28,5 @@ if(parentcmd == "su"){
   message("Running in shiny server")
   packrat::on()
 }
+
+#### Shinysender Loader End ####

@@ -85,7 +85,7 @@ ss_does_shinyapps_exist <- function(session){
 
   if(returndata$status == 0) { # Command worked - see what directories we have
 
-    remotedirs <- processls(returndata$stdout)
+    remotedirs <- process_raw(returndata$stdout)
     return("ShinyApps/" %in% remotedirs)
 
   } else {
@@ -125,4 +125,19 @@ ss_create_shinyapps <- function(session) {
   # Check the directory exists now we've made it
   if(!ss_does_shinyapps_exist(session))
     stop("Remote command apparently worked, but cannot see ~/ShinyApps directory")
+}
+
+
+#' Get remote .Rprofile
+#'
+#' Get the remote .Rprofile on the session
+#'
+#' @param session The session to use
+#'
+#' @return The contents of the remote .Rprofile
+get_remote_Rprofile <- function(session){
+
+
+
+
 }

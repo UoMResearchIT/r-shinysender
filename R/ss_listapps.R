@@ -22,7 +22,7 @@ ss_listapps <- function(session,
 
   out <- ssh::ssh_exec_internal(session, listappcmd)
 
-  appvect <- processls(out$stdout)
+  appvect <- process_raw(out$stdout)
   # TODO Handle log directory
   # TODO check each directory contains a (potentially) valid app
   return(appvect)
@@ -60,10 +60,10 @@ ss_appreport <- function(session,
 
     # TODO Catch if errors
 
-    shinyApp = isShinyApp(processls(out$stdout))
+    shinyApp = isShinyApp(process_raw(out$stdout))
 
 
-    haspackrat = isPackratApp(processls(out$stdout))
+    haspackrat = isPackratApp(process_raw(out$stdout))
 
 
     thisrow <- c(entryname = p,
