@@ -8,10 +8,10 @@ exist}
 ss_setupserver(session)
 }
 \arguments{
-\item{session}{The session to upload the .RProfile to}
+\item{session}{The session to upload the .Rprofile to}
 }
 \description{
-Set up the user's environment with an appropriate .RProfile to
+Set up the user's environment with an appropriate .Rprofile to
 load packrat libraries when running their apps
 }
 \details{

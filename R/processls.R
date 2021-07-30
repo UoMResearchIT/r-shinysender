@@ -1,13 +1,13 @@
 
 
-#' Convert the output from an ls command exectuted on the remote
-#' server into a vector of directory entries
+#' Convert the output from an command executed on the remote
+#' server into a vector; one row per line
 #'
 #' @param inraw A raw string of bytes (typically as output by
 #' ssh::ssh_exec_internal()$stdout)
 #'
-#' @return A list of directory entries
-processls <- function(inraw) {
+#' @return A vector containing the returned data
+process_raw <- function(inraw) {
 
   entries <- rawToChar(inraw)
   entriessplit <- strsplit(entries, "\\n")[[1]]
