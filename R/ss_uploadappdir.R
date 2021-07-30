@@ -42,7 +42,7 @@ ss_uploadappdir <- function(session, appDir, appName,
 
 
     if (tolower(appName) %in% tolower(installedApps) ) {
-      warning(appName, "is already on the server")
+      warning(appName, " is already on the server")
       if (!overwrite) {
         return("alreadyExists")
       } else {
