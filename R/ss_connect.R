@@ -35,9 +35,11 @@ ss_connect <- function(username = getUserName(),
 
 #' Get the login of the logged on user
 #'
-#' Return the login of the current user.
+#' Return the login of the user to logon with.  This is usually current user.
 #'
-#' The username is stored in the USER and/or USERNAME environment variables
+#' We can override the login by setting the SHINYSENDER_USER environment variable
+#'
+#' The current user's login is stored in the USER and/or USERNAME environment variables
 #' Which are populated seems to depend on the platform.  This function attempts
 #' to get the username robustly regardless of platform
 #'
@@ -48,6 +50,22 @@ ss_connect <- function(username = getUserName(),
 #'
 #' @return The user name
 getUserName <- function(){
+
+  # Use the username set in SHINYSENDER_USER in preference to
+  # anything else
+  shinyuser <- Sys.getenv("SHINYSENDER_USER")
+
+  if(shinyuser != "") {
+    # Check if user specified username is a valid login name
+    # regex taken from NAME_REGEX default in man adduser.conf
+    # Should we be testing USER/USERNAME against this too?
+    # Presumably user could change these if so inclined...
+    if(!grepl("^[a-z][-a-z0-9]*$", shinyuser)){
+      stop("Invalid username specified in SHINYSENDER_USER")
+    }
+
+    return(shinyuser)
+  }
 
   user <- Sys.getenv("USER")
   username <- Sys.getenv("USERNAME")
