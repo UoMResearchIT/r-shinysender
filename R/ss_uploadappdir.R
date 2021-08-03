@@ -61,7 +61,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     # Make remote directory and decompress
     remotecommand <- paste0("cd ~/ShinyApps && mkdir ",
                             appName,
-                            " && tar xvzf ",
+                            " && tar xzf ",
                             bundleBareFile,
                             " -C ",
                             appName,
