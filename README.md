@@ -37,3 +37,12 @@ ss_deleteapp(session, "demo")
 # Disconnect from the server
 ss_disconnect(session)
 ```
+
+### Setting up the remote Server
+
+(these notes are currently incomplete)
+
+-   Tested using Ubuntu 21.04
+-   Check homedir permissions - should be set correctly on 21.04, but not on earlier versions. Don't want to be able to see others' home dir.
+-   Dependencies for Tidyverse: `sudo apt install libcurl4-openssl-dev libssl-dev libxml2-dev` (from <https://blog.zenggyu.com/en/post/2018-01-29/installing-r-r-packages-e-g-tidyverse-and-rstudio-on-ubuntu-linux/>)
+-   Install Packrat as root from CRAN
