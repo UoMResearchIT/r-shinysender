@@ -15,8 +15,9 @@ You will need to have a user account on the remote server already set up. If thi
 ### Basic workflow
 
 ```{r}
-# Connect to shiny server, using the same login name as the local account and the server
-# set in the SHINYSENDER_SERVER environment variable
+# Connect to shiny server, using the same login name as the local account
+# (this can be overriden by setting the SHINYSENDER_USER environment variable
+# and the server set in the SHINYSENDER_SERVER environment variable
 # User will be prompted for password if not using ssh keys
 session <- ss_connect()
 

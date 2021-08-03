@@ -43,6 +43,19 @@ test_that("Username detection works", {
                        {
                          expect_error(getUserName(), "but not equal")
                        })
+
+
+    # Check the override user works
+    withr::with_envvar(new = c("SHINYSENDER_USER"="bob"),
+                       {
+                         expect_equal(getUserName(), "bob")
+                       })
+
+    withr::with_envvar(new = c("SHINYSENDER_USER"=" "),
+                       {
+                         expect_error(getUserName(), "Invalid username")
+                       })
+
   }
 
 })

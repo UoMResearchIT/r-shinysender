@@ -10,10 +10,12 @@ getUserName()
 The user name
 }
 \description{
-Return the login of the current user.
+Return the login of the user to logon with.  This is usually current user.
 }
 \details{
-The username is stored in the USER and/or USERNAME environment variables
+We can override the login by setting the SHINYSENDER_USER environment variable
+
+The current user's login is stored in the USER and/or USERNAME environment variables
 Which are populated seems to depend on the platform.  This function attempts
 to get the username robustly regardless of platform
 
