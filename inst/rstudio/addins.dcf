@@ -1,4 +1,4 @@
 Name: Upload app
 Description: Upload app with Shinysender
-Binding: ss_upload_addin
+Binding: ss_uploadAddin
 Interactive: true

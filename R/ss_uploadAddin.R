@@ -3,7 +3,7 @@
 #' RStudio addin to automatically upload an app
 #'
 #' @export
-ss_upload_addin <- function() {
+ss_uploadAddin <- function() {
 
   # Check required environment variables for default login set
   checkenv = c(username="SHINYSENDER_USER",
