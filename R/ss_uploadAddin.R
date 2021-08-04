@@ -24,5 +24,6 @@ ss_upload_addin <- function() {
   # TODO let user set addin app name via environment variable
   ss_uploadappdir(session, appdir, basename(appdir), overwrite = TRUE)
 
+  ss_disconnect(session)
 
 }
