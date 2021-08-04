@@ -39,13 +39,15 @@ ss_deleteapp(session, "demo")
 ss_disconnect(session)
 ```
 
-If you're using RStudio and your application name is the same on your local machine and the remote server, you may find it easier to use the "Upload app" addin. To use this just set the remote server's name and your user name on it using the SHINYSENDER_SERVER and SHINYSENDER_USER environment variables (you may want to do this in your .Rprofile file).
+If you're using RStudio and your application name is the same on your local machine and the remote server, you may find it easier to use the "Upload app" addin. To use this just set the remote server's name and your user name on it using the SHINYSENDER_SERVER and SHINYSENDER_USER environment variables:
 
 ```{r}
 Sys.setenv(SHINYSENDER_SERVER="myshinyserver.com")
 Sys.setenv(SHINYSENDER_USER="alice")
 
 ```
+
+If you always use the same settings, it may be easier to [set these in a .Renviron file](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
 
 ### Setting up the remote Server
 
