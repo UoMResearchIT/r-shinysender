@@ -4,7 +4,7 @@
 
 <!-- badges: end -->
 
-The aim of this package is to provide tools and a Shiny app to allow users to send their Shiny apps to a remote Shiny Server.
+The aim of this package is to provide tools and a Shiny app to allow users to easily send their Shiny apps to a remote Shiny Server.
 
 ## Usage
 
@@ -37,6 +37,14 @@ ss_deleteapp(session, "demo")
 
 # Disconnect from the server
 ss_disconnect(session)
+```
+
+If you're using RStudio and your application name is the same on your local machine and the remote server, you may find it easier to use the "Upload app" addin. To use this just set the remote server's name and your user name on it using the SHINYSENDER_SERVER and SHINYSENDER_USER environment variables (you may want to do this in your .Rprofile file).
+
+```{r}
+Sys.setenv(SHINYSENDER_SERVER="myshinyserver.com")
+Sys.setenv(SHINYSENDER_USER="alice")
+
 ```
 
 ### Setting up the remote Server
