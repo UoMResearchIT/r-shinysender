@@ -19,11 +19,17 @@ ss_connect <- function(username = getUserName(),
                        server = Sys.getenv("SHINYSENDER_SERVER"),
                        keyfile = NULL){
 
+  errstring <- ""
   if(server == "")
-    stop("Pass server parameter, or set SHINYSENDER_SERVER environment variable")
+    errstring <- paste0(errstring,
+                        "Pass server parameter, or set SHINYSENDER_SERVER environment variable\n")
 
   if(username == "")
-    stop("Pass username parameter.  USERNAME environment variable was not set")
+    errstring <- paste0(errstring,
+                        "Pass username parameter.  USERNAME environment variable was not set\n")
+
+  if(errstring != "")
+    stop(errstring)
 
   conname = paste0(username, "@", server)
 

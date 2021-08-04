@@ -15,31 +15,36 @@ test_that("Username detection works", {
 
   if (requireNamespace("withr", quietly = TRUE)) {
     withr::with_envvar(new = c("USER"="",
-                               "USERNAME"=""),
+                               "USERNAME"="",
+                               "SHINYSENDER_USER"=""),
                        {
                          expect_error(getUserName(), "Could not determine username")
                        })
 
     withr::with_envvar(new = c("USER"="alice",
-                               "USERNAME"=""),
+                               "USERNAME"="",
+                               "SHINYSENDER_USER"=""),
                        {
                          expect_equal(getUserName(), "alice")
                        })
 
     withr::with_envvar(new = c("USER"="",
-                               "USERNAME"="alice"),
+                               "USERNAME"="alice",
+                               "SHINYSENDER_USER"=""),
                        {
                          expect_equal(getUserName(), "alice")
                        })
 
     withr::with_envvar(new = c("USER"="alice",
-                               "USERNAME"="alice"),
+                               "USERNAME"="alice",
+                               "SHINYSENDER_USER"=""),
                        {
                          expect_equal(getUserName(), "alice")
                        })
 
     withr::with_envvar(new = c("USER"="alice",
-                               "USERNAME"="bob"),
+                               "USERNAME"="bob",
+                               "SHINYSENDER_USER"=""),
                        {
                          expect_error(getUserName(), "but not equal")
                        })

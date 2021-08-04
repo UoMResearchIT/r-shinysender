@@ -5,15 +5,27 @@
 #' @export
 ss_upload_addin <- function() {
 
-  # Check required envionment variables for default login set
-  checkenv = c("SHINYSENDER_USER", "SHINYSENDER_SERVER")
-  for (ce in checkenv) {
+  # Check required environment variables for default login set
+  checkenv = c(username="SHINYSENDER_USER",
+               servername="SHINYSENDER_SERVER")
+
+  errstring <- ""
+  for (ci in seq_along(checkenv) ){
+
+    ce = checkenv[ci] # Environment variable
+    cn = names(checkenv)[ci] # Example name for environment variable
 
     if(Sys.getenv(ce) == ""){
-      stop("You must set the ", ce,  " environment variable before using the addin")
+      errstring <- paste0(errstring, "You must set the ", ce,
+           " environment variable before using the addin.\nUse 'Sys.setenv(",
+           ce, "=", '"', cn, '")', "'\n"
+           )
     }
 
   }
+
+  if(errstring != "")
+    stop(errstring)
 
   session <- ss_connect()
 
