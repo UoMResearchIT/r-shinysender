@@ -26,6 +26,7 @@ ss_uploadappdir <- function(session, appDir, appName,
   # TODO check we have a potentially valid Shiny app (i.e. ui.R+server.R or app.R)
   # at top level
 
+  message("Preparing application bundle")
   bundleFile <- ss_bundleapp(appDir = appDir,
                              appName = appName)
   bundleBareFile <- basename(bundleFile)
@@ -42,7 +43,7 @@ ss_uploadappdir <- function(session, appDir, appName,
 
 
     if (tolower(appName) %in% tolower(installedApps) ) {
-      warning(appName, " is already on the server")
+      message(appName, " is already on the server")
       if (!overwrite) {
         return("alreadyExists")
       } else {
@@ -51,6 +52,7 @@ ss_uploadappdir <- function(session, appDir, appName,
       }
     }
 
+    message("Uploading application bundle")
     tryCatch(
       ssh::scp_upload(session,
                       file = bundleFile,
@@ -68,6 +70,7 @@ ss_uploadappdir <- function(session, appDir, appName,
                             " && rm ",
                             bundleBareFile)
 
+    message("Decompressing bundle on remote machine")
     retval = ssh::ssh_exec_wait(session, remotecommand)
 
     if (retval != 0){
@@ -81,6 +84,10 @@ ss_uploadappdir <- function(session, appDir, appName,
     remotecommand <- paste0("cd ./ShinyApps/", appName,
                             " && Rscript -e 'packrat::restore()'")
 
+    message("Installing packages on remote machine")
+    # TODO check if we have a populated packrat cache and only print
+    # the folowing if we don't
+    message("(This may take some time for a new application)")
     retval = ssh::ssh_exec_wait(session, remotecommand )
     if (retval != 0){
       warning("Library restoration on remote server failed")
@@ -97,4 +104,4 @@ ss_uploadappdir <- function(session, appDir, appName,
 
 }
 
-
+#
