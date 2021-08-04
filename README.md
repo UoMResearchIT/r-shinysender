@@ -30,6 +30,9 @@ ss_listapps(session)
 
 # Upload app stored in ~/testapp to server as an app called demo
 # This will automatically set up the package environment to match the user's local computer
+# This will take some time for the first app you install, since we need to build
+# all of its library dependencies from source.  Subsequent updates and other apps will
+# use cached versions of the libraries.
 ss_uploadappdir(session, "~/testapp/", "demo")
 
 # Delete app "demo" on the server
@@ -48,6 +51,14 @@ Sys.setenv(SHINYSENDER_USER="alice")
 ```
 
 If you always use the same settings, it may be easier to [set these in a .Renviron file](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
+
+## Non CRAN repositories
+
+If you are using non-CRAN packages, you will need to install them using `devtools::install_github()`. For example: `devtools::install_github("tidyverse/ggplot2")` will install the development version of ggplot2.
+
+If your package is in a private repository, you will need to [generate a personal access token](https://github.com/settings/tokens), with the "repo" scope. Put this in the `GITHUB_PAT` environment variable: `Sys.setenv(GITHUB_PAT="mytoken")`. The token will need to be set before using `devtools::install_github()`, and when uploading your app. The token will be used to install the private repositories on the remote sever, but will not be stored on it.
+
+Locally hosted packages (i.e. an R package source that only exists on your local machine) cannot be included in the "bundle" that is sent to the remote server - you will need to put them on Github, and then install them as described above.
 
 ### Setting up the remote Server
 

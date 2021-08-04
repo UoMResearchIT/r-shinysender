@@ -79,14 +79,29 @@ ss_uploadappdir <- function(session, appDir, appName,
     }
 
     # Restore the packrat libraries
+
+    # If there are Private github remotes, we'll need to pass the
+    # GITHUB_PAT environment variable over
+    github_pat = Sys.getenv("GITHUB_PAT")
+
+    # Prepare code to insert set the environment variable
+    github_pat_insert = ""
+    if(github_pat != "")
+      github_pat_insert = paste0('Sys.setenv(GITHUB_PAT="',
+                                 github_pat, '");')
+
+
+
     # Project parameter doesn't seem to work, so cd to project directory
     # first
     remotecommand <- paste0("cd ./ShinyApps/", appName,
-                            " && Rscript -e 'packrat::restore()'")
+                            " && Rscript -e '",
+                            github_pat_insert,
+                            "packrat::restore()'")
 
     message("Installing packages on remote machine")
     # TODO check if we have a populated packrat cache and only print
-    # the folowing if we don't
+    # the following if we don't
     message("(This may take some time for a new application)")
     retval = ssh::ssh_exec_wait(session, remotecommand )
     if (retval != 0){
@@ -104,4 +119,3 @@ ss_uploadappdir <- function(session, appDir, appName,
 
 }
 
-#
