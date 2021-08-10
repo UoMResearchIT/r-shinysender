@@ -13,18 +13,9 @@ get_remote_Rprofile <- function(session,
                                 ){
 
   # Check we're getting either the home .Rprofile or one for a potentially valid app name
-  cleanloc <- NULL
-
-  if(appname == "~") {
-    cleanloc = "~/"
-  } else if(ss_isAppNameValid(appname) ){
-    cleanloc = paste0("~/ShinyApps/", appname, "/")
-  } else {
-    stop("Invalid application name")
-  }
-
+  cleanloc <- appnameToPath(appname)
   # Create full path
-  cleanloc <- paste0(cleanloc, ".Rprofile")
+  cleanloc <- paste0(cleanloc, "/.Rprofile")
   remotecommand <- paste0("cat ", cleanloc)
 
   raw_remote.Rprofile <- ssh::ssh_exec_internal(session,
@@ -44,8 +35,9 @@ get_remote_Rprofile <- function(session,
 #' Send an Rprofile file to the remote server
 #'
 #' @param session The session to use
+#' @param appname The location of the .Rprofile file to send. Will send .Rprofile in home directory if not specified
 #' @param Rprofile A vector containing the Rprofile to send
-send_Rprofile <- function(session, Rprofile) {
+send_Rprofile <- function(session, Rprofile, appname = "~") {
 
   stopifnot(class(Rprofile) == "character")
 
