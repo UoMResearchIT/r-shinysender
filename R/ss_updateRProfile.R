@@ -3,14 +3,32 @@
 #' Get the remote .Rprofile on the session
 #'
 #' @param session The session to use
+#' @param appname The location of the .Rprofile file to return. Will return .Rprofile in home directory if not specified
 #' @param warnmissing Whether to warn if there's no remote .Rprofile
 #'
 #' @return The contents of the remote .Rprofile
-get_remote_Rprofile <- function(session, warnmissing = FALSE){
+get_remote_Rprofile <- function(session,
+                                appname = "~",
+                                warnmissing = FALSE
+                                ){
 
+  # Check we're getting either the home .Rprofile or one for a potentially valid app name
+  cleanloc <- NULL
+
+  if(appname == "~") {
+    cleanloc = "~/"
+  } else if(ss_isAppNameValid(appname) ){
+    cleanloc = paste0("~/ShinyApps/", appname, "/")
+  } else {
+    stop("Invalid application name")
+  }
+
+  # Create full path
+  cleanloc <- paste0(cleanloc, ".Rprofile")
+  remotecommand <- paste0("cat ", cleanloc)
 
   raw_remote.Rprofile <- ssh::ssh_exec_internal(session,
-                                                command = "cat ~/.Rprofile",
+                                                command = remotecommand,
                                                 error = FALSE)
 
   if(warnmissing & raw_remote.Rprofile$status == 1){
