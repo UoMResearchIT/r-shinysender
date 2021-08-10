@@ -1,3 +1,24 @@
+#' Convert an appname to a path on the remote
+#'
+#' @param appname a valid shiny app name, or "~" to return home directory
+#'
+#' @return A path wrt ~
+appnameToPath <- function(appname){
+
+  cleanloc <- NULL
+  if(appname == "~") {
+    cleanloc = "~"
+  } else if(ss_isAppNameValid(appname) ){
+    cleanloc = paste0("~/ShinyApps/", appname, "")
+  } else {
+    stop("Invalid application name")
+  }
+
+  return(cleanloc)
+
+}
+
+
 #' Get remote .Rprofile
 #'
 #' Get the remote .Rprofile on the session
@@ -56,12 +77,14 @@ send_Rprofile <- function(session, Rprofile, appname = "~") {
   writeLines(Rprofile, localRprofile)
   close(localRprofile)
 
-  # Send it to the remote
+
+  remotepath = appnameToPath(appname)
+  # Send it to the remote - this goes to the home directory as a temp filename
   ssh::scp_upload(session, localRprofile_path)
 
   # Rename it on the remote
   bare_Rprofile_name <- basename(localRprofile_path)
-  mv_cmd <- paste0("mv ", bare_Rprofile_name, " .Rprofile")
+  mv_cmd <- paste0("mv ", bare_Rprofile_name, " ",  remotepath,"/.Rprofile")
 
   cmdout <- ssh::ssh_exec_internal(session, mv_cmd)
   # Abort if cmd failed

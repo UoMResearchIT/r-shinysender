@@ -4,10 +4,12 @@
 \alias{get_remote_Rprofile}
 \title{Get remote .Rprofile}
 \usage{
-get_remote_Rprofile(session, warnmissing = FALSE)
+get_remote_Rprofile(session, appname = "~", warnmissing = FALSE)
 }
 \arguments{
 \item{session}{The session to use}
+
+\item{appname}{The location of the .Rprofile file to return. Will return .Rprofile in home directory if not specified}
 
 \item{warnmissing}{Whether to warn if there's no remote .Rprofile}
 }

@@ -40,20 +40,22 @@ ss_setupserver <- function(session){
 }
 
 
-#' Set up users Rprofile so hosted apps use Packrat correctly
+#' Set up app's Rprofile so it can use Packrat packages
 #'
-#' This adds the required text to the remote ~/.Rprofile, if it
+#' This adds the required text to the remote .Rprofile, or creates it if it
 #' does not already exist
 #'
 #' @param session The session
+#' @param appname The application to setup
 #'
-ss_setupRprofile <- function(session){
+ss_setupRprofile <- function(session, appname){
 
-  original_Rprofile <- get_remote_Rprofile(session)
+  original_Rprofile <- get_remote_Rprofile(session, appname = appname)
 
   modified_Rprofile <- shinysenderize_Rprofile(original_Rprofile)
 
-  send_Rprofile(session, modified_Rprofile)
+  send_Rprofile(session, modified_Rprofile, appname = appname)
+
 
 }
 

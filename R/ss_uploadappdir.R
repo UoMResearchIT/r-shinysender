@@ -78,6 +78,11 @@ ss_uploadappdir <- function(session, appDir, appName,
       return("otherError")
     }
 
+
+    # Setup the app's .Rprofile
+    message("Setting up package environment")
+    ss_setupRprofile(session, appName)
+
     # Restore the packrat libraries
 
     # If there are Private github remotes, we'll need to pass the
