@@ -65,6 +65,19 @@ Locally hosted packages (i.e. an R package source that only exists on your local
 (these notes are currently incomplete)
 
 -   Tested using Ubuntu 21.04
--   Check homedir permissions - should be set correctly on 21.04, but not on earlier versions. Don't want to be able to see others' home dir.
--   Dependencies for Tidyverse: `sudo apt install libcurl4-openssl-dev libssl-dev libxml2-dev` (from <https://blog.zenggyu.com/en/post/2018-01-29/installing-r-r-packages-e-g-tidyverse-and-rstudio-on-ubuntu-linux/>)
+
+-   Check homedir permissions - should be set correctly on 21.04, but not on earlier versions. Don't want to be able to access others' home dir.
+
 -   Install Packrat as root from CRAN
+
+-   Dependencies for Tidyverse: `sudo apt install libcurl4-openssl-dev libssl-dev libxml2-dev` (from <https://blog.zenggyu.com/en/post/2018-01-29/installing-r-r-packages-e-g-tidyverse-and-rstudio-on-ubuntu-linux/>)
+
+-   Other development libraries we're likely to need: library deb name (package needed for)
+
+    -   libfontconfig1-dev (freetype)
+
+    -   libcairo2-dev (cairo)
+
+    -   libudunits2-dev (units (sf dependency))
+
+    -   libgdal-dev (sf)
