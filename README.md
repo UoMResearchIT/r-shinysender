@@ -60,6 +60,17 @@ If your package is in a private repository, you will need to [generate a persona
 
 Locally hosted packages (i.e. an R package source that only exists on your local machine) cannot be included in the "bundle" that is sent to the remote server - you will need to put them on Github, and then install them as described above.
 
+### .Rprofile
+
+The deployed app uses Packrat to emulate your local development environment.  This is set up cache installed libraries (and their versions) between all your apps.   This process is set up in the `.Rprofile` file in the deployed app's directory on the server.  
+
+If you have a project level `.Rprofile`, this will be uploaded to the remote server and modified to use Packrat - your local `.Rprofile` will not be edited.  If you do not have a project level `.Rprofile` a new one will be created on the remote machine.
+
+If your user level `.Rprofile` on your local machine is contains settings that your app _requires_, you will need to copy these to a project level `.Rprofile` so that the server can use them.
+
+Note that R only runs a _single_ `.Rprofile` on startup - this will be the project level `.Rprofile`, if it exists, and the user level one otherwise - see https://rstats.wtf/r-startup.html for more details.
+
+
 ### Setting up the remote Server
 
 (these notes are currently incomplete)
