@@ -63,7 +63,7 @@ ss_is_remote_package_installed <- function(session, package){
 
 #' Check whether a directory exists in user's homedir on the remote machine
 #'
-#' @param sesison The session to use
+#' @param session The session to use
 #' @param dirname The directory name, relative to ~
 does_directory_exist <- function(session ,dirname){
 
