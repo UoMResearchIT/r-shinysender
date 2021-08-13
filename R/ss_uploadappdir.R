@@ -26,47 +26,62 @@ ss_uploadappdir <- function(session, appDir, appName,
   # TODO check we have a potentially valid Shiny app (i.e. ui.R+server.R or app.R)
   # at top level
 
+  # TODO use separate staging directory so partially deployed apps aren't visible
+  # e.g. ~/ShinyApps_staging
+
+
   message("Preparing application bundle")
   bundleFile <- ss_bundleapp(appDir = appDir,
                              appName = appName)
   bundleBareFile <- basename(bundleFile)
 
   if (method == "direct_home") {
-    # Check ~/ShinyApps exists
-    if (!ss_does_shinyapps_exist(session) ){
-      warning("~/ShinyApps does not exist")
-      return("otherError")
+    # Check required directories exist
+    required_dirs <- c("ShinyApps", "ShinyApps_staging")
+    for(rd in required_dirs) {
+      if (!does_directory_exist(session, rd) ){
+        warning(paste0("~/", rd, " does not exist"))
+        return("otherError")
+      }
     }
 
 
     installedApps <- ss_listapps(session)
 
-
-    if (tolower(appName) %in% tolower(installedApps) ) {
+    appExistsOnRemote <- tolower(appName) %in% tolower(installedApps)
+    if (appExistsOnRemote) {
       message(appName, " is already on the server")
       if (!overwrite) {
         return("alreadyExists")
-      } else {
-        message("Deleting existing app and re-uploading")
-        ss_deleteapp(session, appName, prompt = FALSE)
       }
+      # else {
+      #   message("Deleting existing app and re-uploading")
+      #   ss_deleteapp(session, appName, prompt = FALSE)
+      # }
     }
 
     message("Uploading application bundle")
     tryCatch(
       ssh::scp_upload(session,
                       file = bundleFile,
-                      to = "./ShinyApps"),
+                      to = "./ShinyApps_staging"),
       error = function(c) stop("Upload failed")
     )
 
+    # Append a random string to the appname to use for staging
+    appNameStaging <- paste0(appName, tempBare())
+
+    # TODO check appNameStaging doesn't exist on the remote
+    # This is very unlikely to happen in practice, but
+    # good to be sure
+
     # Make remote directory and decompress
-    remotecommand <- paste0("cd ~/ShinyApps && mkdir ",
-                            appName,
+    remotecommand <- paste0("cd ~/ShinyApps_staging && mkdir ",
+                            appNameStaging,
                             " && tar xzf ",
                             bundleBareFile,
                             " -C ",
-                            appName,
+                            appNameStaging,
                             " && rm ",
                             bundleBareFile)
 
@@ -81,8 +96,9 @@ ss_uploadappdir <- function(session, appDir, appName,
 
     # Setup the app's .Rprofile
     message("Setting up package environment")
-    ss_setupRprofile(session, appName)
-
+    ss_setupRprofile(session,
+                     remotepath = paste0("ShinyApps_staging/", appNameStaging))
+#
     # Restore the packrat libraries
 
     # If there are Private github remotes, we'll need to pass the
@@ -99,7 +115,7 @@ ss_uploadappdir <- function(session, appDir, appName,
 
     # Project parameter doesn't seem to work, so cd to project directory
     # first
-    remotecommand <- paste0("cd ./ShinyApps/", appName,
+    remotecommand <- paste0("cd ./ShinyApps_staging/", appNameStaging,
                             " && Rscript -e '",
                             github_pat_insert,
                             "packrat::restore()'")
@@ -119,8 +135,46 @@ ss_uploadappdir <- function(session, appDir, appName,
   }
 
 
+  # If we get here we've uploaded it to staging OK
+  # So delete the old app
+  if(appExistsOnRemote) {
+
+    message("Removing existing version of app")
+    ss_deleteapp(session, appName, prompt = FALSE)
+
+  }
+
+  message("Deploying app from staging location")
+  remotecommand <- paste0("mv ~/ShinyApps_staging/", appNameStaging, " ",
+                          "~/ShinyApps/", appName)
+  retval = ssh::ssh_exec_wait(session, remotecommand )
+  if (retval != 0){
+    warning("Moving app from staging failed")
+    return("otherError")
+  }
 
 
+  # TODO check bundleBareFile gets cleaned up when we exit function
 
 }
 
+
+#' Return a string suitable for use as a temporary
+#' filelestem
+#'
+#' This is used for the staging directory of an app when we upload
+#' one that already exists.
+#'
+#'
+tempBare <- function(){
+
+  # We can't generate a bare filename (i.e. no path info at all)
+  # with tempfile()
+
+  # So we generate with and remove everything that's not alphanumeric
+  tempfilepath <- tempfile(tmpdir = "/")
+
+  tempbare <- gsub("[^[:alnum:]]", "", tempfilepath)
+
+  return(tempbare)
+}

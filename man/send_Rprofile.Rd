@@ -4,14 +4,16 @@
 \alias{send_Rprofile}
 \title{Send an Rprofile file to the remote server}
 \usage{
-send_Rprofile(session, Rprofile, appname = "~")
+send_Rprofile(session, appname = "~", remotepath = NULL, Rprofile)
 }
 \arguments{
 \item{session}{The session to use}
 
-\item{Rprofile}{A vector containing the Rprofile to send}
+\item{appname}{The app to send  to send the  .Rprofile to in ~/ShinyApps/}
 
-\item{appname}{The location of the .Rprofile file to send. Will send .Rprofile in home directory if not specified}
+\item{remotepath}{A location to send the file to wrt ~.  Exactly one of appname or remotepath must be specified}
+
+\item{Rprofile}{A vector containing the Rprofile to send}
 }
 \description{
 Send an Rprofile file to the remote server

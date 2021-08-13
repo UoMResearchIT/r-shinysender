@@ -25,18 +25,29 @@ appnameToPath <- function(appname){
 #'
 #' @param session The session to use
 #' @param appname The location of the .Rprofile file to return. Will return .Rprofile in home directory if not specified
+#' @param remotepath The path of the .Rprofile to return.  Exactly one of appname or remotepath must be specified
 #' @param warnmissing Whether to warn if there's no remote .Rprofile
 #'
 #' @return The contents of the remote .Rprofile
 get_remote_Rprofile <- function(session,
                                 appname = "~",
+                                remotepath = NULL,
                                 warnmissing = FALSE
                                 ){
 
-  # Check we're getting either the home .Rprofile or one for a potentially valid app name
-  cleanloc <- appnameToPath(appname)
-  # Create full path
-  cleanloc <- paste0(cleanloc, "/.Rprofile")
+  if(!(xor(is.null(appname),
+             is.null(remotepath)))){
+    stop("Must specify appname or remotepath, not both")
+  }
+
+  if(!is.null(appname)) {
+    # Check we're getting either the home .Rprofile or one for a potentially valid app name
+    cleanloc <- appnameToPath(appname)
+    # Create full path
+    cleanloc <- paste0(cleanloc, "/.Rprofile")
+  } else if(!is.null(remotepath)){
+    cleanloc <-  paste0(remotepath, "/.Rprofile")
+  }
   remotecommand <- paste0("cat ", cleanloc)
 
   raw_remote.Rprofile <- ssh::ssh_exec_internal(session,
@@ -56,11 +67,20 @@ get_remote_Rprofile <- function(session,
 #' Send an Rprofile file to the remote server
 #'
 #' @param session The session to use
-#' @param appname The location of the .Rprofile file to send. Will send .Rprofile in home directory if not specified
+#' @param appname The app to send  to send the  .Rprofile to in ~/ShinyApps/
+#' @param remotepath A location to send the file to wrt ~.  Exactly one of appname or remotepath must be specified
 #' @param Rprofile A vector containing the Rprofile to send
-send_Rprofile <- function(session, Rprofile, appname = "~") {
+send_Rprofile <- function(session,
+                          appname = "~",
+                          remotepath = NULL,
+                          Rprofile) {
 
   stopifnot(class(Rprofile) == "character")
+
+  if(!(xor(is.null(appname),
+             is.null(remotepath)))){
+    stop("Must specify appname or remotepath, not both")
+  }
 
 
   # We need a rather convoluted way of uploading the modified Rprofile
@@ -77,8 +97,10 @@ send_Rprofile <- function(session, Rprofile, appname = "~") {
   writeLines(Rprofile, localRprofile)
   close(localRprofile)
 
+  if(!is.null(appname)) {
+    remotepath = appnameToPath(appname)
+  }
 
-  remotepath = appnameToPath(appname)
   # Send it to the remote - this goes to the home directory as a temp filename
   ssh::scp_upload(session, localRprofile_path)
 
