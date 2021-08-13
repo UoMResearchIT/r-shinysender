@@ -2,14 +2,16 @@
 % Please edit documentation in R/ss_setupserver.R
 \name{ss_setupRprofile}
 \alias{ss_setupRprofile}
-\title{Set up users Rprofile so hosted apps use Packrat correctly}
+\title{Set up app's Rprofile so it can use Packrat packages}
 \usage{
-ss_setupRprofile(session)
+ss_setupRprofile(session, appname)
 }
 \arguments{
 \item{session}{The session}
+
+\item{appname}{The application to setup}
 }
 \description{
-This adds the required text to the remote ~/.Rprofile, if it
+This adds the required text to the remote .Rprofile, or creates it if it
 does not already exist
 }
