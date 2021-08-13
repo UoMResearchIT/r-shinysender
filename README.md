@@ -92,3 +92,6 @@ Note that R only runs a _single_ `.Rprofile` on startup - this will be the proje
     -   libudunits2-dev (units (sf dependency))
 
     -   libgdal-dev (sf)
+
+- Will need to set http_proxy and https_proxy for downloading packages on RVM
+
