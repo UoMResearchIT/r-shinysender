@@ -37,9 +37,6 @@ ss_setupserver <- function(session){
   }
 
 
-  # Setup user's .Rprofile
-  ss_setupRprofile(session)
-
 }
 
 
@@ -49,15 +46,27 @@ ss_setupserver <- function(session){
 #' does not already exist
 #'
 #' @param session The session
-#' @param appname The application to setup
+#' @param appname The application to setup, assumed to be in ~/ShinyApps/
+#' @param remotepath The remote path containing the application.  Exactly one of  appname or remotepath must be specified
 #'
-ss_setupRprofile <- function(session, appname){
+ss_setupRprofile <- function(session,
+                             appname = NULL,
+                             remotepath = NULL){
 
-  original_Rprofile <- get_remote_Rprofile(session, appname = appname)
+  if(!(xor(is.null(appname),
+             is.null(remotepath)))){
+    stop("Must specify appname or remotepath, not both")
+  }
+
+  original_Rprofile <- get_remote_Rprofile(session,
+                                           appname = appname,
+                                           remotepath = remotepath)
 
   modified_Rprofile <- shinysenderize_Rprofile(original_Rprofile)
 
-  send_Rprofile(session, modified_Rprofile, appname = appname)
+  send_Rprofile(session, modified_Rprofile,
+                appname = appname,
+                remotepath = remotepath)
 
 
 }
@@ -119,7 +128,7 @@ does_directory_exist <- function(session ,dirname){
 
 #' Create a directory on the remote if it doesn't already exist
 #'
-#' @param session The sesison to use
+#' @param session The session to use
 #' @param dirname The directory name, relative to ~
 #'
 create_remote_dir <- function(session, dirname){

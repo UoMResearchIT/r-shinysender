@@ -36,10 +36,13 @@ ss_uploadappdir <- function(session, appDir, appName,
   bundleBareFile <- basename(bundleFile)
 
   if (method == "direct_home") {
-    # Check ~/ShinyApps exists
-    if (!ss_does_shinyapps_exist(session) ){
-      warning("~/ShinyApps does not exist")
-      return("otherError")
+    # Check required directories exist
+    required_dirs <- c("ShinyApps", "ShinyApps_staging")
+    for(rd in required_dirs) {
+      if (!does_directory_exist(session, rd) ){
+        warning(paste0("~/", rd, " does not exist"))
+        return("otherError")
+      }
     }
 
 
@@ -61,15 +64,19 @@ ss_uploadappdir <- function(session, appDir, appName,
     tryCatch(
       ssh::scp_upload(session,
                       file = bundleFile,
-                      to = "./ShinyApps"),
+                      to = "./ShinyApps_staging"),
       error = function(c) stop("Upload failed")
     )
 
     # Append a random string to the appname to use for staging
     appNameStaging <- paste0(appName, tempBare())
 
+    # TODO check appNameStaging doesn't exist on the remote
+    # This is very unlikely to happen in practice, but
+    # good to be sure
+
     # Make remote directory and decompress
-    remotecommand <- paste0("cd ~/ShinyApps && mkdir ",
+    remotecommand <- paste0("cd ~/ShinyApps_staging && mkdir ",
                             appNameStaging,
                             " && tar xzf ",
                             bundleBareFile,
@@ -89,8 +96,9 @@ ss_uploadappdir <- function(session, appDir, appName,
 
     # Setup the app's .Rprofile
     message("Setting up package environment")
-    ss_setupRprofile(session, appNameStaging)
-
+    ss_setupRprofile(session,
+                     remotepath = paste0("ShinyApps_staging/", appNameStaging))
+#
     # Restore the packrat libraries
 
     # If there are Private github remotes, we'll need to pass the
@@ -107,7 +115,7 @@ ss_uploadappdir <- function(session, appDir, appName,
 
     # Project parameter doesn't seem to work, so cd to project directory
     # first
-    remotecommand <- paste0("cd ./ShinyApps/", appNameStaging,
+    remotecommand <- paste0("cd ./ShinyApps_staging/", appNameStaging,
                             " && Rscript -e '",
                             github_pat_insert,
                             "packrat::restore()'")
@@ -137,13 +145,16 @@ ss_uploadappdir <- function(session, appDir, appName,
   }
 
   message("Deploying app from staging location")
-  remotecommand <- paste0("mv ~/ShinyApps/", appNameStaging, " ",
+  remotecommand <- paste0("mv ~/ShinyApps_staging/", appNameStaging, " ",
                           "~/ShinyApps/", appName)
   retval = ssh::ssh_exec_wait(session, remotecommand )
   if (retval != 0){
     warning("Moving app from staging failed")
     return("otherError")
   }
+
+
+  # TODO check bundleBareFile gets cleaned up when we exit function
 
 }
 
