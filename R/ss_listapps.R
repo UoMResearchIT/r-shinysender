@@ -11,7 +11,7 @@
 #' @return A vector containing the user's apps; NULL if there are none
 #'
 #' @export
-ss_listapps <- function(session,
+ss_listdir <- function(session,
                         appdir = "~/ShinyApps"){
 
   # TODO Handle no ShinyApps directory
@@ -49,7 +49,7 @@ ss_appreport <- function(session,
                          appdir = "~/ShinyApps"){
 
 
-  possibleApps <- ss_listapps(session, appdir)
+  possibleApps <- ss_listdir(session, appdir)
 
   appinfo <- list()
   i <- 1
