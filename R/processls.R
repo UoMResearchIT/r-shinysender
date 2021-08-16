@@ -29,12 +29,37 @@ process_raw <- function(inraw) {
 #'
 #' @param directoryEntries A character vector containing directory entries;
 #' one per element
+#' @param includeMarkdown Whether to include index.Rmd as a potentially valid app
 #'
 #' @return TRUE if the directory contains a Shiny app, FALSE otherwise. Return
-#' NA if both app types are defined
-isShinyApp <- function(directoryEntries) {
+#' NA if an invalid combination of app files are included
+isShinyApp <- function(directoryEntries, includeMarkdown = TRUE) {
+
+  if(includeMarkdown) {
+    if("index.Rmd" %in% directoryEntries){ # Markdown app
+      # Excluding this, what's left shouldn't be a shiny app
+
+      whatsleft = isShinyApp(directoryEntries, includeMarkdown = FALSE)
+
+      if(isFALSE(whatsleft))
+        return(TRUE)
+      else
+        return(NA)
+
+
+    }
+  }
+
 
   if(all(c("app.R", "server.R", "ui.R") %in% directoryEntries))
+    return(NA)
+
+  # Need ui & server or neither
+  if(xor("ui.R" %in% directoryEntries,
+         "server.R" %in% directoryEntries))
+    return(NA)
+
+  if("app.R" %in% directoryEntries & any(c("ui.R", "server.R") %in% directoryEntries))
     return(NA)
 
   return("app.R" %in% directoryEntries |
