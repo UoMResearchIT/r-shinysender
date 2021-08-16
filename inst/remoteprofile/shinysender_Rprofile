@@ -5,7 +5,7 @@
 # (to avoid recompiling packages for each app)
 # and to enable Packrat on startup
 
-Sys.setenv(R_PACKRAT_CACHE_DIR = "~/R/packratcache")
+Sys.setenv(R_PACKRAT_CACHE_DIR = "/var/cache/packrat")
 packrat::set_opts(use.cache=TRUE)
 packrat::on()
 
