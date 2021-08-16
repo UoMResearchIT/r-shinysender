@@ -111,3 +111,5 @@ Experimental look at using a global cache (i.e. shared between all users on the 
 This needs much more testing - seems to mostly work, but since Packrat's "move from temp install directory to cache directory" operation isn't atomic it can go wrong if users are both installing the package at the same time. Not sure if there's an (easy) way around this...
 
 Will also need to think about security. The global cache location has to be writable by all members of the packrat group (so they can install the packages). This means that a user could edit the cached package files. Unclear how much of an issue this will be for the use case we have, or if there's a way round it.
+
+(Possible other approaches for speed issue - build a local binary package repo - see <https://github.com/r-builder/cran2deb> / pull down prebuilt binaries<https://cloud.r-project.org/web/packages/bspm/index.html>. )
