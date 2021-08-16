@@ -4,15 +4,17 @@
 \alias{isShinyApp}
 \title{Test if a directory contains files indicating it contains a shiny app}
 \usage{
-isShinyApp(directoryEntries)
+isShinyApp(directoryEntries, includeMarkdown = TRUE)
 }
 \arguments{
 \item{directoryEntries}{A character vector containing directory entries;
 one per element}
+
+\item{includeMarkdown}{Whether to include index.Rmd as a potentially valid app}
 }
 \value{
 TRUE if the directory contains a Shiny app, FALSE otherwise. Return
-NA if both app types are defined
+NA if an invalid combination of app files are included
 }
 \description{
 Test for the presence of app.R or (server.R and ui.R) in a

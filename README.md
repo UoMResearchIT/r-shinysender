@@ -52,6 +52,10 @@ Sys.setenv(SHINYSENDER_USER="alice")
 
 If you always use the same settings, it may be easier to [set these in a .Renviron file](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
 
+## R Markdown documents
+
+It is possible to host interactive R Markdown documents, as described [here](https://bookdown.org/yihui/rmarkdown/shiny-documents.html). You will need to ensure that you have an `index.Rmd` document in your deployment directory. The document can then be deployed in the same way as a Shiny app.
+
 ## Non CRAN repositories
 
 If you are using non-CRAN packages, you will need to install them using `devtools::install_github()`. For example: `devtools::install_github("tidyverse/ggplot2")` will install the development version of ggplot2.
@@ -62,14 +66,13 @@ Locally hosted packages (i.e. an R package source that only exists on your local
 
 ### .Rprofile
 
-The deployed app uses Packrat to emulate your local development environment.  This is set up cache installed libraries (and their versions) between all your apps.   This process is set up in the `.Rprofile` file in the deployed app's directory on the server.  
+The deployed app uses Packrat to emulate your local development environment. This is set up cache installed libraries (and their versions) between all your apps. This process is set up in the `.Rprofile` file in the deployed app's directory on the server.
 
-If you have a project level `.Rprofile`, this will be uploaded to the remote server and modified to use Packrat - your local `.Rprofile` will not be edited.  If you do not have a project level `.Rprofile` a new one will be created on the remote machine.
+If you have a project level `.Rprofile`, this will be uploaded to the remote server and modified to use Packrat - your local `.Rprofile` will not be edited. If you do not have a project level `.Rprofile` a new one will be created on the remote machine.
 
-If your user level `.Rprofile` on your local machine is contains settings that your app _requires_, you will need to copy these to a project level `.Rprofile` so that the server can use them.
+If your user level `.Rprofile` on your local machine is contains settings that your app *requires*, you will need to copy these to a project level `.Rprofile` so that the server can use them.
 
-Note that R only runs a _single_ `.Rprofile` on startup - this will be the project level `.Rprofile`, if it exists, and the user level one otherwise - see https://rstats.wtf/r-startup.html for more details.
-
+Note that R only runs a *single* `.Rprofile` on startup - this will be the project level `.Rprofile`, if it exists, and the user level one otherwise - see <https://rstats.wtf/r-startup.html> for more details.
 
 ### Setting up the remote Server
 
@@ -93,5 +96,4 @@ Note that R only runs a _single_ `.Rprofile` on startup - this will be the proje
 
     -   libgdal-dev (sf)
 
-- Will need to set http_proxy and https_proxy for downloading packages on RVM
-
+-   Will need to set http_proxy and https_proxy for downloading packages on RVM
