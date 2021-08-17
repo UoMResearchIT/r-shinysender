@@ -23,11 +23,16 @@ ss_getlogs <- function(session,
                         alllogs, proto)
   logdata <- cbind( logname=alllogs, logdata )
 
+  logdata$datetime <- as.POSIXlt(paste(logdata$date,
+                                       logdata$time),
+                                 format = "%Y%m%d %H%M%S")
+  logdata$date <- NULL
+  logdata$time <- NULL
 
   applogs <- logdata[logdata$appName == appName,]
 
   # Sort by date and time
-  appsort <- applogs[order(paste0(applogs$date, applogs$time)),]
+  appsort <- applogs[order(applogs$datetime),]
 
   if(what == "list"){ # data frame of log files for the app
     return(appsort)
