@@ -153,6 +153,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     return("otherError")
   }
 
+  message("App deployed to:", appName)
 
   # TODO check bundleBareFile gets cleaned up when we exit function
 
