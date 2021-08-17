@@ -26,14 +26,21 @@ ss_uploadappdir <- function(session, appDir, appName,
   # TODO check we have a potentially valid Shiny app (i.e. ui.R+server.R or app.R)
   # at top level
 
-  # TODO use separate staging directory so partially deployed apps aren't visible
-  # e.g. ~/ShinyApps_staging
 
+  if(!ss_isAppNameValid(appName)) {
+    stop(appName, " is not a valid Shiny app name")
+  }
 
   message("Preparing application bundle")
   bundleFile <- ss_bundleapp(appDir = appDir,
                              appName = appName)
   bundleBareFile <- basename(bundleFile)
+
+  # Check bundleBareFile has expected format since we use it in
+  # shell commands
+  if(gsub("rsconnect-bundle[^[:alnum:]]\\.tar\\.gz", "", bundleBareFile) != bundleBareFile){
+    stop("Error with bundle filename:", bundleBareFile)
+  }
 
   if (method == "direct_home") {
     # Check required directories exist
@@ -71,9 +78,29 @@ ss_uploadappdir <- function(session, appDir, appName,
     # Append a random string to the appname to use for staging
     appNameStaging <- paste0(appName, tempBare())
 
-    # TODO check appNameStaging doesn't exist on the remote
-    # This is very unlikely to happen in practice, but
-    # good to be sure
+
+    # Now the file is on the remote, we want it to be cleaned up when we exit
+    # the function.  We do this via on.exit so that it will still happen
+    # even if the decompression fails
+    on.exit({
+      remotecommand <- paste0('rm ~/ShinyApps_staging/"', bundleBareFile, '"')
+      # print(remotecommand)
+      ssh::ssh_exec_wait(session, remotecommand )
+
+
+      # We move the app from staging, but if this fails (or library restoration
+      # fails), we'll need to clean up the staging directory.  Since it most
+      # likely doesn't exist (since it's moved), we check whether it's there
+      # before deleting
+      stagingDir <- paste0("~/ShinyApps_staging/", appNameStaging)
+
+      # Test if stagingDir exists and remove if it does
+      remotecommand <- paste0("bash -c '[ -d ", stagingDir,
+                              " ] && rm -r ", stagingDir, "'")
+      # print(remotecommand)
+      ssh::ssh_exec_wait(session, remotecommand )
+
+    }, add = TRUE)
 
     # Make remote directory and decompress
     remotecommand <- paste0("cd ~/ShinyApps_staging && mkdir ",
@@ -81,9 +108,7 @@ ss_uploadappdir <- function(session, appDir, appName,
                             " && tar xzf ",
                             bundleBareFile,
                             " -C ",
-                            appNameStaging,
-                            " && rm ",
-                            bundleBareFile)
+                            appNameStaging)
 
     message("Decompressing bundle on remote machine")
     retval = ssh::ssh_exec_wait(session, remotecommand)
@@ -121,8 +146,6 @@ ss_uploadappdir <- function(session, appDir, appName,
                             "packrat::restore()'")
 
     message("Installing packages on remote machine")
-    # TODO check if we have a populated packrat cache and only print
-    # the following if we don't
     message("(This may take some time for a new application)")
     retval = ssh::ssh_exec_wait(session, remotecommand )
     if (retval != 0){
@@ -155,7 +178,10 @@ ss_uploadappdir <- function(session, appDir, appName,
 
   message("App deployed to:", appName)
 
-  # TODO check bundleBareFile gets cleaned up when we exit function
+
+
+
+
 
 }
 
