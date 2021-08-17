@@ -23,8 +23,6 @@ ss_uploadappdir <- function(session, appDir, appName,
                             overwrite = FALSE,
                             method = "direct_home"){
 
-  # TODO check we have a potentially valid Shiny app (i.e. ui.R+server.R or app.R)
-  # at top level
 
 
   if(!ss_isAppNameValid(appName)) {

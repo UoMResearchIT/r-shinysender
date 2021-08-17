@@ -19,6 +19,12 @@ ss_bundleapp <- function(appDir = ".",
   # Check app name is OK
   stopifnot(ss_isAppNameValid(appName))
 
+  # Check we've got somethign that looks like a shiny app in the directory
+  direntries <- list.files(path = appDir)
+  if(!isShinyApp(direntries)) {
+    stop(appDir, " does not appear to contain a Shiny app")
+  }
+
   # Extract functions we need from rsconnect package
   # This avoids a note in the cran checks, since they're internal
   # It's a bit of a hack, based on

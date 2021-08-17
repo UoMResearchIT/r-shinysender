@@ -31,8 +31,6 @@ ss_uploadAddin <- function() {
 
   appdir <- getwd()
 
-  stopifnot(isShinyApp(list.files(appdir)))
-
   # Get name for remote app
   envRemoteName <- Sys.getenv("SHINYSENDER_REMOTENAME")
   if(envRemoteName != ""){
