@@ -17,7 +17,7 @@ ss_deleteapp <- function(session, appName, prompt = TRUE){
   stopifnot(length(appName) == 1)
 
   # Check app is in directory
-  installedApps <- ss_listapps(session)
+  installedApps <- ss_listdir(session)
   stopifnot(appName %in% installedApps)
 
   appPath = paste0("~/ShinyApps/", appName)

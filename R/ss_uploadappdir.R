@@ -46,7 +46,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     }
 
 
-    installedApps <- ss_listapps(session)
+    installedApps <- ss_listdir(session)
 
     appExistsOnRemote <- tolower(appName) %in% tolower(installedApps)
     if (appExistsOnRemote) {
