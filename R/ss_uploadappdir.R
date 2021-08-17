@@ -69,7 +69,8 @@ ss_uploadappdir <- function(session, appDir, appName,
     tryCatch(
       ssh::scp_upload(session,
                       file = bundleFile,
-                      to = "./ShinyApps_staging"),
+                      to = "./ShinyApps_staging",
+                      verbose = FALSE),
       error = function(c) stop("Upload failed")
     )
 
@@ -174,7 +175,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     return("otherError")
   }
 
-  message("App deployed to:", appName)
+  message("App deployed to: ", appName)
 
 
 

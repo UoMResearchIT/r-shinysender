@@ -102,7 +102,7 @@ send_Rprofile <- function(session,
   }
 
   # Send it to the remote - this goes to the home directory as a temp filename
-  ssh::scp_upload(session, localRprofile_path)
+  ssh::scp_upload(session, localRprofile_path, verbose = FALSE)
 
   # Rename it on the remote
   bare_Rprofile_name <- basename(localRprofile_path)
