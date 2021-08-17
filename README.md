@@ -97,3 +97,15 @@ Note that R only runs a *single* `.Rprofile` on startup - this will be the proje
     -   libgdal-dev (sf)
 
 -   Will need to set http_proxy and https_proxy for downloading packages on RVM
+
+
+### Shinyproxy notes (very incomplete)
+
+This section contains notes and thoughts about how we might switch to a 
+Shinyproxy based setup.  This would provide better scaling for apps, since 
+each user gets their own copy in its own Dockerised instance.   
+
+Published apps need to be added to `application.yml` and the server restarted.  This causes all current users sessions to be ended.  https://shinyproxy.io/documentation/configuration/#session-persistence suggests we can keep the sessions open using Redis (unclear what happens during the ~20 seconds the Shinyproxy is restarting and we get a 502 error)
+
+If we go down this route, we'd probably want to mount /home as /home in Docker container (how to handle permissions???) so the Packrat libraries are available (and in the same place within and without the container)
+
