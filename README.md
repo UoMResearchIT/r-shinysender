@@ -42,13 +42,17 @@ ss_deleteapp(session, "demo")
 ss_disconnect(session)
 ```
 
-If you're using RStudio and your application name is the same on your local machine and the remote server, you may find it easier to use the "Upload app" addin. To use this just set the remote server's name and your user name on it using the SHINYSENDER_SERVER and SHINYSENDER_USER environment variables:
+If you're using RStudio, you may find it easier to use the "Upload app" addin. To use this just set the remote server's name and your user name on it using the SHINYSENDER_SERVER and SHINYSENDER_USER environment variables:
 
 ```{r}
 Sys.setenv(SHINYSENDER_SERVER="myshinyserver.com")
 Sys.setenv(SHINYSENDER_USER="alice")
 
 ```
+
+With your working directory set to the application's directory, select Addins, Upload App from the main toolbar (this can be bound to a keyboard shortcut (Tools, Modify Keyboard Shortcuts).
+
+By default the name of the app on the remote server will be the same as the basename of your working directory. You can override the name of the app on the remote server by setting the SHINYSENDER_REMOTENAME environment variable.
 
 If you always use the same settings, it may be easier to [set these in a .Renviron file](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
 
@@ -98,16 +102,12 @@ Note that R only runs a *single* `.Rprofile` on startup - this will be the proje
 
 -   Will need to set http_proxy and https_proxy for downloading packages on RVM
 
-
 ### Shinyproxy notes (very incomplete)
 
-This section contains notes and thoughts about how we might switch to a 
-Shinyproxy based setup.  This would provide better scaling for apps, since 
-each user gets their own copy in its own Dockerised instance.   
+This section contains notes and thoughts about how we might switch to a Shinyproxy based setup. This would provide better scaling for apps, since each user gets their own copy in its own Dockerised instance.
 
-Published apps need to be added to `application.yml` and the server restarted.  This causes all current users sessions to be ended.  https://shinyproxy.io/documentation/configuration/#session-persistence suggests we can keep the sessions open using Redis (unclear what happens during the ~20 seconds the Shinyproxy is restarting and we get a 502 error)
+Published apps need to be added to `application.yml` and the server restarted. This causes all current users sessions to be ended. <https://shinyproxy.io/documentation/configuration/#session-persistence> suggests we can keep the sessions open using Redis (unclear what happens during the \~20 seconds the Shinyproxy is restarting and we get a 502 error)
 
 If we go down this route, we'd probably want to mount /home as /home in Docker container (how to handle permissions???) so the Packrat libraries are available (and in the same place within and without the container)
 
 (See also notes on local Wekan server)
-

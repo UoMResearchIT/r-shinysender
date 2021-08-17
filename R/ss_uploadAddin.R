@@ -33,8 +33,19 @@ ss_uploadAddin <- function() {
 
   stopifnot(isShinyApp(list.files(appdir)))
 
-  # TODO let user set addin app name via environment variable
-  ss_uploadappdir(session, appdir, basename(appdir), overwrite = TRUE)
+  # Get name for remote app
+  envRemoteName <- Sys.getenv("SHINYSENDER_REMOTENAME")
+  if(envRemoteName != ""){
+    remoteName = envRemoteName
+  } else {
+    remoteName = basename(appdir)
+  }
+
+  if(!ss_isAppNameValid(remoteName)) {
+    stop(remoteName, " is not a valid application name")
+  }
+
+  ss_uploadappdir(session, appdir, remoteName, overwrite = TRUE)
 
   ss_disconnect(session)
 
