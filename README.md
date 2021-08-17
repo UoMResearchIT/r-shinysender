@@ -109,3 +109,5 @@ Published apps need to be added to `application.yml` and the server restarted.  
 
 If we go down this route, we'd probably want to mount /home as /home in Docker container (how to handle permissions???) so the Packrat libraries are available (and in the same place within and without the container)
 
+(See also notes on local Wekan server)
+
