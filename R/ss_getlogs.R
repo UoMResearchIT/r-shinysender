@@ -1,8 +1,8 @@
 #' Get error logs for an app from the remote server
 #'
 #' @param session The ssh session to use
-#' @param appname The name of the application to collect logs for.  Defaults to the name of your current local directory
-#' @param what One of "last", "list", or a pid as returned by list.  Defaults to "last" - the most recent log for the app
+#' @param appName The name of the application to collect logs for.  Defaults to the name of your current local directory
+#' @param what One of "last", "list", or a row index as returned by list.  Defaults to "last" - the most recent log for the app
 #'
 #' @return An invisible copy of the selected logfile, or a visible data frame containing the remote log files for the app
 #'
@@ -19,7 +19,7 @@ ss_getlogs <- function(session,
                       date=integer(),
                       time=integer(),
                       pid=integer())
-  logdata <- strcapture("(\\w+)-(\\w+)-(\\d+)-(\\d+)-(\\d+)\\.log",
+  logdata <- utils::strcapture("(\\w+)-(\\w+)-(\\d+)-(\\d+)-(\\d+)\\.log",
                         alllogs, proto)
   logdata <- cbind( logname=alllogs, logdata )
 
@@ -38,25 +38,31 @@ ss_getlogs <- function(session,
     return(appsort)
   }
 
-  if(what == "last"){ # Return most recent log for app
+  if(is.numeric(what)) { # Return log relating to a row index
+
+    wantfile <- appsort[as.numeric(rownames(appsort)) == what, "logname"]
+
+  } else if(what == "last"){ # Return most recent log for app
     # Most recent will be last
     wantfile <- appsort[nrow(appsort), "logname"]
-
-    logloc <- paste0("~/ShinyApps/log/", wantfile)
-
-    remotecommand <- paste0("cat ", logloc)
-
-    raw_log <- ssh::ssh_exec_internal(session,
-                                      command = remotecommand,
-                                      error = FALSE)
-
-    remote.log <- process_raw(raw_log$stdout)
-
-    message(wantfile)
-    message()
-    message(paste0(remote.log, "\n"))
-    invisible(remote.log)
-
+  } else {
+    stop("What must be 'last', 'list', or a row number")
   }
 
+  logloc <- paste0("~/ShinyApps/log/", wantfile)
+
+  remotecommand <- paste0("cat ", logloc)
+
+  raw_log <- ssh::ssh_exec_internal(session,
+                                    command = remotecommand,
+                                    error = FALSE)
+
+  remote.log <- process_raw(raw_log$stdout)
+
+  message(wantfile)
+  message()
+  message(paste0(remote.log, "\n"))
+  invisible(remote.log)
+
 }
+

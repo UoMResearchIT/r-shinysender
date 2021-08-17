@@ -4,14 +4,17 @@
 \alias{ss_getlogs}
 \title{Get error logs for an app from the remote server}
 \usage{
-ss_getlogs(session, appname = basename(getwd()), what = "last")
+ss_getlogs(session, appName = basename(getwd()), what = "last")
 }
 \arguments{
 \item{session}{The ssh session to use}
 
-\item{appname}{The name of the application to collect logs for.  Defaults to the name of your current local directory}
+\item{appName}{The name of the application to collect logs for.  Defaults to the name of your current local directory}
 
-\item{what}{One of "last", "list", or a pid as returned by list.  Defaults to "last" - the most recent log for the app}
+\item{what}{One of "last", "list", or a row index as returned by list.  Defaults to "last" - the most recent log for the app}
+}
+\value{
+An invisible copy of the selected logfile, or a visible data frame containing the remote log files for the app
 }
 \description{
 Get error logs for an app from the remote server
