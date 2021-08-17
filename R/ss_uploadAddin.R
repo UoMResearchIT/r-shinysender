@@ -29,6 +29,11 @@ ss_uploadAddin <- function() {
 
   session <- ss_connect()
 
+  # Close session when we quit
+  on.exit({
+    ss_disconnect(session)
+  }, add = TRUE)
+
   appdir <- getwd()
 
   # Get name for remote app
@@ -45,6 +50,5 @@ ss_uploadAddin <- function() {
 
   ss_uploadappdir(session, appdir, remoteName, overwrite = TRUE)
 
-  ss_disconnect(session)
 
 }
