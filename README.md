@@ -123,3 +123,11 @@ We need to source the app's .Rprofile (so we get packrat setup), and then launch
     docker run  -v /home/david:/home/david   -p4040:4040 openanalytics/shinyproxy-demo R -e "setwd('/home/david/ShinyApps/testapp2'); source('.Rprofile'); shiny::runApp('/home/david/ShinyApps/testapp2', port = 4040, host = '0.0.0.0')"
 
 Works from the command line, so we need the ""ed string in our Shinyproxy's application.yml
+
+`shinyproxy/` contains a rough Dockerfile and application.yml to use with Shinysender apps (these don't implement running as a non-root user).
+
+### Updating `application.yml`
+
+We will need to scan users' `~/ShinyApps` to generate the appropriate configs for each app. Shinyproxy will only deploy to a single location (e.g. shinyserver.com/app_direct/appname, not shinyserver.com/app_direct/david/appname). We *can* use hyphens in the Shinyproxy appname - may be possible to do some URL rewriting in e.g. nginx to convert `david-testapp` to `david/testapp`?
+
+Will need disable `shinyserver.com/app` URLs, to prevent everything on the server being listed. This should be doable in the web proxy config.
