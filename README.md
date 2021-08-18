@@ -110,4 +110,16 @@ Published apps need to be added to `application.yml` and the server restarted. T
 
 If we go down this route, we'd probably want to mount /home as /home in Docker container (how to handle permissions???) so the Packrat libraries are available (and in the same place within and without the container)
 
-(See also notes on local Wekan server)
+The Docker image we run will need to be the same version of Ubuntu as the host OS (since we use the packrat libraries in the app directory; these will have been compiled on the host OS when we deploy the app).
+
+We ideally want to run the container containing the app as the user whose app it is (rather than doing everything as root). This appears to be possible: <https://github.com/openanalytics/shinyproxy/issues/164> (though each user will need their own custom image - space wise this won't be an issue, since all the big layers will be shared). The user's home directory will need to be mounted *to the same location* in Docker, i.e. `-v /home/alice:/home/alice`
+
+The container will need to contain the same libraries, e.g. libcurl etc., as the host.
+
+### Launching the app
+
+We need to source the app's .Rprofile (so we get packrat setup), and then launch the app.
+
+    docker run  -v /home/david:/home/david   -p4040:4040 openanalytics/shinyproxy-demo R -e "setwd('/home/david/ShinyApps/testapp2'); source('.Rprofile'); shiny::runApp('/home/david/ShinyApps/testapp2', port = 4040, host = '0.0.0.0')"
+
+Works from the command line, so we need the ""ed string in our Shinyproxy's application.yml

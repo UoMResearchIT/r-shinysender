@@ -1,0 +1,23 @@
+proxy:
+  port: 8080
+  authentication: none 
+  admin-groups: admins
+  users:
+  - name: jack
+    password: password
+    groups: admins
+  - name: jeff
+    password: password
+  docker:
+    url: http://localhost:2375
+  specs:
+  - id: testapp2 
+    display-name: Testapp 2 
+    description: Application which demonstrates the basics of a Shiny app
+    container-cmd: ["R", "-e", "setwd('/home/david/ShinyApps/testapp2'); source('.Rprofile'); shiny::runApp('/home/david/ShinyApps/testapp2', port = 3838, host = '0.0.0.0')"]
+    container-image: openanalytics/shinyproxy-demo
+    container-volumes: [ "/home/david:/home/david" ]
+
+logging:
+  file:
+    shinyproxy.log
