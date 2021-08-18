@@ -128,6 +128,10 @@ Works from the command line, so we need the ""ed string in our Shinyproxy's appl
 
 ### Updating `application.yml`
 
-We will need to scan users' `~/ShinyApps` to generate the appropriate configs for each app. Shinyproxy will only deploy to a single location (e.g. shinyserver.com/app_direct/appname, not shinyserver.com/app_direct/david/appname). We *can* use hyphens in the Shinyproxy appname - may be possible to do some URL rewriting in e.g. nginx to convert `david-testapp` to `david/testapp`?
+We will need to scan users' `~/ShinyApps` to generate the appropriate configs for each app. Shinyproxy will only deploy to a single location (e.g. shinyserver.com/app_direct/appname, not shinyserver.com/app_direct/david/appname). We *can* use hyphens in the Shinyproxy appname - may be possible to do some URL rewriting in e.g. nginx to convert `david-testapp` to `david/testapp`
 
 Will need disable `shinyserver.com/app` URLs, to prevent everything on the server being listed. This should be doable in the web proxy config.
+
+`shinyproxy/shinyproxytemplate` contains some rough Python code to scan users' \~/ShinyApps and output an application.yml to stdout. This uses jinja for the templating (in python3-jinja2 package).
+
+Next steps - run this as a cron job on the server, and restart Shinyproxy if changed. Will (eventually) need to report differences and failure by email.

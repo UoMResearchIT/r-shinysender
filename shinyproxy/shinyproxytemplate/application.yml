@@ -1,0 +1,22 @@
+proxy:
+  port: 8080
+  authentication: none 
+  admin-groups: admins
+  users:
+  - name: jack
+    password: password
+    groups: admins
+  - name: jeff
+    password: password
+  docker:
+    url: http://localhost:2375
+  specs:
+{% for app in apps %}
+  - id: {{ app.user }}-{{ app.appname }} 
+    container-cmd: ["R", "-e", "setwd('/home/{{ app.user }}/ShinyApps/{{ app.appname }}'); source('.Rprofile'); shiny::runApp('/home/{{ app.user }}/ShinyApps/{{ app.appname }}', port = 3838, host='0.0.0.0')"]
+    container-image: openanalytics/shinyproxy-demo
+    container-volumes: [ "/home/{{ app.user }}:/home/{{ app.user }}" ]
+{% endfor %}
+logging:
+  file:
+    shinyproxy.log
