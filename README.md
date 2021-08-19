@@ -135,3 +135,8 @@ Will need disable `shinyserver.com/app` URLs, to prevent everything on the serve
 `shinyproxy/shinyproxytemplate` contains some rough Python code to scan users' \~/ShinyApps and output an application.yml to stdout. This uses jinja for the templating (in python3-jinja2 package).
 
 Next steps - run this as a cron job on the server, and restart Shinyproxy if changed. Will (eventually) need to report differences and failure by email.
+
+To think about:
+
+* Should we rehydrate the Packrat cache within the container (rather than on the server directly)?  Would need to sort out user permissions first.  This would have the benefit that we could support multiple R versions on the server (since each can have its own Docker container).  Packrat uses R version specific directories so shouldn't get any clashes there.
+* 
