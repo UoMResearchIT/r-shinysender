@@ -102,6 +102,9 @@ Note that R only runs a *single* `.Rprofile` on startup - this will be the proje
 
 -   Will need to set http_proxy and https_proxy for downloading packages on RVM
 
+
+(Library dependencies - this could get quite complicated - see: https://github.com/rstudio/r-system-requirements https://github.com/r-hub/sysreqsdb for two (different) databases of OS package dependencies for R libraries)
+
 ### Shinyproxy notes (very incomplete)
 
 This section contains notes and thoughts about how we might switch to a Shinyproxy based setup. This would provide better scaling for apps, since each user gets their own copy in its own Dockerised instance.
