@@ -29,6 +29,9 @@ ss_uploadAddin <- function() {
 
   session <- ss_connect()
 
+  # Setup server (this won't do anything if already setup)
+  ss_setupserver(session)
+
   # Close session when we quit
   on.exit({
     ss_disconnect(session)
