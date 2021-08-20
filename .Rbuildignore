@@ -4,3 +4,4 @@ config.yml
 id_rsa*
 testserver.txt
 github_pat
+librarydeps

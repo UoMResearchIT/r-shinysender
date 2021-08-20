@@ -102,8 +102,7 @@ Note that R only runs a *single* `.Rprofile` on startup - this will be the proje
 
 -   Will need to set http_proxy and https_proxy for downloading packages on RVM
 
-
-(Library dependencies - this could get quite complicated - see: https://github.com/rstudio/r-system-requirements https://github.com/r-hub/sysreqsdb for two (different) databases of OS package dependencies for R libraries)
+(Library dependencies - this could get quite complicated - see: <https://github.com/rstudio/r-system-requirements> <https://github.com/r-hub/sysreqsdb> for two (different) databases of OS package dependencies for R libraries. `getdeps.R` will produce a (draft) apt install line for a given set of packages)
 
 ### Shinyproxy notes (very incomplete)
 
