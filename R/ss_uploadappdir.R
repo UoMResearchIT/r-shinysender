@@ -45,7 +45,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     required_dirs <- c("ShinyApps", "ShinyApps_staging")
     for(rd in required_dirs) {
       if (!does_directory_exist(session, rd) ){
-        warning(paste0("~/", rd, " does not exist"))
+        warning(paste0("~/", rd, " does not exist. Run ss_setupserver() to create"))
         return("otherError")
       }
     }
@@ -91,9 +91,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     # even if the decompression fails
     on.exit({
       remotecommand <- paste0('rm ~/ShinyApps_staging/"', bundleBareFile, '"')
-      # print(remotecommand)
       ssh::ssh_exec_wait(session, remotecommand )
-
 
       # We move the app from staging, but if this fails (or library restoration
       # fails), we'll need to clean up the staging directory.  Since it most
