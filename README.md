@@ -68,6 +68,10 @@ If your package is in a private repository, you will need to [generate a persona
 
 Locally hosted packages (i.e. an R package source that only exists on your local machine) cannot be included in the "bundle" that is sent to the remote server - you will need to put them on Github, and then install them as described above.
 
+### Bioconductor
+
+If your app uses Bioconductor packages, run `options(repos = BiocManager::repositories())` before deploying your app. 
+
 ### .Rprofile
 
 The deployed app uses Packrat to emulate your local development environment. This is set up to cache installed libraries (and their versions) between all your apps. This process is set up in the `.Rprofile` file in the deployed app's directory on the server.
