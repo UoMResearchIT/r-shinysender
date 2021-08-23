@@ -53,16 +53,24 @@ ss_uploadappdir <- function(session, appDir, appName,
 
     installedApps <- ss_listdir(session)
 
-    appExistsOnRemote <- tolower(appName) %in% tolower(installedApps)
+    # Note this is case sensitive, since Shiny server is
+    appExistsOnRemote <- appName %in% installedApps
     if (appExistsOnRemote) {
       message(appName, " is already on the server")
       if (!overwrite) {
         return("alreadyExists")
       }
-      # else {
-      #   message("Deleting existing app and re-uploading")
-      #   ss_deleteapp(session, appName, prompt = FALSE)
-      # }
+      # App will be overwritten if it stages successfully
+
+    }
+
+    # We probably don't want multiple apps differing only in case,
+    # so warn if the user has done this.
+    casecheck  <- tolower(appName) %in% tolower(installedApps)
+    if(!appExistsOnRemote & casecheck){
+      casedups <- installedApps[tolower(appName) == tolower(installedApps)]
+      warning(paste("An app with the same name but different case exists on the server. You may wish to delete these using ss_deleteapp():",
+                    casedups))
     }
 
     message("Uploading application bundle")
