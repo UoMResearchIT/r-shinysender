@@ -128,12 +128,17 @@ ss_uploadappdir <- function(session, appDir, appName,
     message("Setting up package environment")
     ss_setupRprofile(session,
                      remotepath = paste0("ShinyApps_staging/", appNameStaging))
-#
+
     # Restore the packrat libraries
 
     # If there are Private github remotes, we'll need to pass the
     # GITHUB_PAT environment variable over
     github_pat = Sys.getenv("GITHUB_PAT")
+
+
+    # Check if token has (almost expired) if we have one
+    if(github_pat != "")
+      check_pat_expiry(pat = github_pat)
 
     # Prepare code to insert set the environment variable
     github_pat_insert = ""
