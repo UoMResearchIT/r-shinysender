@@ -27,19 +27,8 @@ ss_uploadAddin <- function() {
   if(errstring != "")
     stop(errstring)
 
-  session <- ss_connect()
-
-  # Setup server (this won't do anything if already setup)
-  ss_setupserver(session)
-
-  # Close session when we quit
-  on.exit({
-    ss_disconnect(session)
-  }, add = TRUE)
-
-  appdir <- getwd()
-
   # Get name for remote app
+  appdir <- getwd()
   envRemoteName <- Sys.getenv("SHINYSENDER_REMOTENAME")
   if(envRemoteName != ""){
     remoteName = envRemoteName
@@ -50,6 +39,18 @@ ss_uploadAddin <- function() {
   if(!ss_isAppNameValid(remoteName)) {
     stop(remoteName, " is not a valid application name")
   }
+
+  session <- ss_connect()
+
+  # Setup server (this won't do anything if already setup)
+  ss_setupserver(session)
+
+  # Close session when we quit
+  on.exit({
+    ss_disconnect(session)
+  }, add = TRUE)
+
+
 
   ss_uploadappdir(session, appdir, remoteName, overwrite = TRUE)
 

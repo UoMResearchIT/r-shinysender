@@ -23,3 +23,15 @@ test_that("Addin errors if required environment variables not set", {
                        })
 })
 #
+
+test_that("Addin errors if we try to publish an invalid app name", {
+
+    withr::with_envvar(new = c("SHINYSENDER_USER"="alice",
+                               "SHINYSENDER_REMOTENAME"="bad name",
+                               "SHINYSENDER_SERVER"="127.0.0.1"),
+                       {
+                         expect_error(ss_uploadAddin(), "not a valid application name")
+                       })
+
+
+})
