@@ -118,13 +118,23 @@ send_Rprofile <- function(session,
   # invisible()
 }
 
-#' Returns the location of our .Rprofile fragment to install on remote
+#' Returns the location of our deployed .Rprofile fragment to install on remote
 #' server
 #'
 #' @return The location of our .Rprofile fragment
 ShinySenderRprofilePath <- function() {
 
   system.file("remoteprofile/shinysender_Rprofile", package = "shinysender",
+              mustWork = TRUE)
+}
+
+#' Returns the location of our staging .Rprofile fragment to install on remote
+#' server
+#'
+#' @return The location of our .Rprofile fragment
+ShinySenderRprofilePathStaging <- function() {
+
+  system.file("remoteprofile/shinysender_staging_Rprofile", package = "shinysender",
               mustWork = TRUE)
 }
 
@@ -141,9 +151,11 @@ ShinySenderRprofilePath <- function() {
 #' @param Rprofile A character vector containing the Rprofile
 #' @param action Whether to update the remote Rprofile with the shinysender
 #' fragment, or delete it
+#' @param rprofilefragmentpath The path to the fragment to add
 #'
 #' @return The modified Rprofile, as a character vector
-shinysenderize_Rprofile <- function(Rprofile, action = c("update", "delete")) {
+shinysenderize_Rprofile <- function(Rprofile, action = c("update", "delete"),
+                                    rprofilefragmentpath = ShinySenderRprofilePath() ) {
 
   # resolve action argument
   action <- match.arg(action)
@@ -161,7 +173,7 @@ shinysenderize_Rprofile <- function(Rprofile, action = c("update", "delete")) {
 
   ## Append our fragment to the original .Rprofile
   if (identical(action, "update"))
-    Rprofile <- c(Rprofile, readLines(ShinySenderRprofilePath()))
+    Rprofile <- c(Rprofile, readLines(rprofilefragmentpath))
 
   return(Rprofile)
 }

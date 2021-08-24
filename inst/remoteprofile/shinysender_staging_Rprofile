@@ -1,0 +1,23 @@
+#### Shinysender Loader ####
+## Shinysender Loader Version 0.0.3
+## Staging version
+## This sets the cache dir, but does not turn Packrat on to
+## rehydrate the packages.
+## We need to do this, so that devtools() is available, which is
+## needed to download private Github repos.  We also need to
+## explictly load devtools(), otherwise the GITHUB_PAT environment
+## variable doesn't reach the downloader (Not sure why this is
+## the case)
+
+# .Rprofile code to use user's packrat cache
+# (to avoid recompiling packages for each app)
+# and to enable Packrat on startup
+
+Sys.setenv(R_PACKRAT_CACHE_DIR = "~/R/packratcache")
+Sys.setenv(MAKEFLAGS="-j2")
+packrat::set_opts(use.cache=TRUE)
+# We *have* to explicitly load devtools otherwise it doesn't
+# pick up GITHUB_PAT.
+library(devtools)
+
+#### Shinysender Loader End ####

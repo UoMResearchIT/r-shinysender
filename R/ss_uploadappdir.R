@@ -125,15 +125,21 @@ ss_uploadappdir <- function(session, appDir, appName,
 
 
     # Setup the app's .Rprofile
-    message("Setting up package environment")
+    message("Setting up staging environment")
     ss_setupRprofile(session,
-                     remotepath = paste0("ShinyApps_staging/", appNameStaging))
-#
+                     remotepath = paste0("ShinyApps_staging/", appNameStaging),
+                     rprofilefragmentpath = ShinySenderRprofilePathStaging())
+
     # Restore the packrat libraries
 
     # If there are Private github remotes, we'll need to pass the
     # GITHUB_PAT environment variable over
     github_pat = Sys.getenv("GITHUB_PAT")
+
+
+    # Check if token has (almost expired) if we have one
+    if(github_pat != "")
+      check_pat_expiry(pat = github_pat)
 
     # Prepare code to insert set the environment variable
     github_pat_insert = ""
@@ -162,6 +168,11 @@ ss_uploadappdir <- function(session, appDir, appName,
     stop("Only direct upload currently supported")
   }
 
+  # Replace the staging .Rprofile with the deployment one
+  message("Setting up deployment environment")
+  ss_setupRprofile(session,
+                   remotepath = paste0("ShinyApps_staging/", appNameStaging),
+                   rprofilefragmentpath = ShinySenderRprofilePath())
 
   # If we get here we've uploaded it to staging OK
   # So delete the old app

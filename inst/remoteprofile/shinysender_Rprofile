@@ -1,12 +1,13 @@
 #### Shinysender Loader ####
-## Shinysender Loader Version 0.0.2
+## Shinysender Loader Version 0.0.3
+## Deployed version
+## This sets the cache dir and turns on Packrat
 
 # .Rprofile code to use user's packrat cache
 # (to avoid recompiling packages for each app)
 # and to enable Packrat on startup
 
 Sys.setenv(R_PACKRAT_CACHE_DIR = "~/R/packratcache")
-Sys.setenv(MAKEFLAGS="-j2")
 packrat::set_opts(use.cache=TRUE)
 packrat::on()
 
