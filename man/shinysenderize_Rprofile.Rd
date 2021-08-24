@@ -5,13 +5,19 @@
 \title{Update a .Rprofile file with the ShinySender code needed to use
 Packrat with the hosted applications}
 \usage{
-shinysenderize_Rprofile(Rprofile, action = c("update", "delete"))
+shinysenderize_Rprofile(
+  Rprofile,
+  action = c("update", "delete"),
+  rprofilefragmentpath = ShinySenderRprofilePath()
+)
 }
 \arguments{
 \item{Rprofile}{A character vector containing the Rprofile}
 
 \item{action}{Whether to update the remote Rprofile with the shinysender
 fragment, or delete it}
+
+\item{rprofilefragmentpath}{The path to the fragment to add}
 }
 \value{
 The modified Rprofile, as a character vector

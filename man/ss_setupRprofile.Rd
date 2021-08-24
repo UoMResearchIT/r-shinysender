@@ -4,7 +4,12 @@
 \alias{ss_setupRprofile}
 \title{Set up app's Rprofile so it can use Packrat packages}
 \usage{
-ss_setupRprofile(session, appname = NULL, remotepath = NULL)
+ss_setupRprofile(
+  session,
+  appname = NULL,
+  remotepath = NULL,
+  rprofilefragmentpath = ShinySenderRprofilePath()
+)
 }
 \arguments{
 \item{session}{The session}
@@ -12,6 +17,8 @@ ss_setupRprofile(session, appname = NULL, remotepath = NULL)
 \item{appname}{The application to setup, assumed to be in ~/ShinyApps/}
 
 \item{remotepath}{The remote path containing the application.  Exactly one of  appname or remotepath must be specified}
+
+\item{rprofilefragmentpath}{The path to the fragment we wish to append to the .Rprofile}
 }
 \description{
 This adds the required text to the remote .Rprofile, or creates it if it

@@ -48,10 +48,12 @@ ss_setupserver <- function(session){
 #' @param session The session
 #' @param appname The application to setup, assumed to be in ~/ShinyApps/
 #' @param remotepath The remote path containing the application.  Exactly one of  appname or remotepath must be specified
+#' @param rprofilefragmentpath The path to the fragment we wish to append to the .Rprofile
 #'
 ss_setupRprofile <- function(session,
                              appname = NULL,
-                             remotepath = NULL){
+                             remotepath = NULL,
+                             rprofilefragmentpath = ShinySenderRprofilePath()){
 
   if(!(xor(is.null(appname),
              is.null(remotepath)))){
@@ -62,7 +64,8 @@ ss_setupRprofile <- function(session,
                                            appname = appname,
                                            remotepath = remotepath)
 
-  modified_Rprofile <- shinysenderize_Rprofile(original_Rprofile)
+  modified_Rprofile <- shinysenderize_Rprofile(original_Rprofile,
+                                               rprofilefragmentpath = rprofilefragmentpath)
 
   send_Rprofile(session, modified_Rprofile,
                 appname = appname,

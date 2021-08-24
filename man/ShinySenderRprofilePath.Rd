@@ -2,7 +2,7 @@
 % Please edit documentation in R/ss_updateRProfile.R
 \name{ShinySenderRprofilePath}
 \alias{ShinySenderRprofilePath}
-\title{Returns the location of our .Rprofile fragment to install on remote
+\title{Returns the location of our deployed .Rprofile fragment to install on remote
 server}
 \usage{
 ShinySenderRprofilePath()
@@ -11,6 +11,6 @@ ShinySenderRprofilePath()
 The location of our .Rprofile fragment
 }
 \description{
-Returns the location of our .Rprofile fragment to install on remote
+Returns the location of our deployed .Rprofile fragment to install on remote
 server
 }
