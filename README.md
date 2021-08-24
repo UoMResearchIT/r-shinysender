@@ -82,6 +82,11 @@ If your user level `.Rprofile` on your local machine is contains settings that y
 
 Note that R only runs a *single* `.Rprofile` on startup - this will be the project level `.Rprofile`, if it exists, and the user level one otherwise - see <https://rstats.wtf/r-startup.html> for more details.
 
+(Technical aside:  We actually modify the user's `.Rprofile` twice - for staging we need to load `devtools`, and set the Packrat cache
+but not _actually_ turn packrat on - otherwise we can't see devtools and its dependencies to install private Github repos.  Once the apps
+libraries have been restored, we remove the staging `.Rprofile` code and replace it with a deployment version, which 
+sets the cache location and turns Packrat on. 
+
 ### Setting up the remote Server
 
 (these notes are currently incomplete)

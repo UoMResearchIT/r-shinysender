@@ -125,9 +125,10 @@ ss_uploadappdir <- function(session, appDir, appName,
 
 
     # Setup the app's .Rprofile
-    message("Setting up package environment")
+    message("Setting up staging environment")
     ss_setupRprofile(session,
-                     remotepath = paste0("ShinyApps_staging/", appNameStaging))
+                     remotepath = paste0("ShinyApps_staging/", appNameStaging),
+                     rprofilefragmentpath = ShinySenderRprofilePathStaging())
 
     # Restore the packrat libraries
 
@@ -167,6 +168,11 @@ ss_uploadappdir <- function(session, appDir, appName,
     stop("Only direct upload currently supported")
   }
 
+  # Replace the staging .Rprofile with the deployment one
+  message("Setting up deployment environment")
+  ss_setupRprofile(session,
+                   remotepath = paste0("ShinyApps_staging/", appNameStaging),
+                   rprofilefragmentpath = ShinySenderRprofilePath())
 
   # If we get here we've uploaded it to staging OK
   # So delete the old app
