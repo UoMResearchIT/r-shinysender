@@ -123,11 +123,11 @@ Install system libraries for common packages (The following covers the packages 
 
 Install R following instructions at <https://docs.rstudio.com/resources/install-r/> (I went with most recent version (4.1.1 at time of writing). Note `r-base` with Ubuntu 20.04 is very old, so don't use Ubuntu provided packages. Set up the symlinks as described on that page.
 
-Start R as root, and install shiny, rmarkdown and packrat packages:
+Start R as root, and install shiny, rmarkdown, devtools and packrat packages:
 
 `sudo R`
 
-`install.packages(c("shiny", "rmarkdown", "packrat"))`
+`install.packages(c("shiny", "rmarkdown", "packrat", "devtools"))`
 
 `q()`
 
