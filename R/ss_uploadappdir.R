@@ -151,7 +151,8 @@ ss_uploadappdir <- function(session, appDir, appName,
 
     # Project parameter doesn't seem to work, so cd to project directory
     # first
-    remotecommand <- paste0("cd ./ShinyApps_staging/", appNameStaging,
+    # Turn off history for this since we don't want the PAT to be saved anywhere
+    remotecommand <- paste0("set +o history && cd ./ShinyApps_staging/", appNameStaging,
                             " && Rscript -e '",
                             github_pat_insert,
                             "packrat::restore()'")
