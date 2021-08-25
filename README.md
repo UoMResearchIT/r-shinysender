@@ -60,6 +60,11 @@ If you always use the same settings, it may be easier to [set these in a .Renvir
 
 It is possible to host interactive R Markdown documents, as described [here](https://bookdown.org/yihui/rmarkdown/shiny-documents.html). You will need to ensure that you have an `index.Rmd` document in your deployment directory. The document can then be deployed in the same way as a Shiny app.
 
+## Golem framework
+
+If you are using the [Golem Framework](https://github.com/ThinkR-open/golem) to develop your app, you will need to run
+`golem::add_shinyserver_file()` before deploying your app.
+
 ## Non CRAN repositories
 
 If you are using non-CRAN packages, you will need to install them using `devtools::install_github()`. For example: `devtools::install_github("tidyverse/ggplot2")` will install the development version of ggplot2.
