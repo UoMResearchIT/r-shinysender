@@ -16,6 +16,9 @@ Suggests:
     testthat (>= 3.0.0),
     withr,
     miniUI,
-    httr
+    httr,
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
 RoxygenNote: 7.1.1
+VignetteBuilder: knitr
