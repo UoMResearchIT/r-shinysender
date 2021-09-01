@@ -155,9 +155,9 @@ Edit `/etc/shiny-server/shiny-server.conf`:
     # Instruct Shiny Server to run applications as the user "shiny"
     run_as shiny;
 
-    # Define a server that listens on port 3838
+    # Define a server that listens on port 3838 on localhost
     server {
-      listen 3838;
+      listen 3838 127.0.0.1;
 
 
       location /user {
@@ -175,6 +175,46 @@ Make it so that user's cannot read others' home directories (<https://superuser.
 (ShinyServer "su"s to the user when serving apps from `~/ShinyApps`, so this will still work)
 
 Add users with `adduser`
+
+### Nginx
+
+Modify `location /` of `/etc/nginx/sites-available/default` to:
+
+```
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+#               try_files $uri $uri/ =404;
+                proxy_pass http://127.0.0.1:3838/;
+                proxy_redirect http://127.0.0.1:3838/ $scheme://$host/;
+                proxy_http_version 1.1;
+
+                # $http_upgrade and $connection_upgrade are set up
+                # in /etc/nginx/nginx.conf
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $connection_upgrade;
+                proxy_read_timeout 20d;
+                proxy_buffering off;
+        }
+
+```
+
+Add the following to the `http` section of `/etc/nginx/nginx.conf`:
+
+
+```
+        # For Shiny proxy
+          map $http_upgrade $connection_upgrade {
+            default upgrade;
+            ''      close;
+        }
+
+
+```
+
+(based on https://www.r-bloggers.com/2016/03/add-authentication-to-shiny-server-with-nginx/ and https://support.rstudio.com/hc/en-us/articles/213733868-Running-Shiny-Server-with-a-Proxy)
+
+TODO: Set up https once we have certificate
 
 ### Shinyproxy notes (very incomplete)
 
