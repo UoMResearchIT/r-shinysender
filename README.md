@@ -8,11 +8,32 @@ The aim of this package is to provide tools and a Shiny app to allow users to ea
 
 ## Usage
 
-The server you wish to send the apps to can be specified using the `server=` parameter of `ss_connect()`, or by setting the `SHINYSENDER_SERVER` environment variable, e.g. in `~/.Renviron`.
+*You must be connected to Globalprotect to access the server*
 
-You will need to have a user account on the remote server already set up. If this is set up to use ssh keys then these will be used. Otherwise you will be prompted for the account password.
+* Install the shinysender package.
+* Set the name of the server and your username on it:
 
-### Basic workflow
+```{r}
+Sys.setenv(SHINYSENDER_SERVER="10.99.97.199")
+Sys.setenv(SHINYSENDER_USER="alice")
+```
+
+(you may wish to add these lines to `~/.Rprofile`, or set the environment variables
+in `~/.Renviron`, to avoid having to st them each time you start R)
+
+
+* Set your working directory to your Shiny app's application directory (this will usually happen automatically when
+you load the project)
+* In Rstudio: Addins, Upload App from the main toolbar (this can be bound to a keyboard shortcut (Tools, Modify Keyboard Shortcuts).
+* If you're running outwith RStudio, run `shinysender::ss_uploadAddin()` from the console
+* The app will be bundled and deployed on the remote server.  The first time you deploy any app, this will likely take some time
+since the system needs to download and compile the same versions of the R libraries you're using as on your local system. Subsequent
+deployments will use cached copies and so will be much quicker.
+* You can deploy the app again to update it
+
+# Advanced workflow
+
+If you want to do anything more complex, the following code may help:
 
 ```{r}
 # Connect to shiny server, using the same login name as the local account
@@ -42,19 +63,6 @@ ss_deleteapp(session, "demo")
 ss_disconnect(session)
 ```
 
-If you're using RStudio, you may find it easier to use the "Upload app" addin. To use this just set the remote server's name and your user name on it using the SHINYSENDER_SERVER and SHINYSENDER_USER environment variables:
-
-```{r}
-Sys.setenv(SHINYSENDER_SERVER="myshinyserver.com")
-Sys.setenv(SHINYSENDER_USER="alice")
-
-```
-
-With your working directory set to the application's directory, select Addins, Upload App from the main toolbar (this can be bound to a keyboard shortcut (Tools, Modify Keyboard Shortcuts).
-
-By default the name of the app on the remote server will be the same as the basename of your working directory. You can override the name of the app on the remote server by setting the SHINYSENDER_REMOTENAME environment variable.
-
-If you always use the same settings, it may be easier to [set these in a .Renviron file](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
 
 ## R Markdown documents
 
@@ -90,4 +98,5 @@ Note that R only runs a *single* `.Rprofile` on startup - this will be the proje
 (Technical aside:  We actually modify the user's `.Rprofile` twice - for staging we need to load `devtools`, and set the Packrat cache
 but not _actually_ turn packrat on - otherwise we can't see devtools and its dependencies to install private Github repos.  Once the apps
 libraries have been restored, we remove the staging `.Rprofile` code and replace it with a deployment version, which 
-sets the cache location and turns Packrat on. 
+sets the cache location and turns Packrat on.  The staging `.Rprofile` also configure the UoM web proxy so we can download packages)
+
