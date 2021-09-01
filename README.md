@@ -160,7 +160,7 @@ Edit `/etc/shiny-server/shiny-server.conf`:
       listen 3838 127.0.0.1;
 
 
-      location /user {
+      location / {
         run_as :HOME_USER:;
         user_dirs;
         directory_index off;
