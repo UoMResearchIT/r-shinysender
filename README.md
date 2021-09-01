@@ -10,7 +10,13 @@ The aim of this package is to provide tools and a Shiny app to allow users to ea
 
 *You must be connected to Globalprotect to access the server*
 
-* Install the shinysender package.
+* Install the shinysender package:
+```{r}
+install.packages("devtools")  # If you don't already have devtools installed
+devtools::install_github("UoMResearchIT/r-shinysender")
+
+```
+
 * Set the name of the server and your username on it:
 
 ```{r}
@@ -25,11 +31,14 @@ in `~/.Renviron`, to avoid having to st them each time you start R)
 * Set your working directory to your Shiny app's application directory (this will usually happen automatically when
 you load the project)
 * In Rstudio: Addins, Upload App from the main toolbar (this can be bound to a keyboard shortcut (Tools, Modify Keyboard Shortcuts).
-* If you're running outwith RStudio, run `shinysender::ss_uploadAddin()` from the console
+* Or, if you're running outwith RStudio, run `shinysender::ss_uploadAddin()` from the console
 * The app will be bundled and deployed on the remote server.  The first time you deploy any app, this will likely take some time
 since the system needs to download and compile the same versions of the R libraries you're using as on your local system. Subsequent
 deployments will use cached copies and so will be much quicker.
 * You can deploy the app again to update it
+
+You may get a warning about the version of R on the server being different to your
+local version.  It is usually safe to ignore this.
 
 # Advanced workflow
 
