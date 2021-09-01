@@ -13,8 +13,13 @@
 # (to avoid recompiling packages for each app)
 # and to enable Packrat on startup
 
+
+# Set up proxy (TODO check if on UoM machine??)
+Sys.setenv(http_proxy="http://webproxy.its.manchester.ac.uk:3128/")
+Sys.setenv(https_proxy="http://webproxy.its.manchester.ac.uk:3128/")
+
 Sys.setenv(R_PACKRAT_CACHE_DIR = "~/R/packratcache")
-Sys.setenv(MAKEFLAGS="-j2")
+Sys.setenv(MAKEFLAGS="-j4")
 packrat::set_opts(use.cache=TRUE)
 # We *have* to explicitly load devtools otherwise it doesn't
 # pick up GITHUB_PAT.
