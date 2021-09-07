@@ -1,7 +1,7 @@
 Package: shinysender
 Type: Package
 Title: Send Shiny Apps to a Server 
-Version: 0.1.0
+Version: 0.1.0.9000
 Author: David Mawdsley
 Maintainer: David Mawdsley <david.mawdsley@manchester.ac.uk>
 Description: Upload and manage users' Shiny Apps via ssh.
