@@ -25,7 +25,7 @@ Sys.setenv(SHINYSENDER_USER="alice")
 ```
 
 (you may wish to add these lines to `~/.Rprofile`, or set the environment variables
-in `~/.Renviron`, to avoid having to st them each time you start R)
+in `~/.Renviron`, to avoid having to set them each time you start R)
 
 
 * Set your working directory to your Shiny app's application directory (this will usually happen automatically when
