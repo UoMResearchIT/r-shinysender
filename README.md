@@ -20,7 +20,8 @@ devtools::install_github("UoMResearchIT/r-shinysender")
 * Set the name of the server and your username on it:
 
 ```{r}
-Sys.setenv(SHINYSENDER_SERVER="10.99.97.199")
+# This is UoM pilot server - must be connected via global protect
+Sys.setenv(SHINYSENDER_SERVER="10.99.97.195")  
 Sys.setenv(SHINYSENDER_USER="alice")
 ```
 
