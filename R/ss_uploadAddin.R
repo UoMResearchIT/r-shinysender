@@ -37,7 +37,7 @@ ss_uploadAddin <- function() {
   }
 
   if(!ss_isAppNameValid(remoteName)) {
-    stop(remoteName, " is not a valid application name")
+    stop(remoteName, " is not a valid application name.\nUse 'Sys.setenv(", 'SHINYSENDER_REMOTENAME="appname") to set a valid name.' )
   }
 
   session <- ss_connect()
