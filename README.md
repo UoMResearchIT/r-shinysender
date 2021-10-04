@@ -21,7 +21,7 @@ devtools::install_github("UoMResearchIT/r-shinysender")
 
 ```{r}
 # This is UoM pilot server - must be connected via global protect
-Sys.setenv(SHINYSENDER_SERVER="10.99.97.195")  
+Sys.setenv(SHINYSENDER_SERVER="130.88.96.181")  
 Sys.setenv(SHINYSENDER_USER="alice")
 ```
 
