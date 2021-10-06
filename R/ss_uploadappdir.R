@@ -198,10 +198,6 @@ ss_uploadappdir <- function(session, appDir, appName,
   # Derive deployed app URL
   # TODO This assumes we always deploy to host/user/appname
   # which is set on the remote in the server config.
-  # TODO - Using http for now; will need to update to https once we've
-  # deployed server properly
-  # TODO - Will need to figure out how to give external name of server
-  # since we'll always be sshing to internal IP
 
   sessionInfo <- ssh::ssh_session_info(session)
 
@@ -209,7 +205,7 @@ ss_uploadappdir <- function(session, appDir, appName,
   sessionServer <- sessionInfo$host
 
   if(!is.null(sessionUser) & !is.null(sessionServer)){
-      remoteURL <- paste0("http://", sessionServer, "/",
+      remoteURL <- paste0("https://", sessionServer, "/",
                           sessionUser, "/", appName)
       message("App deployed to:")
       message(remoteURL)

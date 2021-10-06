@@ -21,7 +21,10 @@ devtools::install_github("UoMResearchIT/r-shinysender")
 
 ```{r}
 # This is UoM pilot server - must be connected via global protect
-Sys.setenv(SHINYSENDER_SERVER="130.88.96.181")  
+# to upload your app.  Deployed apps will be visible on the public
+# internet.  
+Sys.setenv(SHINYSENDER_SERVER="shiny.its.manchester.ac.uk")  
+# Your username is your UoM login
 Sys.setenv(SHINYSENDER_USER="alice")
 ```
 
@@ -33,6 +36,7 @@ in `~/.Renviron`, to avoid having to set them each time you start R)
 you load the project)
 * In Rstudio: Addins, Upload App from the main toolbar (this can be bound to a keyboard shortcut (Tools, Modify Keyboard Shortcuts).
 * Or, if you're running outwith RStudio, run `shinysender::ss_uploadAddin()` from the console
+* You will be prompted for your UoM password.  
 * The app will be bundled and deployed on the remote server.  The first time you deploy any app, this will likely take some time
 since the system needs to download and compile the same versions of the R libraries you're using as on your local system. Subsequent
 deployments will use cached copies and so will be much quicker.
