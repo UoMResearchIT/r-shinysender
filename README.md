@@ -8,7 +8,8 @@ The aim of this package is to provide tools and a Shiny app to allow users to ea
 
 ## Usage
 
-*You must be connected to Globalprotect to access the server*
+*You must be connected to Globalprotect to upload an app*
+(You do not need to be connected to Globalprotect to view an app -these are visible worldwide)
 
 * Install the shinysender package:
 ```{r}
@@ -122,6 +123,10 @@ libraries have been restored, we remove the staging `.Rprofile` code and replace
 sets the cache location and turns Packrat on.  The staging `.Rprofile` also configure the UoM web proxy so we can download packages.  The deployed `.Rprofile`
 doesn't set up access to the UoM web proxy, so deployed apps will be unable to access remote sites.  If this functionality is needed the proxy will need to 
 be set in the local `.Rprofile` before deployment).
+
+### Shiny training
+
+https://uomresearchit.github.io/r-shiny-course/ contains the notes for a half day workshop on developing Shiny apps.  This may be useful if you haven't used Shiny before
 
 ### Server fingerprint
 
