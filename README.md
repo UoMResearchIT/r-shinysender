@@ -43,6 +43,8 @@ you load the project)
 since the system needs to download and compile the same versions of the R libraries you're using as on your local system. Subsequent
 deployments will use cached copies and so will be much quicker.
 * You can deploy the app again to update it
+* By default, your app will have the name of your local project directory, to set it to something different, set the `SHINYSENDER_REMOTENAME`
+environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appname")`.
 
 You may get a warning about the version of R on the server being different to your
 local version.  It is usually safe to ignore this.
