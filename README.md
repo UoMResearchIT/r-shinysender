@@ -104,7 +104,7 @@ If you are using non-CRAN packages, you will need to install them using `devtool
 
 If your package is in a private repository, you will need to [generate a personal access token](https://github.com/settings/tokens), with the "repo" scope. Put the token in the `GITHUB_PAT` environment variable: `Sys.setenv(GITHUB_PAT="mytoken")`. The environment variable will need to be set before using `devtools::install_github()`, and when uploading your app. The token will be used to install the private repositories on the remote sever, but will not be stored on it.
 
-Locally hosted packages (i.e. an R package source that only exists on your local machine) cannot be included in the "bundle" that is sent to the remote server - you will need to put them on Github, and then install them as described above. This is because the remote machine has no way of getting the source for your loccal package.
+Locally hosted packages (i.e. an R package source that only exists on your local machine) cannot be included in the "bundle" that is sent to the remote server - you will need to put them on Github, and then install them as described above. This is because the remote machine has no way of getting the source for your local package.
 
 ### Bioconductor
 
@@ -130,6 +130,21 @@ be set in the local `.Rprofile` before deployment).
 ### Shiny training
 
 https://uomresearchit.github.io/r-shiny-course/ contains the notes for a half day workshop on developing Shiny apps.  This may be useful if you haven't used Shiny before
+
+### Embedding your app in an existing webpage
+
+It isn't (currently) possible to change the URL of deployed apps (i.e. they will always be https://shiny.its.manchester.ac.uk/username/appname).  You may want 
+to embed your app within an existing web page.  This can be done with an iframe.  The fragement of html code below gives an example:
+
+```{html}
+<iframe width="100%" height="700px" name="iframe" src="https://shiny.its.manchester.ac.uk/username/appname" 
+    frameborder="0" 
+    scrolling="no" 
+    onload="resizeIframe(this)">
+</iframe>
+```
+
+(This is the technique we use to embed the example Shiny app in the Shiny course referred to above)
 
 ### Server fingerprint
 
