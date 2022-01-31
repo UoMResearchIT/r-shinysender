@@ -49,6 +49,18 @@ environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appn
 You may get a warning about the version of R on the server being different to your
 local version.  It is usually safe to ignore this.
 
+## Overriding the default proxy
+
+The package uses the UoM web proxy to download the packages needed during app
+staging.  If you need to override this, set the required server and port in the
+`SHINYSENDER_PROXY` environment variable:
+
+```{r}
+Sys.setenv(SHINYSENDER_PROXY="myproxy.co.uk:3128")
+```
+
+
+
 # Advanced workflow
 
 If you want to do anything more complex, the following code may help:

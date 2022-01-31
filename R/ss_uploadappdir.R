@@ -126,9 +126,37 @@ ss_uploadappdir <- function(session, appDir, appName,
 
     # Setup the app's .Rprofile
     message("Setting up staging environment")
+
+    # TODO - this is a temporary fix to workaround issues with the default
+    # proxy.
+
+    # Path to the file containing the lines we need to add to the
+    # remote .Rprofile for staging
+    staging_rprofile_path = ShinySenderRprofilePathStaging()
+    # Read the default staging .Rprofile in
+    our_profile <- readLines(staging_rprofile_path)
+
+    # tempfile to put the staging profile in
+    temp_profile_path <- tempfile()
+
+    # Override the web proxy on the remote server if SHINYSENDER_PROXY environment
+    # variable is set
+    remote_proxy = Sys.getenv("SHINYSENDER_PROXY")
+    if(remote_proxy != ""){
+      message("Overriding default proxy for staging")
+      # Update the proxy
+      our_profile <- gsub("http://webproxy.its.manchester.ac.uk:3128", Sys.getenv("SHINYSENDER_PROXY"), our_profile, fixed = TRUE)
+
+    }
+
+    writeLines(our_profile, temp_profile_path)
+
     ss_setupRprofile(session,
                      remotepath = paste0("ShinyApps_staging/", appNameStaging),
-                     rprofilefragmentpath = ShinySenderRprofilePathStaging())
+                     rprofilefragmentpath = temp_profile_path)
+
+    # Remove temporary path
+    unlink(temp_profile_path, expand = FALSE)
 
     # Restore the packrat libraries
 
