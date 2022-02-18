@@ -6,3 +6,4 @@ testserver.txt
 github_pat
 librarydeps
 ^\.github$
+^codecov\.yml$

@@ -20,7 +20,8 @@ Suggests:
     miniUI,
     httr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    covr
 Config/testthat/edition: 3
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
