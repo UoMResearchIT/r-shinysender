@@ -3,6 +3,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/UoMResearchIT/r-shinysender/workflows/R-CMD-check/badge.svg)](https://github.com/UoMResearchIT/r-shinysender/actions)
+[![Codecov test coverage](https://codecov.io/gh/UoMResearchIT/r-shinysender/branch/master/graph/badge.svg)](https://app.codecov.io/gh/UoMResearchIT/r-shinysender?branch=master)
 <!-- badges: end -->
 
 The aim of this package is to provide tools and a Shiny app to allow users to easily send their Shiny apps to the University of Manchester's pilot Shiny server.
