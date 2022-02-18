@@ -31,7 +31,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      name: Install libssh
       - if: matrix.os == 'ubuntu-latest'
         name: Install libssh
         run: |
