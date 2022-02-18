@@ -5,3 +5,4 @@ id_rsa*
 testserver.txt
 github_pat
 librarydeps
+^\.github$
