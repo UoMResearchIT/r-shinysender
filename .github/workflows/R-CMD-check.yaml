@@ -31,10 +31,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install libssh
-        run: |
-          sudo apt-get -y install libssh-dev
-        if: matrix.os == 'ubuntu-latest'
+      - name: Install libssh-dev on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get update -y && sudo apt-get install -y libssh-dev
 
       - uses: r-lib/actions/setup-pandoc@v1
 
