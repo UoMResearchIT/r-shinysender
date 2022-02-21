@@ -22,7 +22,8 @@ Suggests:
     knitr,
     rmarkdown,
     covr,
-    fs
+    fs,
+    mockery
 Config/testthat/edition: 3
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
