@@ -1,13 +1,3 @@
-# Return a fake ssh connection
-fakessh <- function(){
-
-  dummysession <- "dummy ssh session"
-  class(dummysession) <- "ssh"
-
-  return(dummysession)
-
-}
-
 test_that("only direct_home method works", {
 
 

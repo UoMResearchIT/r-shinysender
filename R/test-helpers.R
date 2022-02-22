@@ -60,3 +60,16 @@ create_local_shiny_app  <- function(dir = fs::file_temp(), env = parent.frame(),
   return(dir)
 
 }
+
+
+
+# Return a fake ssh connection
+fakessh <- function(){
+
+  dummysession <- "dummy ssh session"
+  class(dummysession) <- "ssh"
+
+  return(dummysession)
+
+}
+
