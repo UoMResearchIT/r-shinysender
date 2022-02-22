@@ -244,7 +244,7 @@ ss_uploadappdir <- function(session, appDir, appName,
 
 
 #' Return a string suitable for use as a temporary
-#' filelestem
+#' filesystem
 #'
 #' This is used for the staging directory of an app when we upload
 #' one that already exists.

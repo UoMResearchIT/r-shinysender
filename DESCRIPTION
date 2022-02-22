@@ -21,7 +21,9 @@ Suggests:
     httr,
     knitr,
     rmarkdown,
-    covr
+    covr,
+    fs,
+    mockery
 Config/testthat/edition: 3
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
