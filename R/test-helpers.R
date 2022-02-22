@@ -57,6 +57,6 @@ create_local_shiny_app  <- function(dir = fs::file_temp(), env = parent.frame(),
 
   withr::defer(setwd(old_project_dir), envir = env) # -B
 
-
+  return(dir)
 
 }
