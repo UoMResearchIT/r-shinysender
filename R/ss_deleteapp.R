@@ -9,29 +9,36 @@
 #' @export
 ss_deleteapp <- function(session, appName, prompt = TRUE){
 
-  # Check application name is valid
-  stopifnot(ss_isAppNameValid(appName))
-
   # Only deal with a single application at a time
   # TODO - handle >1 app per function call
   stopifnot(length(appName) == 1)
 
+  # Check application name is valid
+  stopifnot(ss_isAppNameValid(appName))
+
   # Check app is in directory
   installedApps <- ss_listdir(session)
-  stopifnot(appName %in% installedApps)
+  if(!appName %in% installedApps) {
+    stop("App not installed on remote server")
+  }
 
   appPath = paste0("~/ShinyApps/", appName)
 
   remotecommand = paste0("rm -rf ", appPath)
 
   if (prompt){
+    print("Run remote command?")
     print(remotecommand)
-    prompt <- utils::askYesNo("Run command?")
+    proceed <- utils::askYesNo("Run command?")
 
-    stopifnot(prompt==TRUE)
+    if(proceed != TRUE){
+      stop("Not deleting remote app")
+    }
 
   }
 
   retval <- ssh::ssh_exec_wait(session, remotecommand)
+
+  return(retval)
 }
 
