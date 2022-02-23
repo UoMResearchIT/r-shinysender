@@ -28,11 +28,12 @@ test_that("App case detection works", {
   stub(ss_uploadappdir, 'does_directory_exist', TRUE)
   stub(ss_uploadappdir, 'ss_listdir', c("app1", "app2", "app3"))
 
-    expect_error(expect_warning(ss_uploadappdir(fakessh,
-                                 create_local_shiny_app(),
-                                 "App1"),
-                 "An app with the same name but different case exists on the server"), # Warning we want
-               "Upload failed") # Since we can't actually upload to a fake ssh connection
+    expect_error(
+      expect_warning(ss_uploadappdir(fakessh,
+                                     create_local_shiny_app(),
+                                     "App1"),
+                     "An app with the same name but different case exists on the server"), # Warning we want
+      "Upload failed") # Since we can't actually upload to a fake ssh connection
 
 
 })
