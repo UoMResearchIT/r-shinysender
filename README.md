@@ -9,7 +9,7 @@
 The aim of this package is to provide tools and a Shiny app to allow users to easily send their Shiny apps to a remote Shiny server.
 Apps published on the server will be public.  
 
-This branch is for a generic server (i.e. no UoM specific configuration)
+This branch is for a generic server (i.e. no UoM specific configuration).  There are some minimal instructions on a suitable server configuration at the end of this file
 
 ## Usage
 
@@ -156,3 +156,74 @@ to embed your app within an existing web page.  This can be done with an iframe.
 
 
 
+## Server setup
+
+This section contains some minimal instructions for setting up a Shiny server to use with this package.  The main thing is that the package expects shiny, rmarkdown, packrat and devtools to be available to all users.
+
+Using Ubuntu 20.04
+
+Install system libraries for common R packages:
+
+```
+    sudo apt install pandoc pandoc-citeproc libssl-dev libxml2-dev libcurl4-openssl-dev libcairo2 libcairo2-dev git-core zlib1g-dev jags default-jre-headless libopenmpi3 libopenmpi-dev libomp-dev make libgit2-dev libssh2-1-dev libgmp10 libgmp-dev libglpk-dev libpng-dev python gdal-bin libproj-dev libgdal-dev libmpfr-dev libgeos-dev libgeos++-dev libsodium-dev libicu-dev tcl8.6 tk8.6 tk-table libudunits2-dev libv8-dev librsvg2-dev libssh-dev libxt-dev libcairo-5c-dev
+```
+
+
+(This list covers most of the debs needed for common R packages - e.g. tidyverse, sf, etc.
+See: <https://github.com/rstudio/r-system-requirements> and <https://github.com/r-hub/sysreqsdb> for two (different) databases of OS package dependencies for R libraries. `./librarydeps/getdeps.R` will produce a (draft) apt install line for a given set of packages)
+
+
+Install R following instructions at <https://docs.rstudio.com/resources/install-r/> (I went with most recent version (4.1.1 at time of writing). Note `r-base` with Ubuntu 20.04 is very old, so don't use Ubuntu provided packages. Set up the symlinks as described on that page.
+
+Start R as root, and install shiny, rmarkdown, devtools and packrat packages:
+
+`sudo R`
+
+`install.packages(c("shiny", "rmarkdown", "packrat", "devtools"))`
+
+`q()`
+
+Install Shiny server (<https://www.rstudio.com/products/shiny/download-server/ubuntu/>), e.g.:
+
+(check you're getting latest version of Shiny Server - note URL is ubuntu-14.04, even though we're using 20.04)
+
+```
+sudo apt-get install gdebi-core
+wget https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.17.973-amd64.deb
+sudo gdebi shiny-server-1.5.17.973-amd64.deb
+```
+
+(Note that there isn't a repository for shiny-server, so it won't update with `apt-get etc...`, so you'll need to keep an eye on new versions manually.
+The product information email list at: https://www.rstudio.com/about/subscription-management/  should inform you when an update is out.)
+
+Check Shiny server is working correctly - go to <http://server:3838>, and check the Shiny and RMarkdown apps appear in frames on the right hand side.
+
+Setup timezone on the server
+
+`sudo dpkg-reconfigure tzdata`
+
+
+Edit `/etc/shiny-server/shiny-server.conf`:
+
+    # Instruct Shiny Server to run applications as the user "shiny"
+    run_as shiny;
+
+    # Define a server that listens on port 3838 on localhost
+    # You will probably want to put this behind a reverse proxy, or listen on all interfaces if accessing directly
+    server {
+      listen 3838 127.0.0.1;
+
+
+      location / {
+        run_as :HOME_USER:;
+        user_dirs;
+        directory_index off;
+      }
+
+    }
+
+Restart Shiny Server `sudo service shiny-server restart`
+
+Make it so that user's cannot read others' home directories (<https://superuser.com/a/615990>): update `DIR_MODE` to `DIR_MODE=0750` in `/etc/adduser.conf` and change permissions on any existing homedirs.
+
+(ShinyServer "su"s to the user when serving apps from `~/ShinyApps`, so this will still work)
