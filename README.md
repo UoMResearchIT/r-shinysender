@@ -9,6 +9,8 @@
 The aim of this package is to provide tools and a Shiny app to allow users to easily send their Shiny apps to the University of Manchester's pilot Shiny server.
 Apps published on the server will be public.  To obtain an account on the server please email david.mawdsley@manchester.ac.uk to request access.
 
+(If you wish to use the package for another Shiny server, please see the notes at the end of this file)
+
 ## Usage
 
 *You must be connected to Globalprotect to upload an app*
@@ -18,7 +20,6 @@ Apps published on the server will be public.  To obtain an account on the server
 ```{r}
 install.packages("devtools")  # If you don't already have devtools installed
 devtools::install_github("UoMResearchIT/r-shinysender")
-
 ```
 
 * Set the name of the server and your username on it:
@@ -60,6 +61,8 @@ staging.  If you need to override this, set the required server and port in the
 ```{r}
 Sys.setenv(SHINYSENDER_PROXY="myproxy.co.uk:3128")
 ```
+
+(If you're using this package for something other than the UoM Shiny service pilot, see the end of this file for further instructions)
 
 
 
@@ -167,5 +170,20 @@ The ssh fingerprint of the pilot shiny server is
 This will be shown the first time you connect to the service
 
 
+
+### Other servers
+
+This package was originally written for the University of Manchester Shiny Pilot service.  This is setup to require that we use a web proxy to download and install packages on the remote server.   It is likely that most other services won't require this step.
+
+If you are using this package with another server, download and install the "generic" branch:
+
+```{r}
+install.packages("devtools")  # If you don't already have devtools installed
+devtools::install_github("UoMResearchIT/r-shinysender@generic")
+```
+
+Then proceed as before.  This branch does not set up a web proxy for app deployment by default.
+
+If you need to use a different web proxy, then set _either_ the `SHINYSENDER_PROXY` environment variable, or, if you require a different proxy address for http and https, set `SHINYSENDER_PROXY_HTTP` and `SHINYSENDER_PROXY_HTTPS`.  (setting `SHINYSENDER_PROXY` sets the http and https proxy to the same address). In all cases, the variable should be set to the full URL, including protocol, e.g. `Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")`
 
 
