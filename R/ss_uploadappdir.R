@@ -296,13 +296,13 @@ prepareRprofile <- function(our_profile){
 
   # TODO check it's a valid URL.
   if(remote_proxy_http != ""){
-    proxystring <- paste0('Sys.setenv(http_proxy="', remote_proxy_http, '"')
+    proxystring <- paste0('Sys.setenv(http_proxy="', remote_proxy_http, '")')
     proxy_fragment <- c(proxy_fragment, proxystring)
 
   }
 
   if(remote_proxy_https != ""){
-    proxystring <- paste0('Sys.setenv(https_proxy="', remote_proxy_https, '"')
+    proxystring <- paste0('Sys.setenv(https_proxy="', remote_proxy_https, '")')
     proxy_fragment <- c(proxy_fragment, proxystring)
 
   }

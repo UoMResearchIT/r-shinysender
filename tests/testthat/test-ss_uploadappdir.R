@@ -81,12 +81,12 @@ test_that("Proxy specification works", {
   mod_profile <- prepareRprofile(orig_profile)
 
   expect_match(mod_profile,
-               'Sys.setenv(http_proxy="http://myproxy.com:3128',
+               'Sys.setenv(http_proxy="http://myproxy.com:3128")',
                fixed = TRUE, all = FALSE
                )
 
   expect_match(mod_profile,
-               'Sys.setenv(https_proxy="http://myproxy.com:3128',
+               'Sys.setenv(https_proxy="http://myproxy.com:3128")',
                fixed = TRUE, all = FALSE
                )
 
