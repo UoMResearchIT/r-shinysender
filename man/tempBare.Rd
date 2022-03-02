@@ -3,7 +3,7 @@
 \name{tempBare}
 \alias{tempBare}
 \title{Return a string suitable for use as a temporary
-filelestem}
+filesystem}
 \usage{
 tempBare()
 }
