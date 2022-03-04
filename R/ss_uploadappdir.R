@@ -262,8 +262,24 @@ tempBare <- function(){
 #' Prepare a .Rprofile for staging
 #'
 #' This function takes an .Rprofile and
-#' modifies it with any proxy setup that is required, using the
-#' local environment variables
+#' modifies it with any proxy setup that is required,
+#' using the look-up included in the package and using the
+#' local environment variables.
+#'
+#' We first test the SHINYSENDER_SERVER environment variable against the servers
+#' specified in shinysender:::server_proxy_overrides.  If SHINYSENDER_SERVER matches
+#' the name of any of the entries in this vector, we default to using its value as
+#' both the http and https proxy.  This is used to handle the fact that the UoM pilot
+#' server requires a web proxy.
+#'
+#' This can be overriden by setting the environment variable SHINYSENDER_PROXY
+#' (to set both http and https proxy
+#' to the same value on the remote server),
+#' or SHINYSENDER_HTTP_PROXY and/or SHINYSENDER_HTTPS_PROXY are set to set
+#'  each environment variable independently.
+#'
+#' In any case, the full URL for the proxy server(s) should be given, e.g.
+#' "http://myproxy.com:3128"
 #'
 #' @param our_profile Character vector containing the .Rprofile you wish to
 #' modify
@@ -271,12 +287,30 @@ tempBare <- function(){
 #' @return A character vector containing the (potentially) modified .Rprofile
 prepareRprofile <- function(our_profile){
 
+  # Get the remote server, to test if we need to automatically set a proxy
+  # Note this will set both http and https proxies
+  remote_server = Sys.getenv("SHINYSENDER_SERVER")
 
+  remote_proxy_override = server_proxy_overrides[names(server_proxy_overrides) == remote_server]
+
+  if(length(remote_proxy_override) > 1)
+     stop("Duplicate proxy overrides detected for server")
+
+  if(length(remote_proxy_override) == 0)
+    remote_proxy_override = ""
 
   # Override the web proxy on the remote server if SHINYSENDER_PROXY environment
-  # variable is set
+  # variable is set, regardless of whether we've got an override proxy
 
-  remote_proxy = Sys.getenv("SHINYSENDER_PROXY")
+  remote_proxy_env = Sys.getenv("SHINYSENDER_PROXY")
+
+  # If we've got an explicitly set environment variable use this
+  # otherwise use the server specific override
+  if(remote_proxy_env != "")
+    remote_proxy = remote_proxy_env
+  else
+    remote_proxy = remote_proxy_override
+
   remote_proxy_http = Sys.getenv("SHINYSENDER_PROXY_HTTP")
   remote_proxy_https = Sys.getenv("SHINYSENDER_PROXY_HTTPS")
 

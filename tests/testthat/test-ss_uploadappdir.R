@@ -136,3 +136,76 @@ test_that("Modification fails if there's no placeholder",{
 })
 
 
+test_that("We set a proxy if the SHINYSENDER_SERVER variable is certain specific servers",{
+
+  withr::local_envvar("SHINYSENDER_SERVER"="shiny.its.manchester.ac.uk")
+
+  orig_profile <- readLines(ShinySenderRprofilePathStaging())
+
+  mod_profile <- prepareRprofile(orig_profile)
+
+  expect_match(mod_profile,
+               'Sys.setenv(http_proxy="http://webproxy.its.manchester.ac.uk:3128/")',
+               fixed = TRUE, all = FALSE
+               )
+
+  expect_match(mod_profile,
+               'Sys.setenv(https_proxy="http://webproxy.its.manchester.ac.uk:3128/")',
+               fixed = TRUE, all = FALSE
+               )
+
+
+
+})
+
+
+
+
+test_that("We set a proxy if the SHINYSENDER_SERVER variable is certain specific servers",{
+  # Dev server TODO - speak to Jok about getting an internal DNS entry for this
+  withr::local_envvar("SHINYSENDER_SERVER"="10.99.97.199")
+
+  orig_profile <- readLines(ShinySenderRprofilePathStaging())
+
+  mod_profile <- prepareRprofile(orig_profile)
+
+  expect_match(mod_profile,
+               'Sys.setenv(http_proxy="http://webproxy.its.manchester.ac.uk:3128/")',
+               fixed = TRUE, all = FALSE
+               )
+
+  expect_match(mod_profile,
+               'Sys.setenv(https_proxy="http://webproxy.its.manchester.ac.uk:3128/")',
+               fixed = TRUE, all = FALSE
+               )
+
+
+
+})
+
+
+
+test_that("We can still override the default proxy if we're using a specific server",{
+
+  withr::local_envvar("SHINYSENDER_SERVER"="shiny.its.manchester.ac.uk",
+                      "SHINYSENDER_PROXY"="http://myspecialproxy.co.uk:1234")
+
+  orig_profile <- readLines(ShinySenderRprofilePathStaging())
+
+  mod_profile <- prepareRprofile(orig_profile)
+
+  expect_match(mod_profile,
+               'Sys.setenv(http_proxy="http://myspecialproxy.co.uk:1234")',
+               fixed = TRUE, all = FALSE
+               )
+
+  expect_match(mod_profile,
+               'Sys.setenv(https_proxy="http://myspecialproxy.co.uk:1234")',
+               fixed = TRUE, all = FALSE
+               )
+
+
+
+})
+
+
