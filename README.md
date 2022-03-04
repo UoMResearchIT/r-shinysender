@@ -6,25 +6,30 @@
 [![Codecov test coverage](https://codecov.io/gh/UoMResearchIT/r-shinysender/branch/master/graph/badge.svg)](https://app.codecov.io/gh/UoMResearchIT/r-shinysender?branch=master)
 <!-- badges: end -->
 
-The aim of this package is to provide tools and a Shiny app to allow users to easily send their Shiny apps to a remote Shiny server.
-Apps published on the server will be public.  
+The aim of this package is to provide tools and a Shiny app to allow users to easily send their Shiny apps to the University of Manchester's pilot Shiny server.
+Apps published on the server will be public.  To obtain an account on the server please email david.mawdsley@manchester.ac.uk to request access.
 
-This branch is for a generic server (i.e. no UoM specific configuration).  There are some minimal instructions on a suitable server configuration at the end of this file
+(If you wish to use the package for another Shiny server, please see the notes at the end of this file)
 
 ## Usage
+
+*You must be connected to Globalprotect to upload an app*
+(You do not need to be connected to Globalprotect to view an app -these are visible worldwide)
 
 * Install the shinysender package:
 ```{r}
 install.packages("devtools")  # If you don't already have devtools installed
-devtools::install_github("UoMResearchIT/r-shinysender@generic")
-
+devtools::install_github("UoMResearchIT/r-shinysender")
 ```
 
 * Set the name of the server and your username on it:
 
 ```{r}
-Sys.setenv(SHINYSENDER_SERVER="myshinyserver.com")  
-# Your username is your login on the server
+# This is UoM pilot server - must be connected via global protect
+# to upload your app.  Deployed apps will be visible on the public
+# internet.  
+Sys.setenv(SHINYSENDER_SERVER="shiny.its.manchester.ac.uk")  
+# Your username is your UoM login
 Sys.setenv(SHINYSENDER_USER="alice")
 ```
 
@@ -47,15 +52,21 @@ environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appn
 You may get a warning about the version of R on the server being different to your
 local version.  It is usually safe to ignore this.
 
-## Web proxy for package installation
+## Overriding the default proxy
 
+If you are using this library to deploy to the UoM pilot Shiny server, it will automatically
+set the UoM web proxy   to download the packages needed during app
+staging.  If you are using another server, no proxy will be set.  
 
-This branch does not set up a web proxy for app deployment by default.
+In either case if you need to override this, set the required server and port in the
+`SHINYSENDER_PROXY` environment variable:
 
-If you need to use a  web proxy, then set _either_ the `SHINYSENDER_PROXY` environment variable, or, if you require a different proxy address for http and https, set `SHINYSENDER_PROXY_HTTP` and `SHINYSENDER_PROXY_HTTPS`.  (setting `SHINYSENDER_PROXY` sets the http and https proxy to the same address). In all cases, the variable should be set to the full URL, including protocol, e.g. `Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")`
+```{r}
+Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")
+```
 
-The proxy is only used for deployment (i.e. to install packages on the remote server).  If you require your app to retrieve data via the proxy when in use, you will need to set these environment variables in your local `.Rprofile` file - see notes below.
-
+(To set the http and https proxies to different servers, instead use SHINYSENDER_PROXY_HTTP and
+SHINYSENDER_PROXY_HTTPS environment variables) 
 
 # Advanced workflow
 
@@ -141,11 +152,11 @@ https://uomresearchit.github.io/r-shiny-course/ contains the notes for a half da
 
 ### Embedding your app in an existing webpage
 
-It isn't (currently) possible to change the URL of deployed apps (i.e. they will always be https://myserver.com/username/appname).  You may want 
+It isn't (currently) possible to change the URL of deployed apps (i.e. they will always be https://shiny.its.manchester.ac.uk/username/appname).  You may want 
 to embed your app within an existing web page.  This can be done with an iframe.  The fragement of html code below gives an example:
 
 ```{html}
-<iframe width="100%" height="700px" name="iframe" src="https://myserver.com/username/appname" 
+<iframe width="100%" height="700px" name="iframe" src="https://shiny.its.manchester.ac.uk/username/appname" 
     frameborder="0" 
     scrolling="no" 
     onload="resizeIframe(this)">
@@ -154,11 +165,19 @@ to embed your app within an existing web page.  This can be done with an iframe.
 
 (This is the technique we use to embed the example Shiny app in the Shiny course referred to above)
 
+### Server fingerprint
+
+The ssh fingerprint of the pilot shiny server is
+`26:0d:42:55:99:32:1b:75:3d:38:2d:dc:c8:08:1b:0b:40:f9:e9:e6`
+This will be shown the first time you connect to the service
+
+
+
 
 
 ## Server setup
 
-This section contains some minimal instructions for setting up a Shiny server to use with this package.  The main thing is that the package expects shiny, rmarkdown, packrat and devtools to be available to all users.
+This section contains some minimal instructions for setting up a new Shiny server to use with this package.  The main thing is that the package expects shiny, rmarkdown, packrat and devtools to be available to all users.
 
 Using Ubuntu 20.04
 
@@ -227,3 +246,4 @@ Restart Shiny Server `sudo service shiny-server restart`
 Make it so that user's cannot read others' home directories (<https://superuser.com/a/615990>): update `DIR_MODE` to `DIR_MODE=0750` in `/etc/adduser.conf` and change permissions on any existing homedirs.
 
 (ShinyServer "su"s to the user when serving apps from `~/ShinyApps`, so this will still work)
+
