@@ -10,6 +10,9 @@ prepareRprofile(our_profile)
 \item{our_profile}{Character vector containing the .Rprofile you wish to
 modify}
 }
+\value{
+A character vector containing the (potentially) modified .Rprofile
+}
 \description{
 This function takes an .Rprofile and
 modifies it with any proxy setup that is required, using the

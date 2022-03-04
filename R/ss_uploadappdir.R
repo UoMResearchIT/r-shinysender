@@ -268,7 +268,7 @@ tempBare <- function(){
 #' @param our_profile Character vector containing the .Rprofile you wish to
 #' modify
 #'
-#' @value A character vector containing the (potentially) modified .Rprofile
+#' @return A character vector containing the (potentially) modified .Rprofile
 prepareRprofile <- function(our_profile){
 
 
