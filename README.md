@@ -65,8 +65,10 @@ In either case if you need to override this, set the required server and port in
 Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")
 ```
 
+
 (To set the http and https proxies to different servers, instead use SHINYSENDER_PROXY_HTTP and
 SHINYSENDER_PROXY_HTTPS environment variables) 
+
 
 # Advanced workflow
 
@@ -172,6 +174,21 @@ The ssh fingerprint of the pilot shiny server is
 This will be shown the first time you connect to the service
 
 
+
+### Other servers
+
+This package was originally written for the University of Manchester Shiny Pilot service.  This is setup to require that we use a web proxy to download and install packages on the remote server.   It is likely that most other services won't require this step.
+
+If you are using this package with another server, download and install the "generic" branch:
+
+```{r}
+install.packages("devtools")  # If you don't already have devtools installed
+devtools::install_github("UoMResearchIT/r-shinysender@generic")
+```
+
+Then proceed as before.  This branch does not set up a web proxy for app deployment by default.
+
+If you need to use a different web proxy, then set _either_ the `SHINYSENDER_PROXY` environment variable, or, if you require a different proxy address for http and https, set `SHINYSENDER_PROXY_HTTP` and `SHINYSENDER_PROXY_HTTPS`.  (setting `SHINYSENDER_PROXY` sets the http and https proxy to the same address). In all cases, the variable should be set to the full URL, including protocol, e.g. `Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")`
 
 
 
