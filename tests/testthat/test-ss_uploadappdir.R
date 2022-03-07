@@ -94,7 +94,9 @@ test_that("Proxy specification works", {
 
 test_that("Proxy specification works", {
   withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
-                          "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com"
+                          "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com",
+                          "SHINYSENDER_PROXY"="", # Unset in case set in our .Rprofile
+                          "SHINYSENDER_SERVER"="" # Unset in case set in our .Rprofile
   ))
 
   orig_profile <- readLines(ShinySenderRprofilePathStaging())
@@ -114,6 +116,12 @@ test_that("Proxy specification works", {
 })
 
 test_that("We don't modify rprofile if no proxy", {
+  # Ensure variables are unset, in case we pick any up from user's .Rprofile
+  withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="",
+                          "SHINYSENDER_PROXY_HTTPS"="",
+                          "SHINYSENDER_PROXY"="",
+                          "SHINYSENDER_SERVER"=""
+  ))
   # File should be identical if no proxy specified
   orig_profile <- readLines(ShinySenderRprofilePathStaging())
 
