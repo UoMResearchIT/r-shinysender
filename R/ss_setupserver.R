@@ -28,12 +28,25 @@ ss_setupserver <- function(session){
   }
 
 
-  # TODO check packrat is available to the user
-  # If not - install to users local library?? (as optional parameter)
-  remote_packrat = ss_is_remote_package_installed(session, package = "packrat")
+  # Check that we have the required packages on the remote server
+  # TODO - check versions?
+  remote_requirements <- c("packrat",
+                           "shiny",
+                           "devtools",
+                           "rmarkdown")
+  missing_packages <- NULL
+  for(rr in remote_requirements) {
+    remote_test = ss_is_remote_package_installed(session, package = rr)
 
-  if(!remote_packrat) {
-    stop("Packrat is not installed on the remote server")
+    if(!remote_test) {
+      # stop(rr, " is not installed on the remote server")
+      missing_packages <- c(missing_packages, rr)
+    }
+  }
+
+  if(!is.null(missing_packages)) {
+    stop("The following packages are not installed on the remote server. Please contact the server administrator: ",
+         paste(missing_packages, collapse = ", "))
   }
 
 
