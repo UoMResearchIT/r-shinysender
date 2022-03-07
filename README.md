@@ -204,6 +204,9 @@ This section contains some minimal instructions for setting up a new Shiny serve
 with any server that's setup to deploy apps from users' home directories. The main thing is that this package 
 expects the Shiny, Rmarkdown, Packrat and Devtools libraries to be available to all users.
 
+Note that the URL of the deployed app assumes that the apps are on https, and 
+that the location section of `shiny-server.conf` is set up as in the example below
+
 Using Ubuntu 20.04
 
 Install system libraries for common R packages:
