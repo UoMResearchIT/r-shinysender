@@ -287,32 +287,43 @@ tempBare <- function(){
 #' @return A character vector containing the (potentially) modified .Rprofile
 prepareRprofile <- function(our_profile){
 
-  # Get the remote server, to test if we need to automatically set a proxy
-  # Note this will set both http and https proxies
-  remote_server = Sys.getenv("SHINYSENDER_SERVER")
 
-  remote_proxy_override = server_proxy_overrides[names(server_proxy_overrides) == remote_server]
-
-  if(length(remote_proxy_override) > 1)
-     stop("Duplicate proxy overrides detected for server")
-
-  if(length(remote_proxy_override) == 0)
-    remote_proxy_override = ""
-
-  # Override the web proxy on the remote server if SHINYSENDER_PROXY environment
-  # variable is set, regardless of whether we've got an override proxy
-
-  remote_proxy_env = Sys.getenv("SHINYSENDER_PROXY")
-
-  # If we've got an explicitly set environment variable use this
-  # otherwise use the server specific override
-  if(remote_proxy_env != "")
-    remote_proxy = remote_proxy_env
-  else
-    remote_proxy = remote_proxy_override
-
+  remote_proxy = Sys.getenv("SHINYSENDER_PROXY")
   remote_proxy_http = Sys.getenv("SHINYSENDER_PROXY_HTTP")
   remote_proxy_https = Sys.getenv("SHINYSENDER_PROXY_HTTPS")
+
+  if(remote_proxy != ""){
+    if(remote_proxy_http != "" | remote_proxy_https != "" ){
+      stop("If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset")
+    }
+  }
+
+  # If any of the proxy variables have been specified we'll use them
+  # regardless of whether we find an override
+  setproxy = FALSE
+  if(remote_proxy != "" | remote_proxy_http != "" | remote_proxy_https != ""){
+    setproxy = TRUE
+  }
+
+
+  if(!setproxy) {
+    # Get the remote server, to test if we need to automatically set a proxy
+    # Note this will set both http and https proxies
+    remote_server = Sys.getenv("SHINYSENDER_SERVER")
+
+    remote_proxy_override = server_proxy_overrides[names(server_proxy_overrides) == remote_server]
+
+    if(length(remote_proxy_override) > 1)
+      stop("Duplicate proxy overrides detected for server")
+
+    if(length(remote_proxy_override) == 0)
+      remote_proxy_override = ""
+
+    remote_proxy = remote_proxy_override
+
+
+  }
+
 
   # Lines containing the proxy spec will be added to this vector
   proxy_fragment <- character(0)
