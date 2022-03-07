@@ -14,7 +14,7 @@ Apps published on the server will be public.  To obtain an account on the server
 ## Usage
 
 *You must be connected to Globalprotect to upload an app*
-(You do not need to be connected to Globalprotect to view an app -these are visible worldwide)
+(You do not need to be connected to Globalprotect to view an app; these are visible worldwide)
 
 * Install the shinysender package:
 ```{r}
@@ -177,7 +177,15 @@ This will be shown the first time you connect to the service
 
 ## Server setup
 
-This section contains some minimal instructions for setting up a new Shiny server to use with this package.  The main thing is that the package expects shiny, rmarkdown, packrat and devtools to be available to all users.
+This package was originally written for the University of Manchester pilot Shiny service,
+and assumed a fixed web-proxy configuration to install packages on the remote server.
+
+It now assumes that no web-proxy is needed, unless SHINYSENDER_SERVER is set to the UoM's pilot
+server address. 
+
+This section contains some minimal instructions for setting up a new Shiny server to use with this package.  It should work
+with any server that's setup to deploy apps from users' home directories. The main thing is that this package 
+expects the Shiny, Rmarkdown, Packrat and Devtools libraries to be available to all users.
 
 Using Ubuntu 20.04
 
