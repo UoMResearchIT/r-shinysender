@@ -119,7 +119,7 @@ It is possible to host interactive R Markdown documents, as described [here](htt
 If you are using the [Golem Framework](https://github.com/ThinkR-open/golem) to develop your app, you will need to run
 `golem::add_shinyserver_file()` before deploying your app.
 
-## Non CRAN repositories
+## Non CRAN packages
 
 If you are using non-CRAN packages, you will need to install them using `devtools::install_github()`. For example: `devtools::install_github("tidyverse/ggplot2")` will install the development version of ggplot2.
 
@@ -131,7 +131,7 @@ Locally hosted packages (i.e. an R package source that only exists on your local
 
 If your app uses Bioconductor packages, run `options(repos = BiocManager::repositories())` before deploying your app. 
 
-### .Rprofile
+## .Rprofile
 
 The deployed app uses Packrat to emulate your local development environment. This is set up to cache installed libraries (and their versions) between all your apps. This is set up in the `.Rprofile` file in the deployed app's directory on the server.
 
@@ -148,11 +148,11 @@ sets the cache location and turns Packrat on.  The staging `.Rprofile` also conf
 doesn't set up access to the UoM web proxy, so deployed apps will be unable to access remote sites.  If this functionality is needed the proxy will need to 
 be set in the local `.Rprofile` before deployment).
 
-### Shiny training
+## Shiny training
 
 https://uomresearchit.github.io/r-shiny-course/ contains the notes for a half day workshop on developing Shiny apps.  This may be useful if you haven't used Shiny before
 
-### Embedding your app in an existing webpage
+## Embedding your app in an existing webpage
 
 It isn't (currently) possible to change the URL of deployed apps (i.e. they will always be https://shiny.its.manchester.ac.uk/username/appname).  You may want 
 to embed your app within an existing web page.  This can be done with an iframe.  The fragement of html code below gives an example:
