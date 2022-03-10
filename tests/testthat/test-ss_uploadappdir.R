@@ -121,9 +121,7 @@ test_that("URL validation works", {
 
   test_that("Proxy specification works", {
     withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
-                            "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com",
-                            "SHINYSENDER_PROXY"="", # Unset in case set in our .Rprofile
-                            "SHINYSENDER_SERVER"="" # Unset in case set in our .Rprofile
+                            "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com"
     ))
 
     orig_profile <- readLines(ShinySenderRprofilePathStaging())
@@ -145,9 +143,7 @@ test_that("URL validation works", {
   test_that("URL trapping works", {
 
     withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="xxx://anotherprox.com",
-                            "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com",
-                            "SHINYSENDER_PROXY"="", # Unset in case set in our .Rprofile
-                            "SHINYSENDER_SERVER"="" # Unset in case set in our .Rprofile
+                            "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com"
     ))
     expect_error(prepareRprofile(orig_profile), "^Invalid proxy string for SHINYSENDER_PROXY_HTTP$")
 
@@ -156,9 +152,7 @@ test_that("URL validation works", {
   test_that("URL trapping works", {
 
     withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
-                            "SHINYSENDER_PROXY_HTTPS"="xxx://yetanotherprox.com",
-                            "SHINYSENDER_PROXY"="", # Unset in case set in our .Rprofile
-                            "SHINYSENDER_SERVER"="" # Unset in case set in our .Rprofile
+                            "SHINYSENDER_PROXY_HTTPS"="xxx://yetanotherprox.com"
     ))
     expect_error(prepareRprofile(orig_profile), "^Invalid proxy string for SHINYSENDER_PROXY_HTTPS$")
 
@@ -169,7 +163,6 @@ test_that("URL validation works", {
   test_that("Proxy specification works with UoM server", {
     withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
                             "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com",
-                            "SHINYSENDER_PROXY"="", # Unset in case set in our .Rprofile
                             "SHINYSENDER_SERVER"="shiny.its.manchester.ac.uk"
     ))
 
@@ -189,12 +182,6 @@ test_that("URL validation works", {
 
   })
   test_that("We don't modify rprofile if no proxy", {
-    # Ensure variables are unset, in case we pick any up from user's .Rprofile
-    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="",
-                            "SHINYSENDER_PROXY_HTTPS"="",
-                            "SHINYSENDER_PROXY"="",
-                            "SHINYSENDER_SERVER"=""
-    ))
     # File should be identical if no proxy specified
     orig_profile <- readLines(ShinySenderRprofilePathStaging())
 
