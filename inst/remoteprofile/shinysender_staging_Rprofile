@@ -1,5 +1,5 @@
 #### Shinysender Loader ####
-## Shinysender Loader Version 0.0.3
+## Shinysender Loader Version 0.0.4
 ## Staging version
 ## This sets the cache dir, but does not turn Packrat on to
 ## rehydrate the packages.
@@ -13,10 +13,9 @@
 # (to avoid recompiling packages for each app)
 # and to enable Packrat on startup
 
-
-# Set up proxy (TODO check if on UoM machine??)
-Sys.setenv(http_proxy="http://webproxy.its.manchester.ac.uk:3128/")
-Sys.setenv(https_proxy="http://webproxy.its.manchester.ac.uk:3128/")
+# Web proxy required for package download will be subsituted
+# in below if SHINYSENDER_PROXY environment variable is set
+## Proxy Placeholder ##
 
 Sys.setenv(R_PACKRAT_CACHE_DIR = "~/R/packratcache")
 Sys.setenv(MAKEFLAGS="-j4")

@@ -14,7 +14,7 @@ Apps published on the server will be public.  To obtain an account on the server
 ## Usage
 
 *You must be connected to Globalprotect to upload an app*
-(You do not need to be connected to Globalprotect to view an app -these are visible worldwide)
+(You do not need to be connected to Globalprotect to view an app; these are visible worldwide)
 
 * Install the shinysender package:
 ```{r}
@@ -54,16 +54,20 @@ local version.  It is usually safe to ignore this.
 
 ## Overriding the default proxy
 
-The package uses the UoM web proxy to download the packages needed during app
-staging.  If you need to override this, set the required server and port in the
+If you are using this library to deploy to the UoM pilot Shiny server, it will automatically
+set the UoM web proxy   to download the packages needed during app
+staging.  If you are using another server, no proxy will be set.  
+
+In either case if you need to override this, set the required server and port in the
 `SHINYSENDER_PROXY` environment variable:
 
 ```{r}
-Sys.setenv(SHINYSENDER_PROXY="myproxy.co.uk:3128")
+Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")
 ```
 
-(If you're using this package for something other than the UoM Shiny service pilot, see the end of this file for further instructions)
 
+(To set the http and https proxies to different servers, instead use SHINYSENDER_PROXY_HTTP and
+SHINYSENDER_PROXY_HTTPS environment variables) 
 
 
 # Advanced workflow
@@ -115,7 +119,7 @@ It is possible to host interactive R Markdown documents, as described [here](htt
 If you are using the [Golem Framework](https://github.com/ThinkR-open/golem) to develop your app, you will need to run
 `golem::add_shinyserver_file()` before deploying your app.
 
-## Non CRAN repositories
+## Non CRAN packages
 
 If you are using non-CRAN packages, you will need to install them using `devtools::install_github()`. For example: `devtools::install_github("tidyverse/ggplot2")` will install the development version of ggplot2.
 
@@ -127,7 +131,7 @@ Locally hosted packages (i.e. an R package source that only exists on your local
 
 If your app uses Bioconductor packages, run `options(repos = BiocManager::repositories())` before deploying your app. 
 
-### .Rprofile
+## .Rprofile
 
 The deployed app uses Packrat to emulate your local development environment. This is set up to cache installed libraries (and their versions) between all your apps. This is set up in the `.Rprofile` file in the deployed app's directory on the server.
 
@@ -144,11 +148,11 @@ sets the cache location and turns Packrat on.  The staging `.Rprofile` also conf
 doesn't set up access to the UoM web proxy, so deployed apps will be unable to access remote sites.  If this functionality is needed the proxy will need to 
 be set in the local `.Rprofile` before deployment).
 
-### Shiny training
+## Shiny training
 
 https://uomresearchit.github.io/r-shiny-course/ contains the notes for a half day workshop on developing Shiny apps.  This may be useful if you haven't used Shiny before
 
-### Embedding your app in an existing webpage
+## Embedding your app in an existing webpage
 
 It isn't (currently) possible to change the URL of deployed apps (i.e. they will always be https://shiny.its.manchester.ac.uk/username/appname).  You may want 
 to embed your app within an existing web page.  This can be done with an iframe.  The fragement of html code below gives an example:
@@ -171,19 +175,87 @@ This will be shown the first time you connect to the service
 
 
 
-### Other servers
+## Other servers
 
-This package was originally written for the University of Manchester Shiny Pilot service.  This is setup to require that we use a web proxy to download and install packages on the remote server.   It is likely that most other services won't require this step.
-
-If you are using this package with another server, download and install the "generic" branch:
-
-```{r}
-install.packages("devtools")  # If you don't already have devtools installed
-devtools::install_github("UoMResearchIT/r-shinysender@generic")
-```
-
-Then proceed as before.  This branch does not set up a web proxy for app deployment by default.
+This package was originally written for the University of Manchester Shiny Pilot service.  If the package is used with this server it will automatically
+set up the required web proxy. If you are using another server, no web proxy will be set by default.
 
 If you need to use a different web proxy, then set _either_ the `SHINYSENDER_PROXY` environment variable, or, if you require a different proxy address for http and https, set `SHINYSENDER_PROXY_HTTP` and `SHINYSENDER_PROXY_HTTPS`.  (setting `SHINYSENDER_PROXY` sets the http and https proxy to the same address). In all cases, the variable should be set to the full URL, including protocol, e.g. `Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")`
 
+### Server setup
+
+This section contains some minimal instructions for setting up a new Shiny server to use with this package.  It should work
+with any server that's setup to deploy apps from users' home directories. The main thing is that this package 
+expects the Shiny, Rmarkdown, Packrat and Devtools libraries to be available to all users.
+
+Note that the URL of the deployed app assumes that the apps are on https, and 
+that the location section of `shiny-server.conf` is set up as in the example below
+
+Using Ubuntu 20.04
+
+Install system libraries for common R packages:
+
+```
+    sudo apt install pandoc pandoc-citeproc libssl-dev libxml2-dev libcurl4-openssl-dev libcairo2 libcairo2-dev git-core zlib1g-dev jags default-jre-headless libopenmpi3 libopenmpi-dev libomp-dev make libgit2-dev libssh2-1-dev libgmp10 libgmp-dev libglpk-dev libpng-dev python gdal-bin libproj-dev libgdal-dev libmpfr-dev libgeos-dev libgeos++-dev libsodium-dev libicu-dev tcl8.6 tk8.6 tk-table libudunits2-dev libv8-dev librsvg2-dev libssh-dev libxt-dev libcairo-5c-dev
+```
+
+
+(This list covers most of the debs needed for common R packages - e.g. tidyverse, sf, etc.
+See: <https://github.com/rstudio/r-system-requirements> and <https://github.com/r-hub/sysreqsdb> for two (different) databases of OS package dependencies for R libraries. `./librarydeps/getdeps.R` will produce a (draft) apt install line for a given set of packages)
+
+
+Install R following instructions at <https://docs.rstudio.com/resources/install-r/> (I went with most recent version (4.1.1 at time of writing). Note `r-base` with Ubuntu 20.04 is very old, so don't use Ubuntu provided packages. Set up the symlinks as described on that page.
+
+Start R as root, and install shiny, rmarkdown, devtools and packrat packages:
+
+`sudo R`
+
+`install.packages(c("shiny", "rmarkdown", "packrat", "devtools"))`
+
+`q()`
+
+Install Shiny server (<https://www.rstudio.com/products/shiny/download-server/ubuntu/>), e.g.:
+
+(check you're getting latest version of Shiny Server - note URL is ubuntu-14.04, even though we're using 20.04)
+
+```
+sudo apt-get install gdebi-core
+wget https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.17.973-amd64.deb
+sudo gdebi shiny-server-1.5.17.973-amd64.deb
+```
+
+(Note that there isn't a repository for shiny-server, so it won't update with `apt-get etc...`, so you'll need to keep an eye on new versions manually.
+The product information email list at: https://www.rstudio.com/about/subscription-management/  should inform you when an update is out.)
+
+Check Shiny server is working correctly - go to <http://server:3838>, and check the Shiny and RMarkdown apps appear in frames on the right hand side.
+
+Setup timezone on the server
+
+`sudo dpkg-reconfigure tzdata`
+
+
+Edit `/etc/shiny-server/shiny-server.conf`:
+
+    # Instruct Shiny Server to run applications as the user "shiny"
+    run_as shiny;
+
+    # Define a server that listens on port 3838 on localhost
+    # You will probably want to put this behind a reverse proxy, or listen on all interfaces if accessing directly
+    server {
+      listen 3838 127.0.0.1;
+
+
+      location / {
+        run_as :HOME_USER:;
+        user_dirs;
+        directory_index off;
+      }
+
+    }
+
+Restart Shiny Server `sudo service shiny-server restart`
+
+Make it so that user's cannot read others' home directories (<https://superuser.com/a/615990>): update `DIR_MODE` to `DIR_MODE=0750` in `/etc/adduser.conf` and change permissions on any existing homedirs.
+
+(ShinyServer "su"s to the user when serving apps from `~/ShinyApps`, so this will still work)
 

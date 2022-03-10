@@ -39,7 +39,7 @@ test_that("Remote directory creation works", {
 
 })
 
-test_that("packrat detection works", {
+test_that("remote package detection works", {
 
 
   stub(ss_setupserver, 'does_directory_exist', FALSE)
@@ -48,7 +48,7 @@ test_that("packrat detection works", {
 
   # Setup server
   expect_error(ss_setupserver(fakessh()),
-               "Packrat is not installed on the remote server")
+               "The following packages are not installed on the remote server. Please contact the server administrator: packrat, shiny, devtools, rmarkdown")
 
 
 

@@ -127,8 +127,8 @@ ss_uploadappdir <- function(session, appDir, appName,
     # Setup the app's .Rprofile
     message("Setting up staging environment")
 
-    # TODO - this is a temporary fix to workaround issues with the default
-    # proxy.
+
+    # Setup any web proxy needed for staging
 
     # Path to the file containing the lines we need to add to the
     # remote .Rprofile for staging
@@ -136,20 +136,13 @@ ss_uploadappdir <- function(session, appDir, appName,
     # Read the default staging .Rprofile in
     our_profile <- readLines(staging_rprofile_path)
 
+    # Setup proxy
+
+    modified_profile <- prepareRprofile(our_profile)
+
     # tempfile to put the staging profile in
     temp_profile_path <- tempfile()
-
-    # Override the web proxy on the remote server if SHINYSENDER_PROXY environment
-    # variable is set
-    remote_proxy = Sys.getenv("SHINYSENDER_PROXY")
-    if(remote_proxy != ""){
-      message("Overriding default proxy for staging")
-      # Update the proxy
-      our_profile <- gsub("http://webproxy.its.manchester.ac.uk:3128", Sys.getenv("SHINYSENDER_PROXY"), our_profile, fixed = TRUE)
-
-    }
-
-    writeLines(our_profile, temp_profile_path)
+    writeLines(modified_profile, temp_profile_path)
 
     ss_setupRprofile(session,
                      remotepath = paste0("ShinyApps_staging/", appNameStaging),
@@ -170,12 +163,14 @@ ss_uploadappdir <- function(session, appDir, appName,
       check_pat_expiry(pat = github_pat)
 
     # Prepare code to insert set the environment variable
+    # Note that we don't put the PAT in the staging .Rprofile, to
+    # avoid the risk of it being saved on the remote
+    # Instead we turn off bash history, and set it on the command line
+    # for the app deployment.
     github_pat_insert = ""
     if(github_pat != "")
       github_pat_insert = paste0('Sys.setenv(GITHUB_PAT="',
                                  github_pat, '");')
-
-
 
     # Project parameter doesn't seem to work, so cd to project directory
     # first
@@ -233,10 +228,10 @@ ss_uploadappdir <- function(session, appDir, appName,
   sessionServer <- sessionInfo$host
 
   if(!is.null(sessionUser) & !is.null(sessionServer)){
-      remoteURL <- paste0("https://", sessionServer, "/",
-                          sessionUser, "/", appName)
-      message("App deployed to:")
-      message(remoteURL)
+    remoteURL <- paste0("https://", sessionServer, "/",
+                        sessionUser, "/", appName)
+    message("App deployed to:")
+    message(remoteURL)
   }
 
 
@@ -261,4 +256,118 @@ tempBare <- function(){
   tempbare <- gsub("[^[:alnum:]]", "", tempfilepath)
 
   return(tempbare)
+}
+
+
+#' Prepare a .Rprofile for staging
+#'
+#' This function takes an .Rprofile and
+#' modifies it with any proxy setup that is required,
+#' using the look-up included in the package and using the
+#' local environment variables.
+#'
+#' We first test the SHINYSENDER_SERVER environment variable against the servers
+#' specified in shinysender:::server_proxy_overrides.  If SHINYSENDER_SERVER matches
+#' the name of any of the entries in this vector, we default to using its value as
+#' both the http and https proxy.  This is used to handle the fact that the UoM pilot
+#' server requires a web proxy.
+#'
+#' This can be overriden by setting the environment variable SHINYSENDER_PROXY
+#' (to set both http and https proxy
+#' to the same value on the remote server),
+#' or SHINYSENDER_HTTP_PROXY and/or SHINYSENDER_HTTPS_PROXY are set to set
+#'  each environment variable independently.
+#'
+#' In any case, the full URL for the proxy server(s) should be given, e.g.
+#' "http://myproxy.com:3128"
+#'
+#' @param our_profile Character vector containing the .Rprofile you wish to
+#' modify
+#'
+#' @return A character vector containing the (potentially) modified .Rprofile
+prepareRprofile <- function(our_profile){
+
+
+  remote_proxy = Sys.getenv("SHINYSENDER_PROXY")
+  remote_proxy_http = Sys.getenv("SHINYSENDER_PROXY_HTTP")
+  remote_proxy_https = Sys.getenv("SHINYSENDER_PROXY_HTTPS")
+
+  if(remote_proxy != ""){
+    if(remote_proxy_http != "" | remote_proxy_https != "" ){
+      stop("If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset")
+    }
+  }
+
+  # If any of the proxy variables have been specified we'll use them
+  # regardless of whether we find an override
+  setproxy = FALSE
+  if(remote_proxy != "" | remote_proxy_http != "" | remote_proxy_https != ""){
+    setproxy = TRUE
+  }
+
+
+  if(!setproxy) {
+    # Get the remote server, to test if we need to automatically set a proxy
+    # Note this will set both http and https proxies
+    remote_server = Sys.getenv("SHINYSENDER_SERVER")
+
+    remote_proxy_override = server_proxy_overrides[names(server_proxy_overrides) == remote_server]
+
+    if(length(remote_proxy_override) > 1)
+      stop("Duplicate proxy overrides detected for server")
+
+    if(length(remote_proxy_override) == 0)
+      remote_proxy_override = ""
+
+    remote_proxy = remote_proxy_override
+
+
+  }
+
+
+  # Lines containing the proxy spec will be added to this vector
+  proxy_fragment <- character(0)
+
+  # Set http/https proxies if single proxy specified
+  if(remote_proxy != ""){
+    if(remote_proxy_http != "" | remote_proxy_https != "" ){
+      stop("If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset")
+    }
+
+    remote_proxy_http = remote_proxy
+    remote_proxy_https = remote_proxy
+
+  }
+
+  # TODO check it's a valid URL.
+  if(remote_proxy_http != ""){
+    proxystring <- paste0('Sys.setenv(http_proxy="', remote_proxy_http, '")')
+    proxy_fragment <- c(proxy_fragment, proxystring)
+
+  }
+
+  if(remote_proxy_https != ""){
+    proxystring <- paste0('Sys.setenv(https_proxy="', remote_proxy_https, '")')
+    proxy_fragment <- c(proxy_fragment, proxystring)
+
+  }
+
+
+  if(length(proxy_fragment) > 0){
+    message("Overriding default proxy for staging")
+    # Update the proxy
+
+    # Find where the stub is
+    stubstring <- "## Proxy Placeholder ##"
+    proxypos <- grep(stubstring, our_profile, fixed = TRUE)
+    if (length(proxypos) != 1){
+      stop("Could not find placeholder to add web proxy")
+    }
+
+    our_profile <- append(our_profile, proxy_fragment, after = proxypos)
+
+  }
+
+  return(our_profile)
+
 }
