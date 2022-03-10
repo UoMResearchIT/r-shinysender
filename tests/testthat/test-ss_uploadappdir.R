@@ -1,3 +1,17 @@
+
+test_that("URL validation works", {
+
+  expect_true(validate_url("http://www.goodurl.com"))
+  expect_true(validate_url("https://www.goodurl.com"))
+  expect_false(validate_url("ftp://badurl.com"))
+  # We require a protocol
+  expect_false(validate_url("www.goodurl.com"))
+  expect_false(validate_url("www.goodurl.com"))
+
+  expect_false(validate_url("hello'bobby'tables"))
+
+})
+
 {
 
   # Unset all of the environment variables we might be using
@@ -128,6 +142,30 @@
 
   })
 
+  test_that("URL trapping works", {
+
+    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="xxx://anotherprox.com",
+                            "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com",
+                            "SHINYSENDER_PROXY"="", # Unset in case set in our .Rprofile
+                            "SHINYSENDER_SERVER"="" # Unset in case set in our .Rprofile
+    ))
+    expect_error(prepareRprofile(orig_profile), "^Invalid proxy string for SHINYSENDER_PROXY_HTTP$")
+
+  })
+
+  test_that("URL trapping works", {
+
+    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
+                            "SHINYSENDER_PROXY_HTTPS"="xxx://yetanotherprox.com",
+                            "SHINYSENDER_PROXY"="", # Unset in case set in our .Rprofile
+                            "SHINYSENDER_SERVER"="" # Unset in case set in our .Rprofile
+    ))
+    expect_error(prepareRprofile(orig_profile), "^Invalid proxy string for SHINYSENDER_PROXY_HTTPS$")
+
+  })
+
+
+
   test_that("Proxy specification works with UoM server", {
     withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
                             "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com",
@@ -254,3 +292,5 @@
 
 
 }
+
+
