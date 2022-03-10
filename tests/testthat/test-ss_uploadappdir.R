@@ -59,8 +59,8 @@ test_that("URL validation works", {
       expect_warning(ss_uploadappdir(fakessh(),
                                      create_local_shiny_app(),
                                      "App1"),
-                     "An app with the same name but different case exists on the server"), # Warning we want
-      "Upload failed") # Since we can't actually upload to a fake ssh connection
+                     "^An app with the same name but different case exists on the server"), # Warning we want
+      "^Upload failed$") # Since we can't actually upload to a fake ssh connection
 
 
   })
@@ -71,7 +71,7 @@ test_that("URL validation works", {
                            "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com"))
     expect_error(
       prepareRprofile(ShinySenderRprofilePathStaging()),
-      "If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset"
+      "^If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset$"
     )
 
   })
@@ -81,7 +81,7 @@ test_that("URL validation works", {
                            "SHINYSENDER_PROXY_HTTPS"="http://anotherprox.com"))
     expect_error(
       prepareRprofile(ShinySenderRprofilePathStaging()),
-      "If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset"
+      "^If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset$"
     )
 
   })
@@ -93,7 +93,7 @@ test_that("URL validation works", {
     ))
     expect_error(
       prepareRprofile(ShinySenderRprofilePathStaging()),
-      "If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset"
+      "^If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset$"
     )
 
   })
@@ -211,7 +211,7 @@ test_that("URL validation works", {
     orig_profile <- readLines(ShinySenderRprofilePath())
 
     expect_error(prepareRprofile(orig_profile),
-                 "Could not find placeholder to add web proxy")
+                 "^Could not find placeholder to add web proxy$")
 
 
   })
