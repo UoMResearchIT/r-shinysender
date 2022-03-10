@@ -341,12 +341,22 @@ prepareRprofile <- function(our_profile){
 
   # TODO check it's a valid URL.
   if(remote_proxy_http != ""){
+
+    if(!validate_url(remote_proxy_http)){
+      stop("Invalid proxy string for SHINYSENDER_PROXY_HTTP")
+    }
+
     proxystring <- paste0('Sys.setenv(http_proxy="', remote_proxy_http, '")')
     proxy_fragment <- c(proxy_fragment, proxystring)
 
   }
 
   if(remote_proxy_https != ""){
+
+    if(!validate_url(remote_proxy_https)){
+      stop("Invalid proxy string for SHINYSENDER_PROXY_HTTPS")
+    }
+
     proxystring <- paste0('Sys.setenv(https_proxy="', remote_proxy_https, '")')
     proxy_fragment <- c(proxy_fragment, proxystring)
 
@@ -369,5 +379,23 @@ prepareRprofile <- function(our_profile){
   }
 
   return(our_profile)
+
+}
+
+
+#' Validate a URL
+#'
+#' Based on regex at https://cran.r-project.org/web/packages/rex/vignettes/url_parsing.html
+#' with ftp removed
+#'
+#' @param url The URL(s) to validate
+#' @return TRUE if potentially valid URL, FALSE otherwise
+#'
+validate_url <- function(url){
+
+
+  urlregex <- "^(?:(?:http(?:s)?)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]){2,})(?::(?:\\d){2,5})?(?:/(?:\\S)*)?$"
+
+  grepl(urlregex, url)
 
 }
