@@ -13,7 +13,7 @@ Apps published on the server will be public.  To obtain an account on the server
 
 ## Usage
 
-*You must be connected to Globalprotect to upload an app*
+*You must be connected to Globalprotect (or be on the campus network) to upload an app*
 (You do not need to be connected to Globalprotect to view an app; these are visible worldwide)
 
 * Install the shinysender package:
