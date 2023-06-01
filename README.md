@@ -7,7 +7,7 @@
 <!-- badges: end -->
 
 The aim of this package is to provide tools and a Shiny app to allow users to easily send their Shiny apps to the University of Manchester's pilot Shiny server.
-Apps published on the server will be public.  To obtain an account on the server please email david.mawdsley@manchester.ac.uk to request access.
+Apps published on the server will be public.  To obtain an account on the server please email its-ri-team@manchester.ac.uk to request access.
 
 (If you wish to use the package for another Shiny server, please see the notes at the end of this file)
 
