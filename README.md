@@ -52,23 +52,6 @@ environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appn
 You may get a warning about the version of R on the server being different to your
 local version.  It is usually safe to ignore this.
 
-## Overriding the default proxy
-
-If you are using this library to deploy to the UoM pilot Shiny server, it will automatically
-set the UoM web proxy   to download the packages needed during app
-staging.  If you are using another server, no proxy will be set.  
-
-In either case if you need to override this, set the required server and port in the
-`SHINYSENDER_PROXY` environment variable:
-
-```{r}
-Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")
-```
-
-
-(To set the http and https proxies to different servers, instead use SHINYSENDER_PROXY_HTTP and
-SHINYSENDER_PROXY_HTTPS environment variables) 
-
 
 # Advanced workflow
 
@@ -177,10 +160,17 @@ This will be shown the first time you connect to the service
 
 ## Other servers
 
-This package was originally written for the University of Manchester Shiny Pilot service.  If the package is used with this server it will automatically
-set up the required web proxy. If you are using another server, no web proxy will be set by default.
+This package was originally written for the University of Manchester Shiny Pilot service.
 
-If you need to use a different web proxy, then set _either_ the `SHINYSENDER_PROXY` environment variable, or, if you require a different proxy address for http and https, set `SHINYSENDER_PROXY_HTTP` and `SHINYSENDER_PROXY_HTTPS`.  (setting `SHINYSENDER_PROXY` sets the http and https proxy to the same address). In all cases, the variable should be set to the full URL, including protocol, e.g. `Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")`
+On other servers, depending on the configuration, you might need to use a web proxy to download the packages needed during app
+staging. If this is the case, you can do so by setting the required server and port in the
+`SHINYSENDER_PROXY` environment variable:
+
+```{r}
+Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")
+```
+To set the http and https proxies to different servers, instead use SHINYSENDER_PROXY_HTTP and
+SHINYSENDER_PROXY_HTTPS environment variables. In all cases, the variable should be set to the full URL, including protocol (as in the example above).
 
 ### Server setup
 
