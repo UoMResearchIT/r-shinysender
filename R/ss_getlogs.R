@@ -14,14 +14,14 @@ ss_getlogs <- function(session,
   alllogs <- ss_listdir(session, "~/ShinyApps/log")
 
   # Parse the filenames into a data frame
-  proto <- data.frame(appName=character(),
-                      user=character(),
-                      date=integer(),
-                      time=integer(),
-                      pid=integer())
+  proto <- data.frame(appName = character(),
+                      user = character(),
+                      date = integer(),
+                      time = integer(),
+                      pid = integer())
   logdata <- utils::strcapture("(\\w+)-(\\w+)-(\\d+)-(\\d+)-(\\d+)\\.log",
                         alllogs, proto)
-  logdata <- cbind( logname=alllogs, logdata )
+  logdata <- cbind( logname = alllogs, logdata )
 
   logdata$datetime <- as.POSIXlt(paste(logdata$date,
                                        logdata$time),
@@ -34,15 +34,15 @@ ss_getlogs <- function(session,
   # Sort by date and time
   appsort <- applogs[order(applogs$datetime),]
 
-  if(what == "list"){ # data frame of log files for the app
+  if (what == "list") { # data frame of log files for the app
     return(appsort)
   }
 
-  if(is.numeric(what)) { # Return log relating to a row index
+  if (is.numeric(what)) { # Return log relating to a row index
 
     wantfile <- appsort[as.numeric(rownames(appsort)) == what, "logname"]
 
-  } else if(what == "last"){ # Return most recent log for app
+  } else if (what == "last") { # Return most recent log for app
     # Most recent will be last
     wantfile <- appsort[nrow(appsort), "logname"]
   } else {

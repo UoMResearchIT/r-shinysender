@@ -39,7 +39,7 @@ create_local_shiny_app  <- function(dir = fs::file_temp(), env = parent.frame(),
   )
 
   # Spit out to multiple / single files
-  if(!singlefile) {
+  if (!singlefile) {
     uiConn <- file("ui.R")
     serverConn <- file("server.R")
   } else {
@@ -52,7 +52,7 @@ create_local_shiny_app  <- function(dir = fs::file_temp(), env = parent.frame(),
 
 
   close(uiConn)
-  if(!singlefile) # Can't close a file twice
+  if (!singlefile) # Can't close a file twice
     close(serverConn)
 
   withr::defer(setwd(old_project_dir), envir = env) # -B
@@ -64,7 +64,7 @@ create_local_shiny_app  <- function(dir = fs::file_temp(), env = parent.frame(),
 
 
 # Return a fake ssh connection
-fakessh <- function(){
+fakessh <- function() {
 
   dummysession <- "dummy ssh session"
   class(dummysession) <- "ssh"

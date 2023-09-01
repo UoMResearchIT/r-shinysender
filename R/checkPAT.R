@@ -28,14 +28,14 @@ get_pat_expiry <- function(pat  = Sys.getenv("GITHUB_PAT")) {
 check_pat_expiry <- function( pat = Sys.getenv("GITHUB_PAT"),
                               minweeks = 2) {
 
-  if(requireNamespace("httr", quietly = TRUE)) {
+  if (requireNamespace("httr", quietly = TRUE)) {
     expiresat <- get_pat_expiry(pat = pat)
 
-    if("POSIXct" %in% class(expiresat)) {
+    if ("POSIXct" %in% class(expiresat)) {
       weeksleft <- difftime(expiresat, Sys.time(), units = "weeks")
-      if(weeksleft < 0) {
+      if (weeksleft < 0) {
         stop("Github PAT has expired")
-      } else if(weeksleft < minweeks ) {
+      } else if (weeksleft < minweeks ) {
         daysleft <- floor(difftime(expiresat, Sys.time(), units = "days"))
         warning("Github PAT expires in ", daysleft, " days.")
       }

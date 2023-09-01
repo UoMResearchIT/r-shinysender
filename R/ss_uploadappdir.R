@@ -173,7 +173,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     # for the app deployment.
     github_pat_insert = ""
     if (github_pat != "")
-      github_pat_insert = paste0('Sys.setenv(GITHUB_PAT="', github_pat, '"); ')
+      github_pat_insert = paste0('Sys.setenv(GITHUB_PAT = "', github_pat, '"); ')
 
     # Project parameter doesn't seem to work, so cd to project directory first
     # Turn off history for this since we don't want the PAT to be saved anywhere
@@ -352,7 +352,7 @@ prepareRprofile <- function(our_profile) {
       stop("Invalid proxy string for SHINYSENDER_PROXY_HTTP")
     }
 
-    proxystring <- paste0('Sys.setenv(http_proxy="', remote_proxy_http, '")')
+    proxystring <- paste0('Sys.setenv(http_proxy = "', remote_proxy_http, '")')
     proxy_fragment <- c(proxy_fragment, proxystring)
 
   }
@@ -363,7 +363,7 @@ prepareRprofile <- function(our_profile) {
       stop("Invalid proxy string for SHINYSENDER_PROXY_HTTPS")
     }
 
-    proxystring <- paste0('Sys.setenv(https_proxy="', remote_proxy_https, '")')
+    proxystring <- paste0('Sys.setenv(https_proxy = "', remote_proxy_https, '")')
     proxy_fragment <- c(proxy_fragment, proxystring)
 
   }
@@ -400,7 +400,7 @@ prepareRprofile <- function(our_profile) {
 validate_url <- function(url) {
 
 
-  urlregex <- "^(?:(?:http(?:s)?)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]){2,})(?::(?:\\d){2,5})?(?:/(?:\\S)*)?$"
+  urlregex <- "^(?:(?:http(?:s)?)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]) {2,})(?::(?:\\d) {2,5})?(?:/(?:\\S)*)?$"
 
   grepl(urlregex, url)
 

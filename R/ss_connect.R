@@ -17,18 +17,18 @@
 #' @export
 ss_connect <- function(username = getUserName(),
                        server = Sys.getenv("SHINYSENDER_SERVER"),
-                       keyfile = NULL){
+                       keyfile = NULL) {
 
   errstring <- ""
-  if(server == "")
+  if (server == "")
     errstring <- paste0(errstring,
                         "Pass server parameter, or set SHINYSENDER_SERVER environment variable\n")
 
-  if(username == "")
+  if (username == "")
     errstring <- paste0(errstring,
                         "Pass username parameter.  USERNAME environment variable was not set\n")
 
-  if(errstring != "")
+  if (errstring ! = "")
     stop(errstring)
 
   conname = paste0(username, "@", server)
@@ -55,18 +55,18 @@ ss_connect <- function(username = getUserName(),
 #' N    Y         Windows
 #'
 #' @return The user name
-getUserName <- function(){
+getUserName <- function() {
 
   # Use the username set in SHINYSENDER_USER in preference to
   # anything else
   shinyuser <- Sys.getenv("SHINYSENDER_USER")
 
-  if(shinyuser != "") {
+  if (shinyuser ! = "") {
     # Check if user specified username is a valid login name
     # regex taken from NAME_REGEX default in man adduser.conf
     # Should we be testing USER/USERNAME against this too?
     # Presumably user could change these if so inclined...
-    if(!grepl("^[a-z][-a-z0-9]*$", shinyuser)){
+    if (!grepl("^[a-z][-a-z0-9]*$", shinyuser)) {
       stop("Invalid username specified in SHINYSENDER_USER")
     }
 
@@ -81,13 +81,13 @@ getUserName <- function(){
   }
 
   # Both match - probably linux
-  if(user == username) {
+  if (user == username) {
     return(user)
   }
 
-  if(nchar(user) > 0 & nchar(username) == 0 )
+  if (nchar(user) > 0 & nchar(username) == 0 )
     return(user)
-  else if(nchar(username) > 0 & nchar(user) == 0 )
+  else if (nchar(username) > 0 & nchar(user) == 0 )
     return(username)
   else
     stop("user and username variables both set, but not equal")

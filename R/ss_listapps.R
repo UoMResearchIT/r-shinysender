@@ -12,7 +12,7 @@
 #'
 #' @export
 ss_listdir <- function(session,
-                        appdir = "~/ShinyApps"){
+                        appdir = "~/ShinyApps") {
 
   # TODO Handle no ShinyApps directory
   # TODO verify appdir is a valid directory name
@@ -46,14 +46,14 @@ ss_listdir <- function(session,
 #'
 #' @export
 ss_appreport <- function(session,
-                         appdir = "~/ShinyApps"){
+                         appdir = "~/ShinyApps") {
 
 
   possibleApps <- ss_listdir(session, appdir)
 
   appinfo <- list()
   i <- 1
-  for(p in possibleApps){
+  for (p in possibleApps) {
 
     cmd <- paste0("ls ", appdir, "/", p)
     out <- ssh::ssh_exec_internal(session, cmd)

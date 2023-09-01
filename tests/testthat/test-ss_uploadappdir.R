@@ -17,10 +17,10 @@ test_that("URL validation works", {
   # Unset all of the environment variables we might be using
   # in these tests, in case we're picking them up from the user's
   # .Rprofile
-  withr::local_envvar( c("SHINYSENDER_PROXY"="",
-                         "SHINYSENDER_PROXY_HTTP"="",
-                         "SHINYSENDER_PROXY_HTTPS"="",
-                         "SHINYSENDER_SERVER"=""
+  withr::local_envvar( c("SHINYSENDER_PROXY" = "",
+                         "SHINYSENDER_PROXY_HTTP" = "",
+                         "SHINYSENDER_PROXY_HTTPS" = "",
+                         "SHINYSENDER_SERVER" = ""
   ))
 
 
@@ -44,7 +44,7 @@ test_that("URL validation works", {
 
     testapp <- create_local_shiny_app()
     expect_warning(ss_uploadappdir(fakessh, testapp, "myapp"),
-                   regexp= "does not exist\\. Run ss_setupserver\\(\\) to create")
+                   regexp = "does not exist\\. Run ss_setupserver\\(\\) to create")
 
 
   })
@@ -67,8 +67,8 @@ test_that("URL validation works", {
 
 
   test_that("Proxy specification works", {
-    withr::local_envvar( c("SHINYSENDER_PROXY"="http://myproxy.com:3128",
-                           "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com"))
+    withr::local_envvar( c("SHINYSENDER_PROXY" = "http://myproxy.com:3128",
+                           "SHINYSENDER_PROXY_HTTP" = "http://anotherprox.com"))
     expect_error(
       prepareRprofile(ShinySenderRprofilePathStaging()),
       "^If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset$"
@@ -77,8 +77,8 @@ test_that("URL validation works", {
   })
 
   test_that("Proxy specification works", {
-    withr::local_envvar( c("SHINYSENDER_PROXY"="http://myproxy.com:3128",
-                           "SHINYSENDER_PROXY_HTTPS"="http://anotherprox.com"))
+    withr::local_envvar( c("SHINYSENDER_PROXY" = "http://myproxy.com:3128",
+                           "SHINYSENDER_PROXY_HTTPS" = "http://anotherprox.com"))
     expect_error(
       prepareRprofile(ShinySenderRprofilePathStaging()),
       "^If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset$"
@@ -87,9 +87,9 @@ test_that("URL validation works", {
   })
 
   test_that("Proxy specification works", {
-    withr::local_envvar( c("SHINYSENDER_PROXY"="http://myproxy.com:3128",
-                           "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
-                           "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com"
+    withr::local_envvar( c("SHINYSENDER_PROXY" = "http://myproxy.com:3128",
+                           "SHINYSENDER_PROXY_HTTP" = "http://anotherprox.com",
+                           "SHINYSENDER_PROXY_HTTPS" = "http://yetanotherprox.com"
     ))
     expect_error(
       prepareRprofile(ShinySenderRprofilePathStaging()),
@@ -100,7 +100,7 @@ test_that("URL validation works", {
 
 
   test_that("Proxy specification works", {
-    withr::local_envvar( c("SHINYSENDER_PROXY"="http://myproxy.com:3128" ))
+    withr::local_envvar( c("SHINYSENDER_PROXY" = "http://myproxy.com:3128" ))
 
 
     orig_profile <- readLines(ShinySenderRprofilePathStaging())
@@ -108,20 +108,20 @@ test_that("URL validation works", {
     mod_profile <- prepareRprofile(orig_profile)
 
     expect_match(mod_profile,
-                 'Sys.setenv(http_proxy="http://myproxy.com:3128")',
+                 'Sys.setenv(http_proxy = "http://myproxy.com:3128")',
                  fixed = TRUE, all = FALSE
     )
 
     expect_match(mod_profile,
-                 'Sys.setenv(https_proxy="http://myproxy.com:3128")',
+                 'Sys.setenv(https_proxy = "http://myproxy.com:3128")',
                  fixed = TRUE, all = FALSE
     )
 
   })
 
   test_that("Proxy specification works", {
-    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
-                            "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com"
+    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP" = "http://anotherprox.com",
+                            "SHINYSENDER_PROXY_HTTPS" = "http://yetanotherprox.com"
     ))
 
     orig_profile <- readLines(ShinySenderRprofilePathStaging())
@@ -129,12 +129,12 @@ test_that("URL validation works", {
     mod_profile <- prepareRprofile(orig_profile)
 
     expect_match(mod_profile,
-                 'Sys.setenv(http_proxy="http://anotherprox.com',
+                 'Sys.setenv(http_proxy = "http://anotherprox.com',
                  fixed = TRUE, all = FALSE
     )
 
     expect_match(mod_profile,
-                 'Sys.setenv(https_proxy="http://yetanotherprox.com',
+                 'Sys.setenv(https_proxy = "http://yetanotherprox.com',
                  fixed = TRUE, all = FALSE
     )
 
@@ -142,8 +142,8 @@ test_that("URL validation works", {
 
   test_that("URL trapping works", {
 
-    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="xxx://anotherprox.com",
-                            "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com"
+    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP" = "xxx://anotherprox.com",
+                            "SHINYSENDER_PROXY_HTTPS" = "http://yetanotherprox.com"
     ))
     expect_error(prepareRprofile(orig_profile), "^Invalid proxy string for SHINYSENDER_PROXY_HTTP$")
 
@@ -151,8 +151,8 @@ test_that("URL validation works", {
 
   test_that("URL trapping works", {
 
-    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
-                            "SHINYSENDER_PROXY_HTTPS"="xxx://yetanotherprox.com"
+    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP" = "http://anotherprox.com",
+                            "SHINYSENDER_PROXY_HTTPS" = "xxx://yetanotherprox.com"
     ))
     expect_error(prepareRprofile(orig_profile), "^Invalid proxy string for SHINYSENDER_PROXY_HTTPS$")
 
@@ -161,9 +161,9 @@ test_that("URL validation works", {
 
 
   test_that("Proxy specification works with UoM server", {
-    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP"="http://anotherprox.com",
-                            "SHINYSENDER_PROXY_HTTPS"="http://yetanotherprox.com",
-                            "SHINYSENDER_SERVER"="shiny.its.manchester.ac.uk"
+    withr::local_envvar( c( "SHINYSENDER_PROXY_HTTP" = "http://anotherprox.com",
+                            "SHINYSENDER_PROXY_HTTPS" = "http://yetanotherprox.com",
+                            "SHINYSENDER_SERVER" = "shiny.its.manchester.ac.uk"
     ))
 
     orig_profile <- readLines(ShinySenderRprofilePathStaging())
@@ -171,12 +171,12 @@ test_that("URL validation works", {
     mod_profile <- prepareRprofile(orig_profile)
 
     expect_match(mod_profile,
-                 'Sys.setenv(http_proxy="http://anotherprox.com',
+                 'Sys.setenv(http_proxy = "http://anotherprox.com',
                  fixed = TRUE, all = FALSE
     )
 
     expect_match(mod_profile,
-                 'Sys.setenv(https_proxy="http://yetanotherprox.com',
+                 'Sys.setenv(https_proxy = "http://yetanotherprox.com',
                  fixed = TRUE, all = FALSE
     )
 
@@ -193,7 +193,7 @@ test_that("URL validation works", {
 
 
   test_that("Modification fails if there's no placeholder",{
-    withr::local_envvar( c("SHINYSENDER_PROXY"="http://myproxy.com:3128" ))
+    withr::local_envvar( c("SHINYSENDER_PROXY" = "http://myproxy.com:3128" ))
     # The deployment Rprofile doesn't have a proxy placeholder
     orig_profile <- readLines(ShinySenderRprofilePath())
 
@@ -205,20 +205,20 @@ test_that("URL validation works", {
 
   test_that("We can still override the default proxy if we're using a specific server",{
 
-    withr::local_envvar("SHINYSENDER_SERVER"="shiny.its.manchester.ac.uk",
-                        "SHINYSENDER_PROXY"="http://myspecialproxy.co.uk:1234")
+    withr::local_envvar("SHINYSENDER_SERVER" = "shiny.its.manchester.ac.uk",
+                        "SHINYSENDER_PROXY" = "http://myspecialproxy.co.uk:1234")
 
     orig_profile <- readLines(ShinySenderRprofilePathStaging())
 
     mod_profile <- prepareRprofile(orig_profile)
 
     expect_match(mod_profile,
-                 'Sys.setenv(http_proxy="http://myspecialproxy.co.uk:1234")',
+                 'Sys.setenv(http_proxy = "http://myspecialproxy.co.uk:1234")',
                  fixed = TRUE, all = FALSE
     )
 
     expect_match(mod_profile,
-                 'Sys.setenv(https_proxy="http://myspecialproxy.co.uk:1234")',
+                 'Sys.setenv(https_proxy = "http://myspecialproxy.co.uk:1234")',
                  fixed = TRUE, all = FALSE
     )
 

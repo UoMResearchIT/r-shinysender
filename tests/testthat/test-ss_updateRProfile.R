@@ -11,7 +11,7 @@ test_that("RProfile updating works", {
     character(0)
   )
 
-  for(Rprofile in Rprofiles) {
+  for (Rprofile in Rprofiles) {
     #Shinysenderize it
     RprofileFilled <- shinysenderize_Rprofile(Rprofile)
 

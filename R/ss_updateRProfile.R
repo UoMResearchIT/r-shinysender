@@ -3,12 +3,12 @@
 #' @param appname a valid shiny app name, or "~" to return home directory
 #'
 #' @return A path wrt ~
-appnameToPath <- function(appname){
+appnameToPath <- function(appname) {
 
   cleanloc <- NULL
-  if(appname == "~") {
+  if (appname == "~") {
     cleanloc = "~"
-  } else if(ss_isAppNameValid(appname) ){
+  } else if (ss_isAppNameValid(appname) ) {
     cleanloc = paste0("~/ShinyApps/", appname, "")
   } else {
     stop("Invalid application name")
@@ -33,19 +33,19 @@ get_remote_Rprofile <- function(session,
                                 appname = "~",
                                 remotepath = NULL,
                                 warnmissing = FALSE
-                                ){
+                                ) {
 
-  if(!(xor(is.null(appname),
-             is.null(remotepath)))){
+  if (!(xor(is.null(appname),
+             is.null(remotepath)))) {
     stop("Must specify appname or remotepath, not both")
   }
 
-  if(!is.null(appname)) {
+  if (!is.null(appname)) {
     # Check we're getting either the home .Rprofile or one for a potentially valid app name
     cleanloc <- appnameToPath(appname)
     # Create full path
     cleanloc <- paste0(cleanloc, "/.Rprofile")
-  } else if(!is.null(remotepath)){
+  } else if (!is.null(remotepath)) {
     cleanloc <-  paste0(remotepath, "/.Rprofile")
   }
   remotecommand <- paste0("cat ", cleanloc)
@@ -54,7 +54,7 @@ get_remote_Rprofile <- function(session,
                                                 command = remotecommand,
                                                 error = FALSE)
 
-  if(warnmissing & raw_remote.Rprofile$status == 1){
+  if (warnmissing & raw_remote.Rprofile$status == 1) {
     message("No remote .Rprofile found")
   }
 

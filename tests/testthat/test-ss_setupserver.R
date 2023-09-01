@@ -2,9 +2,9 @@ test_that("Remote package installation testing works", {
 
 
 
-  has_package <- function(session, remoteRRun){
+  has_package <- function(session, remoteRRun) {
     # ssh_exec_wait returns shell's exit code, i.e. 0 for success
-    if(grepl("installedPackage", remoteRRun))
+    if (grepl("installedPackage", remoteRRun))
       return(0)
     else
       return(1)

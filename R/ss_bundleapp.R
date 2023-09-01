@@ -4,7 +4,7 @@
 #' a manifest.json file with dependencies (taken from `renv`)
 #'
 #' *NOTE*: in order to include `packrat` dependencies, make sure to
-#' set `Sys.setenv(RSCONNECT_PACKRAT=TRUE)`
+#' set `Sys.setenv(RSCONNECT_PACKRAT = TRUE)`
 #'
 #' This function is a wrapper around some of the (internal) functionality
 #' of [rsconnect][pkg::rsconnect]
