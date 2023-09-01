@@ -1,0 +1,17 @@
+#### Shinysender Loader ####
+#
+# sandbox must be disabled, otherwise renv::restore tries to
+# make a copy of the shared /opt/R/<version> library inside
+# the write-protected /opt/R/<version>/.renv
+# an alternative would be setting a local RENV_PATHS_SANDBOX
+
+RENV_PATHS_CACHE = "~/R/renvcache"
+RENV_CONFIG_SANDBOX_ENABLED = FALSE
+# RENV_CONFIG_SHIMS_ENABLED = FALSE
+RENV_CONFIG_USER_LIBRARY = TRUE
+# RENV_CONFIG_USER_PROFILE = TRUE
+MAKEFLAGS = "-j4"
+
+#### Shinysender Loader End ####
+
+

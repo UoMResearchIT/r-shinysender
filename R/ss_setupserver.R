@@ -1,12 +1,12 @@
-#' Set up .Rprofile on remote server, and create ~/ShinyApps if it doesn't
+#' Set up `.Rprofile` on remote server, and create `~/ShinyApps` if it doesn't
 #' exist
 #'
-#' Set up the user's environment with an appropriate .Rprofile to
-#' load packrat libraries when running their apps
+#' Set up the user's environment with an appropriate `.Rprofile` to
+#' load `renv` libraries when running their apps
 #'
-#' We use Packrat to reproduce the local system's libraries as closely
+#' We use `renv` to reproduce the local system's libraries as closely
 #' as possible on the Shiny server.  We need a way of making the app
-#' aware that it should be using its own local (i.e. Packrat) libraries
+#' aware that it should be using its own local (i.e. `renv`) libraries
 #' when running.
 #'
 #' This function uploads an .Rprofile to the user's home directory
@@ -27,10 +27,9 @@ ss_setupserver <- function(session){
     }
   }
 
-
   # Check that we have the required packages on the remote server
   # TODO - check versions?
-  remote_requirements <- c("packrat",
+  remote_requirements <- c("renv",
                            "shiny",
                            "devtools",
                            "rmarkdown")
@@ -53,15 +52,16 @@ ss_setupserver <- function(session){
 }
 
 
-#' Set up app's Rprofile so it can use Packrat packages
+#' Set up app's Rprofile so it can use `renv` packages
 #'
-#' This adds the required text to the remote .Rprofile, or creates it if it
+#' This adds the required text to the remote `.Rprofile`, or creates it if it
 #' does not already exist
 #'
 #' @param session The session
-#' @param appname The application to setup, assumed to be in ~/ShinyApps/
-#' @param remotepath The remote path containing the application.  Exactly one of  appname or remotepath must be specified
-#' @param rprofilefragmentpath The path to the fragment we wish to append to the .Rprofile
+#' @param appname The application to setup, assumed to be in `~/ShinyApps/`
+#' @param remotepath The remote path containing the application.
+#' Exactly one of `appname` or `remotepath` must be specified
+#' @param rprofilefragmentpath The path to the fragment we wish to append to the `.Rprofile`
 #'
 ss_setupRprofile <- function(session,
                              appname = NULL,
@@ -84,7 +84,12 @@ ss_setupRprofile <- function(session,
                 appname = appname,
                 remotepath = remotepath)
 
-
+  Renviron <- system.file("remoteprofile/shinysender_Renviron", package = "shinysender", mustWork = TRUE)
+  send_file(session,
+            file = Renviron,
+            appname = appname,
+            remotepath = remotepath,
+            name = ".Renviron")
 }
 
 #' Check whether a package on the remote server is installed
