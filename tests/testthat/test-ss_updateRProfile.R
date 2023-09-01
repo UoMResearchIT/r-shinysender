@@ -65,7 +65,7 @@ test_that("We can detect a missing remote Rprofile", {
 
   fakesession <-  fakessh()
 
-  stub(get_remote_Rprofile, 'ssh::ssh_exec_internal', mock_failed_ssh_command )
+  mockery::stub(get_remote_Rprofile, 'ssh::ssh_exec_internal', mock_failed_ssh_command )
 
   expect_error(
     expect_message(get_remote_Rprofile(fakesession, appname = "myapp",

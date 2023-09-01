@@ -2,7 +2,7 @@
 % Please edit documentation in R/ss_setupserver.R
 \name{ss_setupserver}
 \alias{ss_setupserver}
-\title{Set up .Rprofile on remote server, and create ~/ShinyApps if it doesn't
+\title{Set up `.Rprofile` on remote server, and create `~/ShinyApps` if it doesn't
 exist}
 \usage{
 ss_setupserver(session)
@@ -11,13 +11,13 @@ ss_setupserver(session)
 \item{session}{The session to upload the .Rprofile to}
 }
 \description{
-Set up the user's environment with an appropriate .Rprofile to
-load packrat libraries when running their apps
+Set up the user's environment with an appropriate `.Rprofile` to
+load `renv` libraries when running their apps
 }
 \details{
-We use Packrat to reproduce the local system's libraries as closely
+We use `renv` to reproduce the local system's libraries as closely
 as possible on the Shiny server.  We need a way of making the app
-aware that it should be using its own local (i.e. Packrat) libraries
+aware that it should be using its own local (i.e. `renv`) libraries
 when running.
 
 This function uploads an .Rprofile to the user's home directory

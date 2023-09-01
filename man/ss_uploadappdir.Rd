@@ -8,6 +8,7 @@ ss_uploadappdir(
   session,
   appDir,
   appName,
+  ...,
   overwrite = FALSE,
   method = "direct_home"
 )
@@ -19,6 +20,8 @@ ss_uploadappdir(
 
 \item{appName}{The name of the application - this will form part of the URL
 for the app}
+
+\item{...}{arguments forwarded to `ss_bundleapp`}
 
 \item{overwrite}{Whether to overwrite or abort if the app directory already exists}
 

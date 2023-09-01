@@ -15,7 +15,7 @@ ss_isAppNameValid <- function(appName) {
 
   # Check we've got a character vector of length 1,
   # with something in it
-  if (class(appName) != "character")
+  if (!is(appName, "character"))
     return(FALSE)
   if(length(appName) != 1)
     return(FALSE)
