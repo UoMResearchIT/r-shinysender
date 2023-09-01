@@ -15,9 +15,9 @@ ss_isAppNameValid <- function(appName) {
 
   # Check we've got a character vector of length 1,
   # with something in it
-  if (!is(appName, "character"))
+  if (!isa(appName, "character"))
     return(FALSE)
-  if (length(appName) ! = 1)
+  if (length(appName) != 1)
     return(FALSE)
   if (nchar(appName) < 1)
     return(FALSE)

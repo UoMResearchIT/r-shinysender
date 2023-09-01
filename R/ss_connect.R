@@ -28,7 +28,7 @@ ss_connect <- function(username = getUserName(),
     errstring <- paste0(errstring,
                         "Pass username parameter.  USERNAME environment variable was not set\n")
 
-  if (errstring ! = "")
+  if (errstring != "")
     stop(errstring)
 
   conname = paste0(username, "@", server)
@@ -61,7 +61,7 @@ getUserName <- function() {
   # anything else
   shinyuser <- Sys.getenv("SHINYSENDER_USER")
 
-  if (shinyuser ! = "") {
+  if (shinyuser != "") {
     # Check if user specified username is a valid login name
     # regex taken from NAME_REGEX default in man adduser.conf
     # Should we be testing USER/USERNAME against this too?

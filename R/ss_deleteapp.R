@@ -31,7 +31,7 @@ ss_deleteapp <- function(session, appName, prompt = TRUE) {
     print(remotecommand)
     proceed <- utils::askYesNo("Run command?")
 
-    if (proceed ! = TRUE) {
+    if (proceed != TRUE) {
       stop("Not deleting remote app")
     }
 
