@@ -21,6 +21,13 @@ Apps published on the server will be public.  To obtain an account on the server
 install.packages("devtools")  # If you don't already have devtools installed
 devtools::install_github("UoMResearchIT/r-shinysender")
 ```
+> 🚧 **Warning:**
+> The master branch is (still) set up to work with `R` version 4.1 and `rsconnect` 0.8. 
+> If your `packageVersion("rsconnect")` is 1.0 or higher, we recommend trying the beta version in the [bundle_fix](https://github.com/UoMResearchIT/r-shinysender/tree/bundle_fix) branch. Replacing the command above with:
+>
+> ```{r}
+> devtools::install_github("UoMResearchIT/r-shinysender@bundle_fix")
+> ```
 
 * Set the name of the server and your username on it:
 
