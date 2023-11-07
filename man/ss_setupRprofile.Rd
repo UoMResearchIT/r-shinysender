@@ -2,7 +2,7 @@
 % Please edit documentation in R/ss_setupserver.R
 \name{ss_setupRprofile}
 \alias{ss_setupRprofile}
-\title{Set up app's Rprofile so it can use Packrat packages}
+\title{Set up app's Rprofile so it can use `renv` packages}
 \usage{
 ss_setupRprofile(
   session,
@@ -14,13 +14,14 @@ ss_setupRprofile(
 \arguments{
 \item{session}{The session}
 
-\item{appname}{The application to setup, assumed to be in ~/ShinyApps/}
+\item{appname}{The application to setup, assumed to be in `~/ShinyApps/`}
 
-\item{remotepath}{The remote path containing the application.  Exactly one of  appname or remotepath must be specified}
+\item{remotepath}{The remote path containing the application.
+Exactly one of `appname` or `remotepath` must be specified}
 
-\item{rprofilefragmentpath}{The path to the fragment we wish to append to the .Rprofile}
+\item{rprofilefragmentpath}{The path to the fragment we wish to append to the `.Rprofile`}
 }
 \description{
-This adds the required text to the remote .Rprofile, or creates it if it
+This adds the required text to the remote `.Rprofile`, or creates it if it
 does not already exist
 }

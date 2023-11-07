@@ -7,7 +7,7 @@
 #' @param prompt Show remote command that will be run before deleting
 #'
 #' @export
-ss_deleteapp <- function(session, appName, prompt = TRUE){
+ss_deleteapp <- function(session, appName, prompt = TRUE) {
 
   # Only deal with a single application at a time
   # TODO - handle >1 app per function call
@@ -18,7 +18,7 @@ ss_deleteapp <- function(session, appName, prompt = TRUE){
 
   # Check app is in directory
   installedApps <- ss_listdir(session)
-  if(!appName %in% installedApps) {
+  if (!appName %in% installedApps) {
     stop("App not installed on remote server")
   }
 
@@ -26,12 +26,12 @@ ss_deleteapp <- function(session, appName, prompt = TRUE){
 
   remotecommand = paste0("rm -rf ", appPath)
 
-  if (prompt){
+  if (prompt) {
     print("Run remote command?")
     print(remotecommand)
     proceed <- utils::askYesNo("Run command?")
 
-    if(proceed != TRUE){
+    if (proceed != TRUE) {
       stop("Not deleting remote app")
     }
 

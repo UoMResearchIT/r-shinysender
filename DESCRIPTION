@@ -12,7 +12,7 @@ Depends:
     R (>= 4.0)
 Imports: 
     ssh,
-    rsconnect,
+    rsconnect (>= 1.0.0),
     utils
 Suggests: 
     testthat (>= 3.0.0),
@@ -23,7 +23,8 @@ Suggests:
     rmarkdown,
     covr,
     fs,
-    mockery
+    mockery,
+    gitcreds
 Config/testthat/edition: 3
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr

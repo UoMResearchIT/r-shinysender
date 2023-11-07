@@ -15,41 +15,40 @@
 #' @param overwrite Whether to overwrite or abort if the app directory already exists
 #' @param method The deployment method - see details
 #'
+#' @param ... arguments forwarded to `ss_bundleapp`
 #'
 #' @return One of "success", "alreadyExists", "otherError"
 #'
 #' @export
 ss_uploadappdir <- function(session, appDir, appName,
+                            ...,
                             overwrite = FALSE,
-                            method = "direct_home"){
+                            method = "direct_home") {
 
-
-
-  if(!ss_isAppNameValid(appName)) {
+  if (!ss_isAppNameValid(appName)) {
     stop(appName, " is not a valid Shiny app name")
   }
 
   message("Preparing application bundle")
   bundleFile <- ss_bundleapp(appDir = appDir,
-                             appName = appName)
+                             appName = appName, ...)
   bundleBareFile <- basename(bundleFile)
 
   # Check bundleBareFile has expected format since we use it in
   # shell commands
-  if(gsub("rsconnect-bundle[^[:alnum:]]\\.tar\\.gz", "", bundleBareFile) != bundleBareFile){
+  if (gsub("rsconnect-bundle[^[:alnum:]]\\.tar\\.gz", "", bundleBareFile) != bundleBareFile) {
     stop("Error with bundle filename:", bundleBareFile)
   }
 
   if (method == "direct_home") {
     # Check required directories exist
     required_dirs <- c("ShinyApps", "ShinyApps_staging")
-    for(rd in required_dirs) {
-      if (!does_directory_exist(session, rd) ){
+    for (rd in required_dirs) {
+      if (!does_directory_exist(session, rd) ) {
         warning(paste0("~/", rd, " does not exist. Run ss_setupserver() to create"))
         return("otherError")
       }
     }
-
 
     installedApps <- ss_listdir(session)
 
@@ -61,13 +60,12 @@ ss_uploadappdir <- function(session, appDir, appName,
         return("alreadyExists")
       }
       # App will be overwritten if it stages successfully
-
     }
 
     # We probably don't want multiple apps differing only in case,
     # so warn if the user has done this.
     casecheck  <- tolower(appName) %in% tolower(installedApps)
-    if(!appExistsOnRemote & casecheck){
+    if (!appExistsOnRemote & casecheck) {
       casedups <- installedApps[tolower(appName) == tolower(installedApps)]
       warning(paste("An app with the same name but different case exists on the server. You may wish to delete these using ss_deleteapp():",
                     casedups))
@@ -76,7 +74,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     message("Uploading application bundle")
     tryCatch(
       ssh::scp_upload(session,
-                      file = bundleFile,
+                      files = bundleFile,
                       to = "./ShinyApps_staging",
                       verbose = FALSE),
       error = function(c) stop("Upload failed")
@@ -118,7 +116,7 @@ ss_uploadappdir <- function(session, appDir, appName,
     message("Decompressing bundle on remote machine")
     retval = ssh::ssh_exec_wait(session, remotecommand)
 
-    if (retval != 0){
+    if (retval != 0) {
       warning("App decompression failed")
       return("otherError")
     }
@@ -151,15 +149,21 @@ ss_uploadappdir <- function(session, appDir, appName,
     # Remove temporary path
     unlink(temp_profile_path, expand = FALSE)
 
-    # Restore the packrat libraries
+# Restore Libraries ----------------------------------------------------------
+# Uses `renv_lockfile_from_manifest` to generate a lockfile object
+# from manifest.json, and passing it to renv::restore
 
     # If there are Private github remotes, we'll need to pass the
     # GITHUB_PAT environment variable over
+    tryCatch({
+      Sys.setenv(GITHUB_PAT = gitcreds::gitcreds_get(use_cache = FALSE)$password)
+    }, error = function(e) {
+      warning("Failed to retrieve GIT credentials, try gitcreds::gitcreds_set()")
+    })
     github_pat = Sys.getenv("GITHUB_PAT")
 
-
     # Check if token has (almost expired) if we have one
-    if(github_pat != "")
+    if (github_pat != "")
       check_pat_expiry(pat = github_pat)
 
     # Prepare code to insert set the environment variable
@@ -168,22 +172,25 @@ ss_uploadappdir <- function(session, appDir, appName,
     # Instead we turn off bash history, and set it on the command line
     # for the app deployment.
     github_pat_insert = ""
-    if(github_pat != "")
-      github_pat_insert = paste0('Sys.setenv(GITHUB_PAT="',
-                                 github_pat, '");')
+    if (github_pat != "")
+      github_pat_insert = paste0('Sys.setenv(GITHUB_PAT = "', github_pat, '"); ')
 
-    # Project parameter doesn't seem to work, so cd to project directory
-    # first
+    # Project parameter doesn't seem to work, so cd to project directory first
     # Turn off history for this since we don't want the PAT to be saved anywhere
-    remotecommand <- paste0("set +o history && cd ./ShinyApps_staging/", appNameStaging,
-                            " && Rscript -e '",
-                            github_pat_insert,
-                            "packrat::restore()'")
+    remotecommand <- paste0(
+      "set +o history && cd ./ShinyApps_staging/", appNameStaging,
+      " && Rscript -e '", github_pat_insert,
+      " options(renv.verbose = FALSE);",
+      " lockfile <- renv:::renv_lockfile_from_manifest(\"manifest.json\");",
+      " lockfile$R$Version <- as.character(lockfile$R$Version);", # see https://github.com/rstudio/renv/issues/1667
+      " renv::lockfile_write(lockfile);",
+      " renv::activate()'",
+      " && Rscript -e '", github_pat_insert,"renv::restore(); renv::status()'")
 
     message("Installing packages on remote machine")
     message("(This may take some time for a new application)")
     retval = ssh::ssh_exec_wait(session, remotecommand )
-    if (retval != 0){
+    if (retval != 0) {
       warning("Library restoration on remote server failed")
       return("otherError")
     }
@@ -200,7 +207,7 @@ ss_uploadappdir <- function(session, appDir, appName,
 
   # If we get here we've uploaded it to staging OK
   # So delete the old app
-  if(appExistsOnRemote) {
+  if (appExistsOnRemote) {
 
     message("Removing existing version of app")
     ss_deleteapp(session, appName, prompt = FALSE)
@@ -211,7 +218,7 @@ ss_uploadappdir <- function(session, appDir, appName,
   remotecommand <- paste0("mv ~/ShinyApps_staging/", appNameStaging, " ",
                           "~/ShinyApps/", appName)
   retval = ssh::ssh_exec_wait(session, remotecommand )
-  if (retval != 0){
+  if (retval != 0) {
     warning("Moving app from staging failed")
     return("otherError")
   }
@@ -227,7 +234,7 @@ ss_uploadappdir <- function(session, appDir, appName,
   sessionUser <- sessionInfo$user
   sessionServer <- sessionInfo$host
 
-  if(!is.null(sessionUser) & !is.null(sessionServer)){
+  if (!is.null(sessionUser) & !is.null(sessionServer)) {
     remoteURL <- paste0("https://", sessionServer, "/",
                         sessionUser, "/", appName)
     message("App deployed to:")
@@ -237,7 +244,6 @@ ss_uploadappdir <- function(session, appDir, appName,
 
 }
 
-
 #' Return a string suitable for use as a temporary
 #' filesystem
 #'
@@ -245,7 +251,7 @@ ss_uploadappdir <- function(session, appDir, appName,
 #' one that already exists.
 #'
 #'
-tempBare <- function(){
+tempBare <- function() {
 
   # We can't generate a bare filename (i.e. no path info at all)
   # with tempfile()
@@ -285,15 +291,15 @@ tempBare <- function(){
 #' modify
 #'
 #' @return A character vector containing the (potentially) modified .Rprofile
-prepareRprofile <- function(our_profile){
+prepareRprofile <- function(our_profile) {
 
 
   remote_proxy = Sys.getenv("SHINYSENDER_PROXY")
   remote_proxy_http = Sys.getenv("SHINYSENDER_PROXY_HTTP")
   remote_proxy_https = Sys.getenv("SHINYSENDER_PROXY_HTTPS")
 
-  if(remote_proxy != ""){
-    if(remote_proxy_http != "" | remote_proxy_https != "" ){
+  if (remote_proxy != "") {
+    if (remote_proxy_http != "" | remote_proxy_https != "" ) {
       stop("If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset")
     }
   }
@@ -301,22 +307,22 @@ prepareRprofile <- function(our_profile){
   # If any of the proxy variables have been specified we'll use them
   # regardless of whether we find an override
   setproxy = FALSE
-  if(remote_proxy != "" | remote_proxy_http != "" | remote_proxy_https != ""){
+  if (remote_proxy != "" | remote_proxy_http != "" | remote_proxy_https != "") {
     setproxy = TRUE
   }
 
 
-  if(!setproxy) {
+  if (!setproxy) {
     # Get the remote server, to test if we need to automatically set a proxy
     # Note this will set both http and https proxies
     remote_server = Sys.getenv("SHINYSENDER_SERVER")
 
     remote_proxy_override = server_proxy_overrides[names(server_proxy_overrides) == remote_server]
 
-    if(length(remote_proxy_override) > 1)
+    if (length(remote_proxy_override) > 1)
       stop("Duplicate proxy overrides detected for server")
 
-    if(length(remote_proxy_override) == 0)
+    if (length(remote_proxy_override) == 0)
       remote_proxy_override = ""
 
     remote_proxy = remote_proxy_override
@@ -329,8 +335,8 @@ prepareRprofile <- function(our_profile){
   proxy_fragment <- character(0)
 
   # Set http/https proxies if single proxy specified
-  if(remote_proxy != ""){
-    if(remote_proxy_http != "" | remote_proxy_https != "" ){
+  if (remote_proxy != "") {
+    if (remote_proxy_http != "" | remote_proxy_https != "" ) {
       stop("If specifying SHINYSENDER_PROXY, SHINYSENDER_PROXY_HTTPS and SHINYSENDER_PROXY_HTTP must both be unset")
     }
 
@@ -340,37 +346,37 @@ prepareRprofile <- function(our_profile){
   }
 
   # TODO check it's a valid URL.
-  if(remote_proxy_http != ""){
+  if (remote_proxy_http != "") {
 
-    if(!validate_url(remote_proxy_http)){
+    if (!validate_url(remote_proxy_http)) {
       stop("Invalid proxy string for SHINYSENDER_PROXY_HTTP")
     }
 
-    proxystring <- paste0('Sys.setenv(http_proxy="', remote_proxy_http, '")')
+    proxystring <- paste0('Sys.setenv(http_proxy = "', remote_proxy_http, '")')
     proxy_fragment <- c(proxy_fragment, proxystring)
 
   }
 
-  if(remote_proxy_https != ""){
+  if (remote_proxy_https != "") {
 
-    if(!validate_url(remote_proxy_https)){
+    if (!validate_url(remote_proxy_https)) {
       stop("Invalid proxy string for SHINYSENDER_PROXY_HTTPS")
     }
 
-    proxystring <- paste0('Sys.setenv(https_proxy="', remote_proxy_https, '")')
+    proxystring <- paste0('Sys.setenv(https_proxy = "', remote_proxy_https, '")')
     proxy_fragment <- c(proxy_fragment, proxystring)
 
   }
 
 
-  if(length(proxy_fragment) > 0){
+  if (length(proxy_fragment) > 0) {
     message("Overriding default proxy for staging")
     # Update the proxy
 
     # Find where the stub is
     stubstring <- "## Proxy Placeholder ##"
     proxypos <- grep(stubstring, our_profile, fixed = TRUE)
-    if (length(proxypos) != 1){
+    if (length(proxypos) != 1) {
       stop("Could not find placeholder to add web proxy")
     }
 
@@ -391,7 +397,7 @@ prepareRprofile <- function(our_profile){
 #' @param url The URL(s) to validate
 #' @return TRUE if potentially valid URL, FALSE otherwise
 #'
-validate_url <- function(url){
+validate_url <- function(url) {
 
 
   urlregex <- "^(?:(?:http(?:s)?)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]){2,})(?::(?:\\d){2,5})?(?:/(?:\\S)*)?$"

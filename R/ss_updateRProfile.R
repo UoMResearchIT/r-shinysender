@@ -3,12 +3,12 @@
 #' @param appname a valid shiny app name, or "~" to return home directory
 #'
 #' @return A path wrt ~
-appnameToPath <- function(appname){
+appnameToPath <- function(appname) {
 
   cleanloc <- NULL
-  if(appname == "~") {
+  if (appname == "~") {
     cleanloc = "~"
-  } else if(ss_isAppNameValid(appname) ){
+  } else if (ss_isAppNameValid(appname) ) {
     cleanloc = paste0("~/ShinyApps/", appname, "")
   } else {
     stop("Invalid application name")
@@ -33,19 +33,19 @@ get_remote_Rprofile <- function(session,
                                 appname = "~",
                                 remotepath = NULL,
                                 warnmissing = FALSE
-                                ){
+                                ) {
 
-  if(!(xor(is.null(appname),
-             is.null(remotepath)))){
+  if (!(xor(is.null(appname),
+             is.null(remotepath)))) {
     stop("Must specify appname or remotepath, not both")
   }
 
-  if(!is.null(appname)) {
+  if (!is.null(appname)) {
     # Check we're getting either the home .Rprofile or one for a potentially valid app name
     cleanloc <- appnameToPath(appname)
     # Create full path
     cleanloc <- paste0(cleanloc, "/.Rprofile")
-  } else if(!is.null(remotepath)){
+  } else if (!is.null(remotepath)) {
     cleanloc <-  paste0(remotepath, "/.Rprofile")
   }
   remotecommand <- paste0("cat ", cleanloc)
@@ -54,7 +54,7 @@ get_remote_Rprofile <- function(session,
                                                 command = remotecommand,
                                                 error = FALSE)
 
-  if(warnmissing & raw_remote.Rprofile$status == 1){
+  if (warnmissing & raw_remote.Rprofile$status == 1) {
     message("No remote .Rprofile found")
   }
 
@@ -64,32 +64,59 @@ get_remote_Rprofile <- function(session,
 
 }
 
-#' Send an Rprofile file to the remote server
+#' Send a file to the remote server
 #'
 #' @param session The session to use
-#' @param appname The app to send  to send the  .Rprofile to in ~/ShinyApps/
-#' @param remotepath A location to send the file to wrt ~.  Exactly one of appname or remotepath must be specified
-#' @param Rprofile A vector containing the Rprofile to send
-send_Rprofile <- function(session,
-                          appname = "~",
-                          remotepath = NULL,
-                          Rprofile) {
+#' @param file local file path
+#' @param appname The app to send the file to in `~/ShinyApps/`
+#' @param name remote file name, defaults to `basename(file)`
+#' @param remotepath A location to send the file to wrt ~. Exactly one of `appname` or `remotepath` must be specified.
+send_file <- function(session,
+                      file,
+                      appname = NULL,
+                      remotepath = "~",
+                      name = basename(file)) {
 
-  stopifnot(class(Rprofile) == "character")
+  stopifnot(file.exists(file))
 
-  if(!(xor(is.null(appname),
-             is.null(remotepath)))){
+  if (!(xor(is.null(appname), is.null(remotepath)))) {
     stop("Must specify appname or remotepath, not both")
   }
 
+  if (!is.null(appname)) {
+    remotepath = appnameToPath(appname)
+  }
 
   # We need a rather convoluted way of uploading the modified Rprofile
   # since we can't upload and rename in one go
-  # 1. Get a (local) temp file name
-  # 2. Get contents of our modified Rprofile into it
-  # 3. Upload this to the server
-  # 4. Remote: Execute rename command on bare filename to change it to .Rprofile
-  # 5. Delete local temp file
+  # 1. Upload this to the server
+  # 2. Remote: Execute rename command on bare filename
+
+  # Send it to the remote - this goes to the home directory as a temp filename
+  ssh::scp_upload(session, file, verbose = FALSE)
+
+  # Rename it on the remote
+  bare_name <- basename(file)
+  mv_cmd <- paste0("mv ", bare_name, " ",  file.path(remotepath, name))
+
+  cmdout <- ssh::ssh_exec_internal(session, mv_cmd)
+
+  # Abort if cmd failed
+  stopifnot(cmdout$status == 0)
+}
+
+#' Send an Rprofile file to the remote server
+#'
+#' @param session The session to use
+#' @param Rprofile A vector containing the Rprofile to send
+#' @param name remote file base-name, default is .Rprofile
+#' @param ... `appname` OR `remotepath`, passed to `send_file`
+send_Rprofile <- function(session,
+                          Rprofile,
+                          name = ".Rprofile",
+                          ...) {
+
+  stopifnot(class(Rprofile) == "character")
 
   # Create temp file and fill
   localRprofile_path <- tempfile()
@@ -97,25 +124,13 @@ send_Rprofile <- function(session,
   writeLines(Rprofile, localRprofile)
   close(localRprofile)
 
-  if(!is.null(appname)) {
-    remotepath = appnameToPath(appname)
-  }
-
-  # Send it to the remote - this goes to the home directory as a temp filename
-  ssh::scp_upload(session, localRprofile_path, verbose = FALSE)
-
-  # Rename it on the remote
-  bare_Rprofile_name <- basename(localRprofile_path)
-  mv_cmd <- paste0("mv ", bare_Rprofile_name, " ",  remotepath,"/.Rprofile")
-
-  cmdout <- ssh::ssh_exec_internal(session, mv_cmd)
-  # Abort if cmd failed
-  stopifnot(cmdout$status == 0)
+  send_file <- send_file(session,
+                         localRprofile_path,
+                         name = name,
+                         ...)
 
   # Tidy up locally
   unlink(localRprofile_path, expand = FALSE)
-
-  # invisible()
 }
 
 #' Returns the location of our deployed .Rprofile fragment to install on remote
@@ -138,18 +153,18 @@ ShinySenderRprofilePathStaging <- function() {
               mustWork = TRUE)
 }
 
-#' Update a .Rprofile file with the ShinySender code needed to use
-#' Packrat with the hosted applications
+#' Update a `.Rprofile` file with the `ShinySender` code needed to use
+#' `renv` with the hosted applications
 #'
-#' Based on the code used in packrat:::editRprofileAutoloader()
+#' Based on the code used in `packrat:::editRprofileAutoloader()`
 #'
-#' Rprofile should be the contents of the .Rprofile file, as a characater
-#' vector (one entry per line). This is what you get from ReadLines() if using
-#' a local Rprofile, or shinysender:::process_raw() if using the results of a
+#' `Rprofile` should be the contents of the `.Rprofile` file, as a characater
+#' vector (one entry per line). This is what you get from `ReadLines()` if using
+#' a local `Rprofile`, or `shinysender:::process_raw()` if using the results of a
 #' remote ssh command
 #'
 #' @param Rprofile A character vector containing the Rprofile
-#' @param action Whether to update the remote Rprofile with the shinysender
+#' @param action Whether to update the remote Rprofile with the `shinysender`
 #' fragment, or delete it
 #' @param rprofilefragmentpath The path to the fragment to add
 #'

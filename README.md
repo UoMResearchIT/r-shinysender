@@ -116,7 +116,6 @@ ss_deleteapp(session, "demo")
 ss_disconnect(session)
 ```
 
-
 ## R Markdown documents
 
 It is possible to host interactive R Markdown documents, as described [here](https://bookdown.org/yihui/rmarkdown/shiny-documents.html). *You will need to ensure that you have an `index.Rmd` document in your deployment directory.* The document can then be deployed in the same way as a Shiny app.
@@ -140,20 +139,18 @@ If your app uses Bioconductor packages, run `options(repos = BiocManager::reposi
 
 ## .Rprofile
 
-The deployed app uses Packrat to emulate your local development environment. This is set up to cache installed libraries (and their versions) between all your apps. This is set up in the `.Rprofile` file in the deployed app's directory on the server.
+The deployed app uses `renv` to emulate your local development environment (even if don't do it explicitly). It will be set up to cache installed libraries (and their versions) between all your apps, by means of the `.Renviron` and `.Rprofile` files in the deployed app's directory on the server.
 
-If you have a project level `.Rprofile`, this will be uploaded to the remote server and modified to use Packrat - your local `.Rprofile` will not be edited. If you do not have a project level `.Rprofile` a new one will be created on the remote machine.
+> *NOTE*: If you have an `.Renviron` file it will currently be overwritten. Replace it by including the affected variables in `Sys.setenv` calls inside your local `.Rprofile`.
 
-If your *user* level `.Rprofile` on your local machine is contains settings that your app *requires*, you will need to copy these to a project level `.Rprofile` so that the server can use them.
+If you have a project level `.Rprofile`, this will be uploaded to the remote server and modified to use `renv` - your local `.Rprofile` will not be edited. If you do not have a project level `.Rprofile` a new one will be created on the remote machine. If your *user* level `.Rprofile` on your local machine contains settings that your app *requires*, you will have to copy these to a project level `.Rprofile` so that the server can use them.
 
 Note that R only runs a *single* `.Rprofile` on startup - this will be the project level `.Rprofile`, if it exists, and the user level one otherwise - see <https://rstats.wtf/r-startup.html> for more details.
 
 (Technical aside:  We actually modify the user's `.Rprofile` twice - for staging we need to load `devtools`, and set the Packrat cache
 but not _actually_ turn packrat on - otherwise we can't see devtools and its dependencies to install private Github repos.  Once the apps
 libraries have been restored, we remove the staging `.Rprofile` code and replace it with a deployment version, which 
-sets the cache location and turns Packrat on.  The staging `.Rprofile` also configure the UoM web proxy so we can download packages.  The deployed `.Rprofile`
-doesn't set up access to the UoM web proxy, so deployed apps will be unable to access remote sites.  If this functionality is needed the proxy will need to 
-be set in the local `.Rprofile` before deployment).
+sets the cache location and turns Packrat on.
 
 ## Shiny training
 

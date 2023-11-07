@@ -35,13 +35,13 @@ process_raw <- function(inraw) {
 #' NA if an invalid combination of app files are included
 isShinyApp <- function(directoryEntries, includeMarkdown = TRUE) {
 
-  if(includeMarkdown) {
-    if("index.Rmd" %in% directoryEntries){ # Markdown app
+  if (includeMarkdown) {
+    if ("index.Rmd" %in% directoryEntries) { # Markdown app
       # Excluding this, what's left shouldn't be a shiny app
 
       whatsleft = isShinyApp(directoryEntries, includeMarkdown = FALSE)
 
-      if(isFALSE(whatsleft))
+      if (isFALSE(whatsleft))
         return(TRUE)
       else
         return(NA)
@@ -51,15 +51,15 @@ isShinyApp <- function(directoryEntries, includeMarkdown = TRUE) {
   }
 
 
-  if(all(c("app.R", "server.R", "ui.R") %in% directoryEntries))
+  if (all(c("app.R", "server.R", "ui.R") %in% directoryEntries))
     return(NA)
 
   # Need ui & server or neither
-  if(xor("ui.R" %in% directoryEntries,
+  if (xor("ui.R" %in% directoryEntries,
          "server.R" %in% directoryEntries))
     return(NA)
 
-  if("app.R" %in% directoryEntries & any(c("ui.R", "server.R") %in% directoryEntries))
+  if ("app.R" %in% directoryEntries & any(c("ui.R", "server.R") %in% directoryEntries))
     return(NA)
 
   return("app.R" %in% directoryEntries |
@@ -79,9 +79,9 @@ isShinyApp <- function(directoryEntries, includeMarkdown = TRUE) {
 #' one per element
 #'
 #' @return TRUE if the directory contains a Packrat app
-isPackratApp <- function(directoryEntries){
+isPackratApp <- function(directoryEntries) {
 
-  if("packrat" %in% directoryEntries)
+  if ("packrat" %in% directoryEntries)
     return(TRUE)
   else
     return(FALSE)

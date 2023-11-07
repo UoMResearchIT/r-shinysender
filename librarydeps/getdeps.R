@@ -18,13 +18,13 @@ pclibs <- read_csv("installed2122.csv")
 installedlibs <- pclibs$Package
 
 wantdebs <- NULL
-for(thislib in installedlibs) {
+for (thislib in installedlibs) {
   message(thislib)
   getstring <- paste0("https://sysreqs.r-hub.io/pkg/", thislib)
   result <- httr::GET(getstring)
   flatresult <- unlist(content(result, flatten = TRUE))
   # Fairly horrid way of getting all the DEB names out
-  if(!is.null(flatresult))
+  if (!is.null(flatresult))
     wantdebs <- c(wantdebs, flatresult[str_detect(names(flatresult), "DEB")])
 }
 

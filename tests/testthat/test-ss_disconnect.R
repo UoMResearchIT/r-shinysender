@@ -1,6 +1,6 @@
 test_that("disconnection works", {
 
-  mocksshdisconnect <- function(session){
+  mocksshdisconnect <- function(session) {
 
     return(NULL)
 

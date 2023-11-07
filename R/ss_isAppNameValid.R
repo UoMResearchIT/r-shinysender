@@ -15,17 +15,17 @@ ss_isAppNameValid <- function(appName) {
 
   # Check we've got a character vector of length 1,
   # with something in it
-  if (class(appName) != "character")
+  if (!isa(appName, "character"))
     return(FALSE)
-  if(length(appName) != 1)
+  if (length(appName) != 1)
     return(FALSE)
-  if(nchar(appName) < 1)
+  if (nchar(appName) < 1)
     return(FALSE)
 
   # Check what's in it is a valid name
   cleanName <- gsub("[^A-Za-z0-9]", "", appName)
 
-  if(cleanName == appName)
+  if (cleanName == appName)
     return(TRUE)
   else
     return(FALSE)

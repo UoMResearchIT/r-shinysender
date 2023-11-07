@@ -2,16 +2,15 @@ test_that("Remote package installation testing works", {
 
 
 
-  has_package <- function(session, remoteRRun){
+  has_package <- function(session, remoteRRun) {
     # ssh_exec_wait returns shell's exit code, i.e. 0 for success
-    if(grepl("installedPackage", remoteRRun))
+    if (grepl("installedPackage", remoteRRun))
       return(0)
     else
       return(1)
   }
 
-
-  stub(ss_is_remote_package_installed, 'ssh::ssh_exec_wait', has_package)
+  mockery::stub(ss_is_remote_package_installed, 'ssh::ssh_exec_wait', has_package)
 
   expect_true(ss_is_remote_package_installed(fakessh(), "installedPackage"))
   expect_false(ss_is_remote_package_installed(fakessh(), "missingPackage"))
@@ -21,11 +20,11 @@ test_that("Remote package installation testing works", {
 
 test_that("Remote directory creation works", {
 
-  m <- mock()
+  m <- mockery::mock()
 
-  stub(ss_setupserver, 'does_directory_exist', FALSE)
-  stub(ss_setupserver, 'create_remote_dir', m)
-  stub(ss_setupserver, 'ss_is_remote_package_installed', TRUE)
+  mockery::stub(ss_setupserver, 'does_directory_exist', FALSE)
+  mockery::stub(ss_setupserver, 'create_remote_dir', m)
+  mockery::stub(ss_setupserver, 'ss_is_remote_package_installed', TRUE)
 
   # Setup server
   ss_setupserver(fakessh())
@@ -42,13 +41,13 @@ test_that("Remote directory creation works", {
 test_that("remote package detection works", {
 
 
-  stub(ss_setupserver, 'does_directory_exist', FALSE)
-  stub(ss_setupserver, 'create_remote_dir', TRUE)
-  stub(ss_setupserver, 'ss_is_remote_package_installed', FALSE)
+  mockery::stub(ss_setupserver, 'does_directory_exist', FALSE)
+  mockery::stub(ss_setupserver, 'create_remote_dir', TRUE)
+  mockery::stub(ss_setupserver, 'ss_is_remote_package_installed', FALSE)
 
   # Setup server
   expect_error(ss_setupserver(fakessh()),
-               "The following packages are not installed on the remote server. Please contact the server administrator: packrat, shiny, devtools, rmarkdown")
+               "The following packages are not installed on the remote server. Please contact the server administrator: renv, shiny, devtools, rmarkdown")
 
 
 
