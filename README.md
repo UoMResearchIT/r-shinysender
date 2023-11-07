@@ -21,12 +21,12 @@ Apps published on the server will be public.  To obtain an account on the server
 install.packages("devtools")  # If you don't already have devtools installed
 devtools::install_github("UoMResearchIT/r-shinysender")
 ```
-> 🚧 **Warning:**
-> The master branch is (still) set up to work with `R` version 4.1 and `rsconnect` 0.8. 
-> If your `packageVersion("rsconnect")` is 1.0 or higher, we recommend trying the beta version in the [bundle_fix](https://github.com/UoMResearchIT/r-shinysender/tree/bundle_fix) branch. Replacing the command above with:
+
+> **Note:**
+> If your `packageVersion("rsconnect")` is **older than 0.8**, update your `Rstudio`, or try using the old version in the [rsconnect_0.8](https://github.com/UoMResearchIT/r-shinysender/tree/rsconnect_0.8) branch. Replacing the command above with:
 >
 > ```{r}
-> devtools::install_github("UoMResearchIT/r-shinysender@bundle_fix")
+> devtools::install_github("UoMResearchIT/r-shinysender@rsconnect_0.8")
 > ```
 
 * Set the name of the server and your username on it:
@@ -61,17 +61,11 @@ local version.  It is usually safe to ignore this.
 
 ## Overriding the default proxy
 
-If you are using this library to deploy to the UoM pilot Shiny server, it will automatically
-set the UoM web proxy   to download the packages needed during app
-staging.  If you are using another server, no proxy will be set.  
-
-In either case if you need to override this, set the required server and port in the
-`SHINYSENDER_PROXY` environment variable:
+If you need to override the default proxy (used to download packages during staging), set the required server and port in the `SHINYSENDER_PROXY` environment variable:
 
 ```{r}
 Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")
 ```
-
 
 (To set the http and https proxies to different servers, instead use SHINYSENDER_PROXY_HTTP and
 SHINYSENDER_PROXY_HTTPS environment variables) 
