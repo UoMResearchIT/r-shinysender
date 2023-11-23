@@ -64,6 +64,8 @@ environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appn
 
 * If you are using packages from GitHub, you will have to make sure you have an active access token see [Non CRAN packages](#Non-CRAN-packages) below.
 
+* If you are using the [Golem Framework](https://github.com/ThinkR-open/golem), you will need to run `golem::add_shinyserver_file()` before deploying your app.
+
 ### 4. (Optional) create an `.rscignore` file
 
 To reduce the size of your app on the server (and speed up the upload process), create a file called `.rscignore` on your project base directory,
