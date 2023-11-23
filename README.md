@@ -13,10 +13,20 @@ Apps published on the server will be public.  To obtain an account on the server
 
 ## Usage
 
+### 1. Make sure you have access to the server
+
 *You must be connected to Globalprotect (or be on the campus network) to upload an app*
 (You do not need to be connected to Globalprotect to view an app; these are visible worldwide)
 
-* Install the shinysender package:
+If you are unsure, open a terminal and try to `ssh` into the server with your `<userid>`:
+```
+ssh <userid>@csf3.itservices.manchester.ac.uk 
+```
+
+### 2. Install the shinysender package
+
+From an R console:
+
 ```{r}
 install.packages("devtools")  # If you don't already have devtools installed
 devtools::install_github("UoMResearchIT/r-shinysender")
@@ -29,13 +39,19 @@ devtools::install_github("UoMResearchIT/r-shinysender")
 > devtools::install_github("UoMResearchIT/r-shinysender@rsconnect_0.8")
 > ```
 
+### 3. Prepare your environment:
+
+* Set your working directory to your Shiny app's application directory (this will usually happen automatically when
+you load the project)
+
 * Set the name of the server and your username on it:
 
 ```{r}
 # This is UoM pilot server - must be connected via global protect
 # to upload your app.  Deployed apps will be visible on the public
 # internet.  
-Sys.setenv(SHINYSENDER_SERVER="shiny.its.manchester.ac.uk")  
+Sys.setenv(SHINYSENDER_SERVER="shiny.its.manchester.ac.uk")
+
 # Your username is your UoM login
 Sys.setenv(SHINYSENDER_USER="alice")
 ```
@@ -43,9 +59,29 @@ Sys.setenv(SHINYSENDER_USER="alice")
 (you may wish to add these lines to `~/.Rprofile`, or set the environment variables
 in `~/.Renviron`, to avoid having to set them each time you start R)
 
+* By default, your app will have the name of your local project directory, to set it to something different, set the `SHINYSENDER_REMOTENAME`
+environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appname")`.
 
-* Set your working directory to your Shiny app's application directory (this will usually happen automatically when
-you load the project)
+* If you are using packages from GitHub, you will have to make sure you have an active access token see [Non CRAN packages](#Non-CRAN-packages) below.
+
+### 4. (Optional) create an `.rscignore` file
+
+To reduce the size of your app on the server (and speed up the upload process), create a file called `.rscignore` on your project base directory,
+and populate it with files and folders that are not required for your app to run, e.g.:
+
+```
+.git
+.Rhistory
+.Rprofile
+.Rproj.user
+
+data-raw
+...
+```
+> Note: unfortunately, `.rscignore` files don't take wildcards, so you'll have to list each file or parent directory explicitly.
+
+### 5. Upload your app
+
 * In Rstudio: Addins, Upload App from the main toolbar (this can be bound to a keyboard shortcut (Tools, Modify Keyboard Shortcuts).
 * Or, if you're running outwith RStudio, run `shinysender::ss_uploadAddin()` from the console
 * You will be prompted for your UoM password.  
@@ -53,27 +89,13 @@ you load the project)
 since the system needs to download and compile the same versions of the R libraries you're using as on your local system. Subsequent
 deployments will use cached copies and so will be much quicker.
 * You can deploy the app again to update it
-* By default, your app will have the name of your local project directory, to set it to something different, set the `SHINYSENDER_REMOTENAME`
-environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appname")`.
 
 You may get a warning about the version of R on the server being different to your
 local version.  It is usually safe to ignore this.
 
-## Overriding the default proxy
-
-If you need to override the default proxy (used to download packages during staging), set the required server and port in the `SHINYSENDER_PROXY` environment variable:
-
-```{r}
-Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")
-```
-
-(To set the http and https proxies to different servers, instead use SHINYSENDER_PROXY_HTTP and
-SHINYSENDER_PROXY_HTTPS environment variables) 
-
-
 # Advanced workflow
 
-If you want to do anything more complex, the following code may help:
+If you found a problem during the last step, or you want to do anything more complex, the following code may help:
 
 ```{r}
 library(shinysender)
@@ -99,7 +121,6 @@ ss_listdir(session)
 # use cached versions of the libraries.
 ss_uploadappdir(session, "~/testapp/", "demo")
 
-
 # Show the most recent log file for app "demo"
 ss_getlogs(session, "demo")
 
@@ -108,6 +129,21 @@ ss_deleteapp(session, "demo")
 
 # Disconnect from the server
 ss_disconnect(session)
+```
+
+In some cases, restoring the `renv` lockfile will fail on the server, even when the app uploaded successfully (your app will be uploaded, but it will fail to run, or display with errors). You can troubleshoot this manually via an interactive R session on the server:
+
+Open a terminal and try to `ssh` into the server with your `<userid>`; navigate to your <appname> folder, and run `R` to open an interactive session:
+```bash
+ssh <userid>@csf3.itservices.manchester.ac.uk
+cd ~/ShinyApps/<appname>
+R
+```
+
+From there, try:
+```R
+> renv::status()
+> renv::restore() 
 ```
 
 ## R Markdown documents
@@ -141,10 +177,16 @@ If you have a project level `.Rprofile`, this will be uploaded to the remote ser
 
 Note that R only runs a *single* `.Rprofile` on startup - this will be the project level `.Rprofile`, if it exists, and the user level one otherwise - see <https://rstats.wtf/r-startup.html> for more details.
 
-(Technical aside:  We actually modify the user's `.Rprofile` twice - for staging we need to load `devtools`, and set the Packrat cache
-but not _actually_ turn packrat on - otherwise we can't see devtools and its dependencies to install private Github repos.  Once the apps
-libraries have been restored, we remove the staging `.Rprofile` code and replace it with a deployment version, which 
-sets the cache location and turns Packrat on.
+## Overriding the default proxy
+
+If you need to override the default proxy (used to download packages during staging), set the required server and port in the `SHINYSENDER_PROXY` environment variable:
+
+```{r}
+Sys.setenv(SHINYSENDER_PROXY="http://myproxy.co.uk:3128")
+```
+
+(To set the http and https proxies to different servers, instead use SHINYSENDER_PROXY_HTTP and
+SHINYSENDER_PROXY_HTTPS environment variables) 
 
 ## Shiny training
 
