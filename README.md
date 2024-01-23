@@ -20,7 +20,7 @@ Apps published on the server will be public.  To obtain an account on the server
 
 If you are unsure, open a terminal and try to `ssh` into the server with your `<userid>`:
 ```
-ssh <userid>@csf3.itservices.manchester.ac.uk 
+ssh <userid>@shiny.its.manchester.ac.uk
 ```
 
 ### 2. Install the shinysender package
