@@ -108,7 +108,6 @@ library(shinysender)
 # User will be prompted for password if not using ssh keys
 session <- ss_connect()
 
-
 # Set up the user's account on the server to use Packrat packages
 # (This only needs to be done once)
 ss_setupserver(session)
@@ -137,7 +136,7 @@ In some cases, restoring the `renv` lockfile will fail on the server, even when 
 
 Open a terminal and try to `ssh` into the server with your `<userid>`; navigate to your <appname> folder, and run `R` to open an interactive session:
 ```bash
-ssh <userid>@csf3.itservices.manchester.ac.uk
+ssh <userid>@shiny.its.manchester.ac.uk
 cd ~/ShinyApps/<appname>
 R
 ```
