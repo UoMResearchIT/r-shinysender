@@ -147,6 +147,32 @@ From there, try:
 > renv::restore() 
 ```
 
+## Debugging your app
+
+Make sure that your app runs locally, that it has effectively been uploaded (use a version tag), and that all of the libraries have been installed and synced correctly (see `renv::status()` above).
+
+The server is configured to store application logs on your home folder, specifically: `~/ShinyApps/logs`. However in many cases (e.g. when the app fails to launch) these can get deleted automatically. To avoid this, place a file called `.shiny_app.conf` on your application root folder (next to your `app.R` or `ui.R` / `server.R` files), with the content:
+```.shiny_app.conf
+preserve_logs true;
+```
+
+You can explore and read your app logs from a remote terminal:
+```sh
+ssh <userid>@shiny.its.manchester.ac.uk
+cd ~/ShinyApps/logs
+
+# list existing logs
+ls
+
+# print the contents of the most recent log
+cat $(ls -Art | tail -n 1)
+
+# print the last lines of the most recent (active) log, and reflect changes dynamically (Ctrl+C to exit)
+tail -f $(ls -Art | tail -n 1)
+```
+
+Once you're happy with your app, you might want to remove the `.shiny_app.conf` file, or come back and erase the contents of `~/ShinyApps/logs` once in a while.
+
 ## R Markdown documents
 
 It is possible to host interactive R Markdown documents, as described [here](https://bookdown.org/yihui/rmarkdown/shiny-documents.html). *You will need to ensure that you have an `index.Rmd` document in your deployment directory.* The document can then be deployed in the same way as a Shiny app.
