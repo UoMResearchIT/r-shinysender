@@ -15,10 +15,14 @@ Apps published on the server will be public.  To obtain an account on the server
 
 ### 1. Make sure you have access to the server
 
-*You must be connected to Globalprotect (or be on the campus network) to upload an app*
-(You do not need to be connected to Globalprotect to view an app; these are visible worldwide)
+> [!WARNING]
+> **You must be on the campus network\* to upload an app**  
 
-If you are unsure, open a terminal and try to `ssh` into the server with your `<userid>`:
+You do not need to be on Campus to view an app; these are visible worldwide.
+
+SSH access through GlobalProtect was disabled due to the phishing-incident in 2023, and as of 02/2025 it is still not available.
+
+If you are unsure, open a terminal (PowerShell on Windows) and try to `ssh` into the server with your `<userid>`:
 ```
 ssh <userid>@shiny.its.manchester.ac.uk
 ```
@@ -32,7 +36,7 @@ install.packages("devtools")  # If you don't already have devtools installed
 devtools::install_github("UoMResearchIT/r-shinysender")
 ```
 
-> **Note:**
+> [!NOTE]
 > If your `packageVersion("rsconnect")` is **older than 0.8**, update your `Rstudio`, or try using the old version in the [rsconnect_0.8](https://github.com/UoMResearchIT/r-shinysender/tree/rsconnect_0.8) branch. Replacing the command above with:
 >
 > ```{r}
@@ -56,11 +60,13 @@ Sys.setenv(SHINYSENDER_SERVER="shiny.its.manchester.ac.uk")
 Sys.setenv(SHINYSENDER_USER="alice")
 ```
 
-(you may wish to add these lines to `~/.Rprofile`, or set the environment variables
-in `~/.Renviron`, to avoid having to set them each time you start R)
+(you may wish to add these lines to `~/.Rprofile`, or set the environment variables in `~/.Renviron`, to avoid having to set them each time you start R)
 
 * By default, your app will have the name of your local project directory, to set it to something different, set the `SHINYSENDER_REMOTENAME`
 environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appname")`.
+
+  > [IMPORTANT!]
+  > App names must be alphanumeric (i.e. no hyphens, underscores, or spaces).
 
 * If you are using packages from GitHub, you will have to make sure you have an active access token see [Non CRAN packages](#Non-CRAN-packages) below.
 
@@ -95,9 +101,17 @@ deployments will use cached copies and so will be much quicker.
 You may get a warning about the version of R on the server being different to your
 local version.  It is usually safe to ignore this.
 
-# Advanced workflow
+# Troubleshooting / Advanced workflow
 
-If you found a problem during the last step, or you want to do anything more complex, the following code may help:
+`shinysender::ss_uploadAddin()` will try to perform the following steps:
+
+1. Establish a connection to the server using `ssh::ssh_connect`
+1. Prepare the application for uploading, using `rsconnect:::bundleApp`
+1. Send the app to the server (`~/ShinyApps_staging/<appname>`), using `ssh::scp_upload`
+1. Replicate your local R environment on the server, using `renv::restore`
+1. Move the app to `~/ShinyApps/<appname>`, where it will be picked up by the `shinyserver`
+
+If you found a problem, or you want to do anything more complex, the following code may help:
 
 ```{r}
 library(shinysender)
@@ -198,7 +212,8 @@ If your app uses Bioconductor packages, run `options(repos = BiocManager::reposi
 
 The deployed app uses `renv` to emulate your local development environment (even if don't do it explicitly). It will be set up to cache installed libraries (and their versions) between all your apps, by means of the `.Renviron` and `.Rprofile` files in the deployed app's directory on the server.
 
-> *NOTE*: If you have an `.Renviron` file it will currently be overwritten. Replace it by including the affected variables in `Sys.setenv` calls inside your local `.Rprofile`.
+> [WARNING!]
+> If you have an `.Renviron` file, it will be overwritten on the server. Replace it by including the affected variables in `Sys.setenv` calls inside your local `.Rprofile`.
 
 If you have a project level `.Rprofile`, this will be uploaded to the remote server and modified to use `renv` - your local `.Rprofile` will not be edited. If you do not have a project level `.Rprofile` a new one will be created on the remote machine. If your *user* level `.Rprofile` on your local machine contains settings that your app *requires*, you will have to copy these to a project level `.Rprofile` so that the server can use them.
 

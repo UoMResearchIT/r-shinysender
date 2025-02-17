@@ -8,3 +8,6 @@ testserver.txt
 github_pat
 
 inst/doc
+.Rprofile
+renv/
+renv.lock
