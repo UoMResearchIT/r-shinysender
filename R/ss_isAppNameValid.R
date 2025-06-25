@@ -1,33 +1,16 @@
 #' Check if a Shiny app name is valid
 #'
-#' Check if a Shiny app name is valid
-#'
-#' Haven't found any documentation on naming rule, so will
-#' go strict and say alphanumeric only.
-#'
-#' Will preserve the case the user provides.
+#' Valid names are alphanumeric [underscores and hyphens allowed],
+#' between 4 and 63 characters long. Case is preserved.
+#' https://github.com/rstudio/rsconnect/issues/142#issuecomment-261393707
 #'
 #' @param appName The name of the app
-#'
 #' @return TRUE if the app name is valid, FALSE otherwise
 #'
 ss_isAppNameValid <- function(appName) {
 
-  # Check we've got a character vector of length 1,
-  # with something in it
-  if (!isa(appName, "character"))
-    return(FALSE)
-  if (length(appName) != 1)
-    return(FALSE)
-  if (nchar(appName) < 1)
+  if (!isa(appName, "character") || length(appName) != 1)
     return(FALSE)
 
-  # Check what's in it is a valid name
-  cleanName <- gsub("[^A-Za-z0-9]", "", appName)
-
-  if (cleanName == appName)
-    return(TRUE)
-  else
-    return(FALSE)
-
+  grepl("^[A-Za-z0-9_-]{4,63}$", appName)
 }
