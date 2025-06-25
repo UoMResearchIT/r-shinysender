@@ -6,7 +6,7 @@ test_that("delete app parameter checking works", {
   stub(ss_deleteapp, 'ss_listdir', c("fakeapp1", "fakeapp2", "fakeapp3") )
   stub(ss_deleteapp, 'ssh::ssh_exec_wait', 0 ) # Return code for success
 
-  expect_error(ss_deleteapp(fakesession, "_badname"),
+  expect_error(ss_deleteapp(fakesession, "!badname"),
                "ss_isAppNameValid\\(appName\\) is not TRUE") # Better error needed
   expect_error(ss_deleteapp(fakesession, c("app1", "app2")),
                "length\\(appName\\) == 1 is not TRUE" ) # Better error needed
