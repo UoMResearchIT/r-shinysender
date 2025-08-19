@@ -1,7 +1,11 @@
 # Generate a minimal Shiny app in its own directory
 # Based on https://testthat.r-lib.org/articles/test-fixtures.html
 
-create_local_shiny_app  <- function(dir = fs::file_temp(), env = parent.frame(), singlefile = TRUE) {
+create_local_shiny_app <- function(
+  dir = fs::file_temp(),
+  env = parent.frame(),
+  singlefile = TRUE
+) {
   # create new folder and package
   dir.create(dir) # A
   withr::defer(fs::dir_delete(dir), envir = env) # -A
@@ -50,26 +54,22 @@ create_local_shiny_app  <- function(dir = fs::file_temp(), env = parent.frame(),
   writeLines(ui.R, uiConn)
   writeLines(server.R, serverConn)
 
-
   close(uiConn)
-  if (!singlefile) # Can't close a file twice
+  if (!singlefile) {
+    # Can't close a file twice
     close(serverConn)
+  }
 
   withr::defer(setwd(old_project_dir), envir = env) # -B
 
   return(dir)
-
 }
-
 
 
 # Return a fake ssh connection
 fakessh <- function() {
-
   dummysession <- "dummy ssh session"
   class(dummysession) <- "ssh"
 
   return(dummysession)
-
 }
-

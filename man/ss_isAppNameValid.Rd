@@ -13,11 +13,7 @@ ss_isAppNameValid(appName)
 TRUE if the app name is valid, FALSE otherwise
 }
 \description{
-Check if a Shiny app name is valid
-}
-\details{
-Haven't found any documentation on naming rule, so will
-go strict and say alphanumeric only.
-
-Will preserve the case the user provides.
+Valid names are alphanumeric [underscores and hyphens allowed],
+between 4 and 63 characters long. Case is preserved.
+https://github.com/rstudio/rsconnect/issues/142#issuecomment-261393707
 }

@@ -8,33 +8,41 @@
 #' i.e. .ssh/id_rsa, followed by interactive password authentication
 #'
 #' @param username The user to log onto the server as. Defaults to current user
-#' @param server The remote Shiny server to connect to.  Uses value set in SHINYSENDER_SERVER environment variable by default
+#' @param server The remote Shiny server to connect to.  Uses value set in
+#' SHINYSENDER_SERVER environment variable by default
 #' @param keyfile The path to the user's private keyfile.
 #' the active config.  Will warn otherwise.
 #
 #' @return An ssh connection object
 #'
 #' @export
-ss_connect <- function(username = getUserName(),
-                       server = Sys.getenv("SHINYSENDER_SERVER"),
-                       keyfile = NULL) {
-
+ss_connect <- function(
+  username = getUserName(),
+  server = Sys.getenv("SHINYSENDER_SERVER"),
+  keyfile = NULL
+) {
   errstring <- ""
-  if (server == "")
-    errstring <- paste0(errstring,
-                        "Pass server parameter, or set SHINYSENDER_SERVER environment variable\n")
+  if (server == "") {
+    errstring <- paste0(
+      errstring,
+      "Pass server parameter, or set SHINYSENDER_SERVER environment variable\n"
+    )
+  }
 
-  if (username == "")
-    errstring <- paste0(errstring,
-                        "Pass username parameter.  USERNAME environment variable was not set\n")
+  if (username == "") {
+    errstring <- paste0(
+      errstring,
+      "Pass username parameter.  USERNAME environment variable was not set\n"
+    )
+  }
 
-  if (errstring != "")
+  if (errstring != "") {
     stop(errstring)
+  }
 
   conname = paste0(username, "@", server)
 
-  session = ssh::ssh_connect(conname,
-                              keyfile = keyfile)
+  session = ssh::ssh_connect(conname, keyfile = keyfile)
 
   return(session)
 }
@@ -56,7 +64,6 @@ ss_connect <- function(username = getUserName(),
 #'
 #' @return The user name
 getUserName <- function() {
-
   # Use the username set in SHINYSENDER_USER in preference to
   # anything else
   shinyuser <- Sys.getenv("SHINYSENDER_USER")
@@ -76,7 +83,7 @@ getUserName <- function() {
   user <- Sys.getenv("USER")
   username <- Sys.getenv("USERNAME")
 
-  if (user == "" & username == "") {
+  if (user == "" && username == "") {
     stop("Could not determine username")
   }
 
@@ -85,12 +92,13 @@ getUserName <- function() {
     return(user)
   }
 
-  if (nchar(user) > 0 & nchar(username) == 0 )
+  if (nchar(user) > 0 && nchar(username) == 0) {
     return(user)
-  else if (nchar(username) > 0 & nchar(user) == 0 )
+  } else if (nchar(username) > 0 && nchar(user) == 0) {
     return(username)
-  else
+  } else {
     stop("user and username variables both set, but not equal")
+  }
 
   stop("Error getting username")
 }

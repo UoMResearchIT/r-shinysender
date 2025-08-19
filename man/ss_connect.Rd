@@ -13,7 +13,8 @@ ss_connect(
 \arguments{
 \item{username}{The user to log onto the server as. Defaults to current user}
 
-\item{server}{The remote Shiny server to connect to.  Uses value set in SHINYSENDER_SERVER environment variable by default}
+\item{server}{The remote Shiny server to connect to.  Uses value set in
+SHINYSENDER_SERVER environment variable by default}
 
 \item{keyfile}{The path to the user's private keyfile.
 the active config.  Will warn otherwise.}

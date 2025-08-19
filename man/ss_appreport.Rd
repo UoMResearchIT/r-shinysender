@@ -20,7 +20,8 @@ Return a tibble containing details of each directory in the user's app
 directory:
 }
 \details{
-* Is the directory a potentially valid Shiny app (i.e. contains app.R or (ui.R and server.R))
+* Is the directory a potentially valid Shiny app
+   (i.e. contains app.R or (ui.R and server.R))
 * Does it have a packrat directory?
 * Any logs associated with the app
 }

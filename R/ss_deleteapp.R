@@ -8,7 +8,6 @@
 #'
 #' @export
 ss_deleteapp <- function(session, appName, prompt = TRUE) {
-
   # Only deal with a single application at a time
   # TODO - handle >1 app per function call
   stopifnot(length(appName) == 1)
@@ -34,11 +33,9 @@ ss_deleteapp <- function(session, appName, prompt = TRUE) {
     if (proceed != TRUE) {
       stop("Not deleting remote app")
     }
-
   }
 
   retval <- ssh::ssh_exec_wait(session, remotecommand)
 
   return(retval)
 }
-

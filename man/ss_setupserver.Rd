@@ -2,23 +2,15 @@
 % Please edit documentation in R/ss_setupserver.R
 \name{ss_setupserver}
 \alias{ss_setupserver}
-\title{Set up `.Rprofile` on remote server, and create `~/ShinyApps` if it doesn't
-exist}
+\title{Verify server dependencies, and create `~/ShinyApps` and `~/ShinyApps_staging`
+if they don't already exist}
 \usage{
 ss_setupserver(session)
 }
 \arguments{
-\item{session}{The session to upload the .Rprofile to}
+\item{session}{ssh session, returned by `ss_connect()`}
 }
 \description{
-Set up the user's environment with an appropriate `.Rprofile` to
-load `renv` libraries when running their apps
-}
-\details{
-We use `renv` to reproduce the local system's libraries as closely
-as possible on the Shiny server.  We need a way of making the app
-aware that it should be using its own local (i.e. `renv`) libraries
-when running.
-
-This function uploads an .Rprofile to the user's home directory
+Verify server dependencies, and create `~/ShinyApps` and `~/ShinyApps_staging`
+if they don't already exist
 }

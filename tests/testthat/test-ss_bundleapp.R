@@ -1,5 +1,4 @@
 test_that("app bundling works", {
-
   appdir <- tempfile("dir")
 
   testapp <- create_local_shiny_app(dir = appdir)

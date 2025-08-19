@@ -23,19 +23,20 @@
 #' @return The location of the created bundle file.
 #'
 #' @export
-ss_bundleapp <- function(appDir = getwd(),
-                         appName,
-                         appFiles = NULL,
-                         appPrimaryDoc = NULL,
-                         appMode = NULL,
-                         contentCategory = NULL,
-                         metadata = list(),
-                         verbose = FALSE,
-                         quiet = FALSE,
-                         quarto = NA,
-                         pythonConfig = NULL,
-                         image = NULL) {
-
+ss_bundleapp <- function(
+  appDir = getwd(),
+  appName,
+  appFiles = NULL,
+  appPrimaryDoc = NULL,
+  appMode = NULL,
+  contentCategory = NULL,
+  metadata = list(),
+  verbose = FALSE,
+  quiet = FALSE,
+  quarto = NA,
+  pythonConfig = NULL,
+  image = NULL
+) {
   # Check app name is OK
   stopifnot(ss_isAppNameValid(appName))
 
