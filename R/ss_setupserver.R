@@ -1,18 +1,7 @@
-#' Set up `.Rprofile` on remote server, and create `~/ShinyApps` if it doesn't
-#' exist
+#' Verify server dependencies, and create `~/ShinyApps` and `~/ShinyApps_staging`
+#' if they don't already exist
 #'
-#' Set up the user's environment with an appropriate `.Rprofile` to
-#' load `renv` libraries when running their apps
-#'
-#' We use `renv` to reproduce the local system's libraries as closely
-#' as possible on the Shiny server.  We need a way of making the app
-#' aware that it should be using its own local (i.e. `renv`) libraries
-#' when running.
-#'
-#' This function uploads an .Rprofile to the user's home directory
-#'
-#' @param session The session to upload the .Rprofile to
-#'
+#' @param session ssh session, returned by `ss_connect()`
 #' @export
 ss_setupserver <- function(session) {
   # TODO require user to confirm it's OK to do what we plan to,
@@ -54,8 +43,14 @@ ss_setupserver <- function(session) {
 
 #' Set up app's Rprofile so it can use `renv` packages
 #'
+#' We use `renv` to reproduce the local system's libraries as closely
+#' as possible on the Shiny server.  We need a way of making the app
+#' aware that it should be using its own local (i.e. `renv`) libraries
+#' when running.
+#'
 #' This adds the required text to the remote `.Rprofile`, or creates it if it
-#' does not already exist
+#' does not already exist. It will also send a custom `.Renviron` file to the
+#' app directory, overwriting any existing one!
 #'
 #' @param session The session
 #' @param appname The application to setup, assumed to be in `~/ShinyApps/`
