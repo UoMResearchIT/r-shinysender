@@ -122,8 +122,8 @@ library(shinysender)
 # User will be prompted for password if not using ssh keys
 session <- ss_connect()
 
-# Set up the user's account on the server to use Packrat packages
-# (This only needs to be done once)
+# Set up the user's account on the server (only needs to be done once)
+# This will check for dependencies and create a `~/ShinyApps` directory
 ss_setupserver(session)
 
 # List apps on Shiny server

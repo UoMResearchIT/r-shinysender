@@ -192,7 +192,3 @@ shinysenderize_Rprofile <- function(Rprofile, action = c("update", "delete"),
 
   return(Rprofile)
 }
-
-
-
-

@@ -8,9 +8,9 @@
 #' @return TRUE if the app name is valid, FALSE otherwise
 #'
 ss_isAppNameValid <- function(appName) {
-
-  if (!isa(appName, "character") || length(appName) != 1)
+  if (!isa(appName, "character") || length(appName) != 1) {
     return(FALSE)
+  }
 
   grepl("^[A-Za-z0-9_-]{4,63}$", appName)
 }

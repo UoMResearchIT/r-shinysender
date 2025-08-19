@@ -19,9 +19,16 @@ ss_setupRprofile(
 \item{remotepath}{The remote path containing the application.
 Exactly one of `appname` or `remotepath` must be specified}
 
-\item{rprofilefragmentpath}{The path to the fragment we wish to append to the `.Rprofile`}
+\item{rprofilefragmentpath}{The path to the fragment to append to the `.Rprofile`}
 }
 \description{
+We use `renv` to reproduce the local system's libraries as closely
+as possible on the Shiny server.  We need a way of making the app
+aware that it should be using its own local (i.e. `renv`) libraries
+when running.
+}
+\details{
 This adds the required text to the remote `.Rprofile`, or creates it if it
-does not already exist
+does not already exist. It will also send a custom `.Renviron` file to the
+app directory, overwriting any existing one!
 }

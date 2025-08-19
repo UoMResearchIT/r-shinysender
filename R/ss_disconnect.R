@@ -6,8 +6,5 @@
 #'
 #' @export
 ss_disconnect <- function(session) {
-
   ssh::ssh_disconnect(session)
-
-
 }

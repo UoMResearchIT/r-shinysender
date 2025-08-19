@@ -11,9 +11,7 @@
 #' @return A vector containing the user's apps; NULL if there are none
 #'
 #' @export
-ss_listdir <- function(session,
-                        appdir = "~/ShinyApps") {
-
+ss_listdir <- function(session, appdir = "~/ShinyApps") {
   # TODO Handle no ShinyApps directory
   # TODO verify appdir is a valid directory name
   # TODO handle files in ~/ShinyApps - show or not?
@@ -34,7 +32,8 @@ ss_listdir <- function(session,
 #' Return a tibble containing details of each directory in the user's app
 #' directory:
 #'
-#' * Is the directory a potentially valid Shiny app (i.e. contains app.R or (ui.R and server.R))
+#' * Is the directory a potentially valid Shiny app
+#'    (i.e. contains app.R or (ui.R and server.R))
 #' * Does it have a packrat directory?
 #' * Any logs associated with the app
 #'
@@ -45,16 +44,12 @@ ss_listdir <- function(session,
 #' directory
 #'
 #' @export
-ss_appreport <- function(session,
-                         appdir = "~/ShinyApps") {
-
-
+ss_appreport <- function(session, appdir = "~/ShinyApps") {
   possibleApps <- ss_listdir(session, appdir)
 
   appinfo <- list()
   i <- 1
   for (p in possibleApps) {
-
     cmd <- paste0("ls ", appdir, "/", p)
     out <- ssh::ssh_exec_internal(session, cmd)
 
@@ -62,18 +57,12 @@ ss_appreport <- function(session,
 
     shinyApp = isShinyApp(process_raw(out$stdout))
 
-
     haspackrat = isPackratApp(process_raw(out$stdout))
 
-
-    thisrow <- c(entryname = p,
-                 isApp = shinyApp,
-                 ispackrat  = haspackrat)
-
+    thisrow <- c(entryname = p, isApp = shinyApp, ispackrat = haspackrat)
 
     appinfo[[i]] <- thisrow
     i <- i + 1
-
   }
 
   # Make into a data frame
@@ -81,7 +70,3 @@ ss_appreport <- function(session,
 
   return(appout)
 }
-
-
-
-

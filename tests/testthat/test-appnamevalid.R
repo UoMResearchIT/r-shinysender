@@ -8,13 +8,11 @@ test_that("App name is 4 to 63 characters long", {
 test_that("Only strings allowed", {
   expect_false(ss_isAppNameValid(c("a", "b")))
   expect_false(ss_isAppNameValid(1))
-  expect_false(ss_isAppNameValid(c(1,2)))
+  expect_false(ss_isAppNameValid(c(1, 2)))
   expect_true(ss_isAppNameValid("appname"))
-
 })
 
 test_that("Only alphanumeric characters, dash, and underscore", {
-
   expect_false(ss_isAppNameValid("~testing"))
   expect_false(ss_isAppNameValid("@hello"))
   expect_false(ss_isAppNameValid("testing!"))

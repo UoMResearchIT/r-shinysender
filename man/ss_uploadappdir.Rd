@@ -6,8 +6,8 @@
 \usage{
 ss_uploadappdir(
   session,
-  appDir,
-  appName,
+  appDir = getwd(),
+  appName = Sys.getenv("SHINYSENDER_REMOTENAME"),
   ...,
   overwrite = FALSE,
   method = "direct_home"
@@ -16,10 +16,10 @@ ss_uploadappdir(
 \arguments{
 \item{session}{The ssh session to use for the upload}
 
-\item{appDir}{The local directory containing the app to upload}
+\item{appDir}{The local directory containing the app to upload (defaults to ".")}
 
 \item{appName}{The name of the application - this will form part of the URL
-for the app}
+for the app, defaults to `Sys.getenv("SHINYSENDER_REMOTENAME")`}
 
 \item{...}{arguments forwarded to `ss_bundleapp`}
 

@@ -1,8 +1,7 @@
 test_that("We can detect a shiny ap", {
-
   expect_false(isShinyApp(c()))
   expect_false(isShinyApp("a.R"))
-  expect_false(isShinyApp(c("a.R","b.R")))
+  expect_false(isShinyApp(c("a.R", "b.R")))
 
   expect_true(isShinyApp("app.R"))
   expect_true(isShinyApp(c("ui.R", "server.R")))
@@ -19,6 +18,5 @@ test_that("We can detect a shiny ap", {
   expect_true(is.na(isShinyApp(c("server.R", "index.Rmd"))))
   expect_true(is.na(isShinyApp(c("ui.R", "index.Rmd"))))
   expect_true(is.na(isShinyApp(c("ui.R", "server.R", "index.Rmd"))))
-#
-
+  #
 })
