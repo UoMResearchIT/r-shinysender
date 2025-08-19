@@ -9,9 +9,9 @@
 #' image containing the bundle
 #'
 #' @param session The ssh session to use for the upload
-#' @param appDir The local directory containing the app to upload
+#' @param appDir The local directory containing the app to upload (defaults to ".")
 #' @param appName The name of the application - this will form part of the URL
-#' for the app
+#' for the app, defaults to `Sys.getenv("SHINYSENDER_REMOTENAME")`
 #' @param overwrite Whether to overwrite or abort if the app directory already exists
 #' @param method The deployment method - see details
 #'
@@ -20,7 +20,9 @@
 #' @return One of "success", "alreadyExists", "otherError"
 #'
 #' @export
-ss_uploadappdir <- function(session, appDir, appName,
+ss_uploadappdir <- function(session,
+                            appDir = getwd(),
+                            appName = Sys.getenv("SHINYSENDER_REMOTENAME"),
                             ...,
                             overwrite = FALSE,
                             method = "direct_home") {
