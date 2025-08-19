@@ -60,13 +60,13 @@ Sys.setenv(SHINYSENDER_SERVER="shiny.its.manchester.ac.uk")
 Sys.setenv(SHINYSENDER_USER="alice")
 ```
 
-(you may wish to add these lines to `~/.Rprofile`, or set the environment variables in `~/.Renviron`, to avoid having to set them each time you start R)
+(you may wish to add these lines to `~/.Rprofile`, to avoid having to set them each time you start R --  see [.Rprofile / .Renviron](#rprofile--renviron) below)
 
 * By default, your app will have the name of your local project directory, to set it to something different, set the `SHINYSENDER_REMOTENAME`
 environment variable before deploying: `Sys.setenv('SHINYSENDER_REMOTENAME="appname")`.
 
-  > [IMPORTANT!]
-  > App names must be alphanumeric (i.e. no hyphens, underscores, or spaces).
+> [!IMPORTANT]
+> App names must be alphanumeric (and may contain hyphens or underscores, but no spaces), between 4 and 63 characters long. Names are case-sensitive.
 
 * If you are using packages from GitHub, you will have to make sure you have an active access token see [Non CRAN packages](#Non-CRAN-packages) below.
 
@@ -208,11 +208,11 @@ Locally hosted packages (i.e. an R package source that only exists on your local
 
 If your app uses Bioconductor packages, run `options(repos = BiocManager::repositories())` before deploying your app. 
 
-## .Rprofile
+## .Rprofile / .Renviron
 
 The deployed app uses `renv` to emulate your local development environment (even if don't do it explicitly). It will be set up to cache installed libraries (and their versions) between all your apps, by means of the `.Renviron` and `.Rprofile` files in the deployed app's directory on the server.
 
-> [WARNING!]
+> [!WARNING]
 > If you have an `.Renviron` file, it will be overwritten on the server. Replace it by including the affected variables in `Sys.setenv` calls inside your local `.Rprofile`.
 
 If you have a project level `.Rprofile`, this will be uploaded to the remote server and modified to use `renv` - your local `.Rprofile` will not be edited. If you do not have a project level `.Rprofile` a new one will be created on the remote machine. If your *user* level `.Rprofile` on your local machine contains settings that your app *requires*, you will have to copy these to a project level `.Rprofile` so that the server can use them.
@@ -251,11 +251,13 @@ to embed your app within an existing web page.  This can be done with an iframe.
 
 ### Server fingerprint
 
-The ssh fingerprint of the pilot shiny server is
-`26:0d:42:55:99:32:1b:75:3d:38:2d:dc:c8:08:1b:0b:40:f9:e9:e6`
-This will be shown the first time you connect to the service
-
-
+The ssh fingerprints of the pilot shiny server are:
+```
+256 SHA256:/4TL+4cIftoWaRuCjJrCKJWUWKl+6Vek+M6Xf5erIMI shiny.its.manchester.ac.uk (ECDSA)
+3072 SHA256:UQaTb8LetrR2yK6qEDAOqQa8CAdPXcglh+mA3+NcHkg shiny.its.manchester.ac.uk (RSA)
+256 SHA256:eePFU2itdNN2KCRh3R8gjemn6fOnoZZbP6yPsVN5jGc shiny.its.manchester.ac.uk (ED25519)
+```
+On of these should be shown the first time you connect to the service.
 
 ## Other servers
 
@@ -275,26 +277,27 @@ that the location section of `shiny-server.conf` is set up as in the example bel
 
 Using Ubuntu 20.04
 
-Install system libraries for common R packages:
+Install R following instructions at <https://docs.posit.co/resources/install-r.html>. 
 
+> [!IMPORTANT]
+> Don't install using Ubuntu PPA's (as in <https://cran.r-project.org/bin/linux/ubuntu/>). This makes it easy to upgrade the R version by mistake (e.g. by apt upgrade), breaking user's libraries... it happened to a friend.
+
+Install common packages (and their system requirements). The easiest is to use `pak`, running R as root:
+
+```sh
+sudo R
 ```
-    sudo apt install pandoc pandoc-citeproc libssl-dev libxml2-dev libcurl4-openssl-dev libcairo2 libcairo2-dev git-core zlib1g-dev jags default-jre-headless libopenmpi3 libopenmpi-dev libomp-dev make libgit2-dev libssh2-1-dev libgmp10 libgmp-dev libglpk-dev libpng-dev python gdal-bin libproj-dev libgdal-dev libmpfr-dev libgeos-dev libgeos++-dev libsodium-dev libicu-dev tcl8.6 tk8.6 tk-table libudunits2-dev libv8-dev librsvg2-dev libssh-dev libxt-dev libcairo-5c-dev
+
+```r
+# You might want to tweak this list depending on your user's needs
+common_packages <- c('tidyverse','devtools','shiny','markdown','sf','renv')
+
+install.packages('pak')
+pak::pkg_install(common_packages, ask = FALSE)
+q()
 ```
 
-
-(This list covers most of the debs needed for common R packages - e.g. tidyverse, sf, etc.
-See: <https://github.com/rstudio/r-system-requirements> and <https://github.com/r-hub/sysreqsdb> for two (different) databases of OS package dependencies for R libraries. `./librarydeps/getdeps.R` will produce a (draft) apt install line for a given set of packages)
-
-
-Install R following instructions at <https://docs.rstudio.com/resources/install-r/> (I went with most recent version (4.1.1 at time of writing). Note `r-base` with Ubuntu 20.04 is very old, so don't use Ubuntu provided packages. Set up the symlinks as described on that page.
-
-Start R as root, and install shiny, rmarkdown, devtools and packrat packages:
-
-`sudo R`
-
-`install.packages(c("shiny", "rmarkdown", "packrat", "devtools"))`
-
-`q()`
+For troubleshooting, you might want to use `pak::pkg_sysreqs(common_packages)`
 
 Install Shiny server (<https://www.rstudio.com/products/shiny/download-server/ubuntu/>), e.g.:
 
@@ -302,8 +305,8 @@ Install Shiny server (<https://www.rstudio.com/products/shiny/download-server/ub
 
 ```
 sudo apt-get install gdebi-core
-wget https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.17.973-amd64.deb
-sudo gdebi shiny-server-1.5.17.973-amd64.deb
+wget https://download3.rstudio.org/ubuntu-20.04/x86_64/shiny-server-1.5.23.1030-amd64.deb
+sudo gdebi shiny-server-1.5.23.1030-amd64.deb
 ```
 
 (Note that there isn't a repository for shiny-server, so it won't update with `apt-get etc...`, so you'll need to keep an eye on new versions manually.
