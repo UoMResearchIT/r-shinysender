@@ -1,9 +1,10 @@
 Package: shinysender
 Type: Package
 Title: Send Shiny Apps to a Server 
-Version: 0.1.3
-Author: David Mawdsley
-Maintainer: David Mawdsley <david.mawdsley@manchester.ac.uk>
+Version: 0.1.4
+Authors@R: c(
+    person("David", "Mawdsley", role = "aut"),
+    person("Martin", "Herrerias Azcue", email = "martin.herreriasazcue@manchester.ac.uk", role = c("ctb","cre")))
 Description: Upload and manage users' Shiny Apps via ssh.
 License: GPL
 Encoding: UTF-8
